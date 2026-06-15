@@ -1,6 +1,7 @@
 import express from 'express'
-import { Create } from '../controller/registerController.js'
+import { Create , Login} from '../controller/registerController.js'
 
 export const registerRouter = express.Router()
 
 registerRouter.post('/create', Create)
+registerRouter.post('/login', Login)
