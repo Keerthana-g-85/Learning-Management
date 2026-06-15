@@ -1,4 +1,4 @@
-import {Entity , Column, CreateDateColumn, UpdateDateColumn } from 'typeorm'
+import {Entity , Column, CreateDateColumn, UpdateDateColumn, PrimaryGeneratedColumn } from 'typeorm'
 
 export enum Role {
     admin = "admin",
@@ -9,13 +9,16 @@ export enum Role {
 @Entity()
 export default class Register {
 
-@Column({ type: 'varchar'})
+@PrimaryGeneratedColumn('uuid')
+id! : string
+
+@Column({ type: 'varchar' , nullable: false})
 Name! : string
 
-@Column ({ type: 'varchar' , unique:true})
+@Column ({ type: 'varchar' , unique:true , nullable: false})
 Email! : string 
 
-@Column ({ type:'varchar'})
+@Column ({ type:'varchar' , nullable: false})
 Password! : string 
 
 @Column ({ type:'varchar'})
@@ -24,7 +27,7 @@ PhoneNumber! : string
 @Column ({ type:'varchar'})
 Address! : string 
 
-@Column ({ type:'enum' , default:null })
+@Column ({ type:'enum' , enum:Role , default:null })
 Role! :  Role
 
 @CreateDateColumn()

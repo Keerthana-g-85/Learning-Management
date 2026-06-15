@@ -1,6 +1,7 @@
 import express  from 'express';
 import dotenv from 'dotenv';
 import { DataSource , type DataSourceOptions} from 'typeorm';
+import Register from './models/registerModel.js';
 
 dotenv.config()
 
@@ -15,6 +16,7 @@ const data : DataSourceOptions = {
     database : process.env.DB_NAME as string ,
     username : process.env.DB_USER as string ,
     port : Number(process.env.DB_PORT),
+    entities : [Register]
 }
 export const database = new DataSource(data)
 const port = process.env.PORT
