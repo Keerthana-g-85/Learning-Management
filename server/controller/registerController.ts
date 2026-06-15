@@ -3,7 +3,7 @@ import Register from '../models/registerModel.js'
 import type { RequestHandler } from 'express'
 import bcrypt from 'bcrypt'
 
-const Create : RequestHandler = async (req,res) => {
+export const Create : RequestHandler = async (req,res) => {
     try{
         const registerRepo = database.getRepository(Register)
         const { Name , Email , Password , PhoneNumber , Address , Role } = req.body
@@ -26,7 +26,7 @@ const Create : RequestHandler = async (req,res) => {
         res.status(201).send({
             success : true ,
             message : "User registered successfully",
-            newUser
+            user : newUser
         })
 
     }

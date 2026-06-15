@@ -2,12 +2,14 @@ import express  from 'express';
 import dotenv from 'dotenv';
 import { DataSource , type DataSourceOptions} from 'typeorm';
 import Register from './models/registerModel.js';
+import {registerRouter } from './Router/registerRouter.js'
 
 dotenv.config()
 
 const app = express()
 
 app.use(express.json())
+app.use('/register' , registerRouter)
 
 const data : DataSourceOptions = {
     type : process.env.DB_TYPE as 'postgres',
@@ -16,6 +18,7 @@ const data : DataSourceOptions = {
     database : process.env.DB_NAME as string ,
     username : process.env.DB_USER as string ,
     port : Number(process.env.DB_PORT),
+    synchronize : true ,
     entities : [Register]
 }
 export const database = new DataSource(data)
