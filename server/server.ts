@@ -3,12 +3,15 @@ import dotenv from 'dotenv';
 import { DataSource , type DataSourceOptions} from 'typeorm';
 import Register from './models/registerModel.js';
 import {registerRouter } from './Router/registerRouter.js'
+import cors from 'cors'
 
 dotenv.config()
 
 const app = express()
 
 app.use(express.json())
+app.use(cors())
+
 app.use('/register' , registerRouter)
 
 const data : DataSourceOptions = {

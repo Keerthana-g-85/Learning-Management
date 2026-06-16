@@ -1,12 +1,21 @@
 import { useState } from "react"
+import axios from "axios";
+
 export default function Register (){
     const [register , setRegister] = useState({ Name :'' , Email: '' , Password: '' , PhoneNumber:'' , Address:''})
-    function handleRegister(){
+     async function handleRegister(){
+        try{
         if (!register.Name || !register.Email || !register.Password || !register.PhoneNumber || !register.Address){
             console.log("enter all the credentials")
+            alert("Enter all credentials")
         }
         else{
         console.log(register);
+        await axios.post('http://localhost:3000/register/create',register)
+        }
+        } catch(error){
+            console.log(error)
+            console.log("Error while sending data to backend")
         }
         }
     return(

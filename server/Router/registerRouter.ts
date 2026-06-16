@@ -4,5 +4,5 @@ import { authentication } from '../middleware/userAuthenticaton.js'
 
 export const registerRouter = express.Router()
 
-registerRouter.post('/create',authentication, Create)
+registerRouter.post('/create', Create)
 registerRouter.post('/login', Login)
