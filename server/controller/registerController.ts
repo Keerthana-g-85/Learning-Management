@@ -9,12 +9,12 @@ export const Create : RequestHandler = async (req,res) => {
         const registerRepo = database.getRepository(Register)
         const { Name , Email , Password , PhoneNumber , Address , Role } = req.body
 
-        if (!Email || !Password || !Name || !PhoneNumber || !Address){
-            return res.status(400).send({
-                success : false ,
-                message : "Enter required values"           
-            })
-        }
+        // if (!Email || !Password || !Name || !PhoneNumber || !Address){
+        //     return res.status(400).send({
+        //         success : false ,
+        //         message : "Enter required values"           
+        //     })
+        // }
 
         const existing = await registerRepo.findOne({ where : { Email : Email , Name : Name }})
         if (existing){
