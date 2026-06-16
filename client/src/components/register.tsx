@@ -56,9 +56,9 @@ export default function Register (){
                         variant="standard"
                         label="Email*" 
                         type='text' 
-                        error={error || errstatus === 400}
+                        error={error || errstatus > 0}
                         value={register.Email} 
-                        helperText={error ? "Email required": errstatus ===400 ? "User already exist" :null   }
+                        helperText={error ? "Email required": errstatus === 400 ? "User already exist" :null   }
                         onChange={(e)=> setRegister({...register ,Email:e.target.value})} />
                     <TextField 
                         fullWidth

@@ -2,10 +2,12 @@ import {useState} from "react"
 import { useNavigate } from "react-router"
 import api from './api'
 import { TextField ,Container, Paper, Typography , Stack, Button} from "@mui/material";
+import axios from "axios";
 
 export default function Login (){
     const [login , setLogin] = useState({ Email : '' , Password : ''})
     const [error,setError] = useState(false)
+    const [errstatus , setStatus] = useState(0)
     const nav = useNavigate()
 
     async function handleLogin (){
@@ -22,8 +24,11 @@ export default function Login (){
             }
 
         }catch(error){
-            console.log(error)
-
+            if (axios.isAxiosError(error)){
+                if (error.response?.status ){
+                    setStatus(error.response.status)           
+                }
+            }
         }
 
     }
@@ -41,9 +46,9 @@ export default function Login (){
                 variant="outlined"
                 label="Email*" 
                 type='text' 
-                error={error}
+                error={error || errstatus ===404 }
                 value={login.Email} 
-                helperText={error ? "Email required": null }
+                helperText={error ? "Email required": errstatus ===404 ? "User not yet registered" : null  }
                 onChange={(e)=>setLogin({...login,Email:e.target.value})} />
             <TextField 
                 fullWidth
@@ -52,8 +57,8 @@ export default function Login (){
                 label="Password*" 
                 type='text' 
                 value={login.Password} 
-                error={error}
-                helperText={error ? "Password required": null }
+                error={error || errstatus == 401}
+                helperText={error ? "Password required":  errstatus == 401 ? "Password invalid": null }
                 onChange={(e)=>setLogin({...login,Password:e.target.value})}/>
             <Button variant="contained" onClick={handleLogin}>Login</Button>
             </Stack>
