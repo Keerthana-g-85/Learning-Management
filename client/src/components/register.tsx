@@ -1,5 +1,5 @@
 import { useState } from "react"
-import axios from "axios";
+import api from "./api";
 
 export default function Register (){
     const [register , setRegister] = useState({ Name :'' , Email: '' , Password: '' , PhoneNumber:'' , Address:''})
@@ -10,8 +10,9 @@ export default function Register (){
             alert("Enter all credentials")
         }
         else{
+        await api.post('/register/create',register)
         console.log(register);
-        await axios.post('http://localhost:3000/register/create',register)
+        
         }
         } catch(error){
             console.log(error)
