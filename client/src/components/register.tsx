@@ -1,8 +1,11 @@
 import { useState } from "react"
 import api from "./api";
+import {useNavigate} from "react-router"
 
 export default function Register (){
     const [register , setRegister] = useState({ Name :'' , Email: '' , Password: '' , PhoneNumber:'' , Address:''})
+
+    const nav = useNavigate()
      async function handleRegister(){
         try{
         if (!register.Name || !register.Email || !register.Password || !register.PhoneNumber || !register.Address){
@@ -11,8 +14,9 @@ export default function Register (){
         }
         else{
         await api.post('/register/create',register)
+        nav('/login')
         console.log(register);
-        
+
         }
         } catch(error){
             console.log(error)
@@ -27,7 +31,7 @@ export default function Register (){
             Phone : <input type='text' value ={register.PhoneNumber} onChange={(e)=> setRegister({...register ,PhoneNumber:e.target.value})}/>
             Address : <input type='text' value ={register.Address} onChange={(e)=> setRegister({...register , Address:e.target.value})}/>
 
-            <button onClick={handleRegister}>Register</button>
+            <button onClick={handleRegister} >Register</button>
         </>
     )
 }
