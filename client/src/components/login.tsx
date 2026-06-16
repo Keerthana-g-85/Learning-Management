@@ -1,4 +1,4 @@
-import {useState} from "react"
+import {useState,useEffect} from "react"
 import { useNavigate } from "react-router"
 import api from './api'
 import { TextField ,Container, Paper, Typography , Stack, Button} from "@mui/material";
@@ -8,6 +8,7 @@ export default function Login (){
     const [login , setLogin] = useState({ Email : '' , Password : ''})
     const [error,setError] = useState(false)
     const [errstatus , setStatus] = useState(0)
+    const [jwt , setJwt] = useState('')
     const nav = useNavigate()
 
     async function handleLogin (){
@@ -19,7 +20,8 @@ export default function Login (){
             else{
                 setError(false)
                 const data =await api.post('/register/login',login)
-                console.log(data.data.token) 
+                setJwt(data.data.token)
+                console.log(jwt)
                 nav('/home')
             }
 
