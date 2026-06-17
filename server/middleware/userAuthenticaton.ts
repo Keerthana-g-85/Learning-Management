@@ -1,8 +1,9 @@
 import jwt from 'jsonwebtoken'
 import type { Request , Response , NextFunction } from 'express'
+import type{ JwtPayload } from "jsonwebtoken";
 
 interface AuthRequest extends Request {
-    user?: string ;
+    user?: string | JwtPayload;
 }
 
 export const authentication = async(req : AuthRequest,res : Response, next : NextFunction) =>{
