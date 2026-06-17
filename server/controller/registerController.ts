@@ -16,7 +16,7 @@ export const Create : RequestHandler = async (req,res) => {
         //     })
         // }
 
-        const existing = await registerRepo.findOne({ where : { Email : Email , Name : Name }})
+        const existing = await registerRepo.findOne({ where : { Email : Email }})
         if (existing){
             return res.status(400).send({
                 success : false ,
