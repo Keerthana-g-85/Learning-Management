@@ -89,8 +89,8 @@ export default function Register (){
         }
         } catch(error){
             if (axios.isAxiosError(error)){
-                if (error.response?.status === 400){
-                    setStatus(error.response.status)           
+                {
+                    setStatus(error.response?.status || 0)           
                 }
             }
             console.log("Error while sending data to backend")
@@ -156,6 +156,8 @@ export default function Register (){
                         onChange={(e)=> setAddress(e.target.value)}/>
 
                     <Button variant="contained" onClick={handleRegister} >Register</Button>
+                    <Button variant="contained" onClick={()=>nav('/login')} >Login</Button>
+
                     </Stack>
                 </Paper>
             </Container>

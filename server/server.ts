@@ -7,13 +7,18 @@ import cors from 'cors'
 
 dotenv.config()
 
+// create express application
 const app = express()
 
+// Converts JSON request body into JavaScript object÷
 app.use(express.json())
+
+// Allow request from other origins 
 app.use(cors())
 
 app.use('/register' , registerRouter)
 
+// Database configuration
 const data : DataSourceOptions = {
     type : process.env.DB_TYPE as 'postgres',
     host : process.env.DB_HOST as string ,
@@ -21,12 +26,13 @@ const data : DataSourceOptions = {
     database : process.env.DB_NAME as string ,
     username : process.env.DB_USER as string ,
     port : Number(process.env.DB_PORT),
-    synchronize : true ,
+    synchronize : true ,                                //TypeORM automatically creates/updates tables.
     entities : [Register]
 }
 export const database = new DataSource(data)
 const port = process.env.PORT
 
+// database connection 
 const connection = async () => {
     try{
     await database.initialize()
