@@ -1,9 +1,11 @@
 import {useState,useEffect , createContext} from "react"
 import { useNavigate ,Link , } from "react-router"
-import {Api} from './api'
+import {Api} from './Api'
 import { TextField ,Container, Paper, Typography , Stack, Button, Snackbar } from "@mui/material";
 import axios from "axios";
 import image1 from '../assets/image1.png'
+import { useDispatch} from 'react-redux'
+import { addToken } from '../redux/LoginSlice'
 
 export const jwtContext = createContext('');
 
@@ -15,12 +17,8 @@ export default function Login (){
 
     const [errmessage , setErrmessage] = useState({'errEmail':'' , 'errPassword':'' , error:''})
 
-
-    const [jwt , setJwt] = useState('')
+    const dispatch = useDispatch()
     const nav = useNavigate()
-    useEffect(()=>{
-                    console.log(jwt)
-                },[jwt])
 
     async function handleLogin (){
         
@@ -48,15 +46,14 @@ export default function Login (){
                 return
             }
             else{
-                // const data =await api.post('/register/login',login)
                 const response = await Api({
                                         method: 'post',
                                         endpoint: '/register/login',
-                                        data: login
-                                    })
+                                        data: login })
+
+                dispatch(addToken( response.data.accesstoken))
 
                 console.log('Login',response)
-                // setJwt(data.data.accesstoken)
                 
                 nav('/home')
             }
