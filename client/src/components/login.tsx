@@ -1,9 +1,11 @@
-import {useState,useEffect} from "react"
+import {useState,useEffect , createContext} from "react"
 import { useNavigate ,Link , } from "react-router"
-import api from './api'
+import {Api} from './api'
 import { TextField ,Container, Paper, Typography , Stack, Button, Snackbar } from "@mui/material";
 import axios from "axios";
 import image1 from '../assets/image1.png'
+
+export const jwtContext = createContext('');
 
 export default function Login (){
     const [login , setLogin] = useState({ email : '' , password : ''})
@@ -46,10 +48,15 @@ export default function Login (){
                 return
             }
             else{
-                const data =await api.post('/register/login',login)
+                // const data =await api.post('/register/login',login)
+                const response = await Api({
+                                        method: 'post',
+                                        endpoint: '/register/login',
+                                        data: login
+                                    })
 
-                console.log(data.data.accesstoken)
-                setJwt(data.data.accesstoken)
+                console.log('Login',response)
+                // setJwt(data.data.accesstoken)
                 
                 nav('/home')
             }
@@ -57,6 +64,7 @@ export default function Login (){
         }catch(error){
             if (axios.isAxiosError(error))
                 {
+                    console.log('login',error)
                     setError(prev=>({...prev,error:true}))
                     setErrmessage(prev=>({...prev, error:error.response?.data.message})); 
                 }
@@ -114,17 +122,19 @@ export default function Login (){
             <Link   to="/register" > <Typography  variant="body2" 
             sx={{display:'flex' ,justifyContent: 'center' , alignItems: 'center'}}>Not an existing user? Register</Typography></Link>
 
-            <Snackbar open={error.error}
-                    autoHideDuration={3000}
-                    message ={errmessage.error}
-                    onClose={() => setError(prev=>({...prev,error:false}))}
-                    anchorOrigin={{
-                        vertical: "top",
-                        horizontal: "center",
-                    }}/> 
             </Stack>
             </Paper>
             </Container>
+            <Snackbar
+                open={error.error}
+                autoHideDuration={3000}
+                message ={errmessage.error}
+                onClose={() => setError(prev=>({...prev,error:false}))}
+                anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'right',
+                }}/>
+
 
         </>
     )

@@ -1,5 +1,5 @@
 import { useState } from "react"
-import api from "./api";
+import {Api} from "./api";
 import axios from 'axios'
 import {useNavigate , Link} from "react-router"
 import { TextField ,Container, Paper, Typography , Stack, Button , Snackbar} from "@mui/material";
@@ -68,8 +68,14 @@ export default function Register (){
                 return;
             }
             else{
-            const response=await api.post('/register/create',register);
-            console.log(response)
+            // const response=await api.post('/register/create',register);
+            const response = await Api({
+                        method: 'post',
+                        endpoint: '/register/create',
+                        data: register
+                    })
+        
+            console.log('register',response)
             nav('/')
             console.log(register);
 
@@ -176,20 +182,32 @@ export default function Register (){
                                                         justifyContent: 'center' ,
                                                         alignItems: 'center'}}>Already Registerd? Login</Typography></Link>
 
-                    <Snackbar
+                    {/* <Snackbar
                         open={error.error}
                         autoHideDuration={3000}
                         message ={errmessage.error}
                         onClose={() => setError(prev=>({...prev,error:false}))}
                         anchorOrigin={{
-                            vertical: "bottom",
-                            horizontal: "left",
-                        }}>
-                    </Snackbar>
+                            vertical: 'top',
+                            horizontal: 'center',
+                        }}
+                        >
+                    </Snackbar> */}
 
                     </Stack>
                 </Paper>
             </Container>
+            <Snackbar
+                        open={error.error}
+                        autoHideDuration={3000}
+                        message ={errmessage.error}
+                        onClose={() => setError(prev=>({...prev,error:false}))}
+                        anchorOrigin={{
+                            vertical: 'bottom',
+                            horizontal: 'right',
+                        }}
+                        >
+                    </Snackbar>
         </>
     )
 }
