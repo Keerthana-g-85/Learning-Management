@@ -41,14 +41,15 @@ const connection = async () => {
     try{
     await database.initialize()
     console.log("Database connected")
+    app.listen(port , ()=>{
+    console.log("server started")
+})
     }
     catch(error){
+        console.log(error)
         console.log("Unable to connect database ")
     }
 }
 
 connection()
 
-app.listen(port , ()=>{
-    console.log("server started")
-})

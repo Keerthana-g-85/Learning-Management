@@ -2,17 +2,16 @@ import { useState } from "react"
 import api from "./api";
 import axios from 'axios'
 import {useNavigate , Link} from "react-router"
-import { TextField ,Container, Paper, Typography , Stack, Button} from "@mui/material";
+import { TextField ,Container, Paper, Typography , Stack, Button , Snackbar} from "@mui/material";
 import image1 from '../assets/image1.png'
 
 export default function Register (){
 
     const [register , setRegister] = useState({ Name :'' , Email: '' , Password: '' , PhoneNumber:'' , Address:''})
     
-    const [error , setError] = useState({'errName':false , 'errEmail':false , 'errPassword':false})
+    const [error , setError] = useState({errName:false , errEmail:false , errPassword:false , error:false})
 
-    const [errmessage , setErrmessage] = useState({'errName':'' , 'errEmail':'' , 'errPassword':''})
-
+    const [errmessage , setErrmessage] = useState({'errName':'' , 'errEmail':'' , 'errPassword':'' , 'error':''})
 
     const nav = useNavigate()
      async function handleRegister(){
@@ -20,7 +19,7 @@ export default function Register (){
             if (!register.Name) {
                 setError(prev => ({ ...prev, errName: true }));
                 setErrmessage(prev=>({...prev, errName:"Name is required"}));
-            } setError(prev => ({ ...prev, errName: false }));
+            };
 
 
             if (!register.Email) {
@@ -71,7 +70,7 @@ export default function Register (){
             else{
             const response=await api.post('/register/create',register);
             console.log(response)
-            nav('/login')
+            nav('/')
             console.log(register);
 
         }
@@ -81,13 +80,16 @@ export default function Register (){
                 
                 {
                     console.log(error.response)
-                    setError(prev => ({ ...prev, errEmail: true }));
-                    setErrmessage(prev=>({...prev, errEmail:error.response?.data.message}));   
+                    setError(prev => ({...prev,error:true}))
+                    setErrmessage(prev=>({...prev, error:error.response?.data.message}));   
+                    
                 }
             }
             console.log("Error while sending data to backend")
         }
         }
+        
+        
     return(
         <>
             <Container sx={{display:'flex' ,
@@ -173,6 +175,17 @@ export default function Register (){
                                                         sx={{display:'flex' ,
                                                         justifyContent: 'center' ,
                                                         alignItems: 'center'}}>Already Registerd? Login</Typography></Link>
+
+                    <Snackbar
+                        open={error.error}
+                        autoHideDuration={3000}
+                        message ={errmessage.error}
+                        onClose={() => setError(prev=>({...prev,error:false}))}
+                        anchorOrigin={{
+                            vertical: "top",
+                            horizontal: "center",
+                        }}>
+                    </Snackbar>
 
                     </Stack>
                 </Paper>

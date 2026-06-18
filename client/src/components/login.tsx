@@ -1,16 +1,17 @@
 import {useState,useEffect} from "react"
 import { useNavigate ,Link , } from "react-router"
 import api from './api'
-import { TextField ,Container, Paper, Typography , Stack, Button } from "@mui/material";
+import { TextField ,Container, Paper, Typography , Stack, Button, Snackbar } from "@mui/material";
 import axios from "axios";
 import image1 from '../assets/image1.png'
 
 export default function Login (){
     const [login , setLogin] = useState({ Email : '' , Password : ''})
 
-    const [error , setError] = useState({ 'errEmail':false , 'errPassword':false})
+    const [error , setError] = useState({ 'errEmail':false , 'errPassword':false ,'error': false });
+    
 
-     const [errmessage , setErrmessage] = useState({'errEmail':'' , 'errPassword':''})
+    const [errmessage , setErrmessage] = useState({'errEmail':'' , 'errPassword':'' , error:''})
 
 
     const [jwt , setJwt] = useState('')
@@ -54,18 +55,13 @@ export default function Login (){
             }
 
         }catch(error){
-            if (axios.isAxiosError(error)){
-                if ((error.response?.data.message).includes('password')){
-                    setError(prev => ({ ...prev, errPassword: true }));
-                    setErrmessage(prev=>({...prev, errPassword:error.response?.data.message}));          
-                }else{
-                    setError(prev => ({ ...prev, errEmail: true }));
-                    setErrmessage(prev=>({...prev, errEmail:error.response?.data.message})); 
+            if (axios.isAxiosError(error))
+                {
+                    setError(prev=>({...prev,error:true}))
+                    setErrmessage(prev=>({...prev, error:error.response?.data.message})); 
                 }
             }
         }
-
-    }
     return(
         <>
         <Container sx={{display:'flex' ,
@@ -117,7 +113,15 @@ export default function Login (){
             <Button variant="contained" onClick={handleLogin}>Login</Button>
             <Link   to="/register" > <Typography  variant="body2" 
             sx={{display:'flex' ,justifyContent: 'center' , alignItems: 'center'}}>Not an existing user? Register</Typography></Link>
-            
+
+            <Snackbar open={error.error}
+                    autoHideDuration={3000}
+                    message ={errmessage.error}
+                    onClose={() => setError(prev=>({...prev,error:false}))}
+                    anchorOrigin={{
+                        vertical: "top",
+                        horizontal: "center",
+                    }}/> 
             </Stack>
             </Paper>
             </Container>

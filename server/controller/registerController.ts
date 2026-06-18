@@ -75,7 +75,7 @@ export const Login : RequestHandler = async (req,res) => {
         if (!isMatch){
             return res.status(401).send({
                 success : false ,
-                message : "Enter correct password"           
+                message : "Invalid password"           
             })
         }
 
