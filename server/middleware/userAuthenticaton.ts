@@ -9,15 +9,15 @@ interface AuthRequest extends Request {
 export const authentication = async(req : AuthRequest,res : Response, next : NextFunction) =>{
     try{
     console.log(req)
-    const token = (req.headers.authorization)?.split(' ')[1]
-    if (!token){
+    const accesstoken = (req.headers.authorization)?.split(' ')[1]
+    if (!accesstoken){
         return res.status(404).send({
             success: false ,
             message : "No token"
         })
     }
 
-    jwt.verify(token , process.env.JW_SECRET as string , (error , decode )=>{
+    jwt.verify(accesstoken , process.env.JW_SECRET as string , (error , decode )=>{
         if (error){
             return res.status(401).send({
             success: false ,

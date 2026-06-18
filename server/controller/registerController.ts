@@ -79,13 +79,25 @@ export const Login : RequestHandler = async (req,res) => {
             })
         }
 
-        const token = jwt.sign({id:exist.id , Name: exist.Name , Address: exist.Address , Phone : exist.PhoneNumber} ,
-            process.env.JW_SECRET as string , {expiresIn : '15d'}
+        const accesstoken = jwt.sign({id:exist.id , Name: exist.Name , Address: exist.Address , Phone : exist.PhoneNumber} ,
+            process.env.JW_SECRET as string , {expiresIn : '1hr'}
         )
+
+        const refreshtoken = jwt.sign({id:exist.id , Name: exist.Name , Address: exist.Address , Phone : exist.PhoneNumber} ,
+            process.env.JW_REFRESH as string , {expiresIn : '7d'}
+        )
+
+        res.cookie("refreshtoken",refreshtoken,{
+            httpOnly : true ,
+            secure : false ,
+            sameSite : "lax",
+            maxAge: 7 * 24 * 60 * 60 * 1000
+        })
+
         res.status(201).send({
             success : true ,
             message : "User logged successfully",
-            token
+            accesstoken
         })
 
 

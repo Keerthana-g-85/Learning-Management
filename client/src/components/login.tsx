@@ -10,8 +10,12 @@ export default function Login (){
     const [errstatus , setStatus] = useState(0)
     const [jwt , setJwt] = useState('')
     const nav = useNavigate()
+    // useEffect(()=>{
+    //                 console.log(jwt)
+    //             },[jwt])
 
     async function handleLogin (){
+        
         try{
             if (!login.Email || !login.Password){
                 console.log("Enter the values")
@@ -20,8 +24,10 @@ export default function Login (){
             else{
                 setError(false)
                 const data =await api.post('/register/login',login)
-                setJwt(data.data.token)
-                console.log(jwt)
+                console.log(data.data.accesstoken)
+                
+                setJwt(data.data.accesstoken)
+                
                 nav('/home')
             }
 
