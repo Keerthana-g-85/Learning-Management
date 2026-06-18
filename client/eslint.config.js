@@ -18,5 +18,27 @@ export default defineConfig([
     languageOptions: {
       globals: globals.browser,
     },
+    rules: {
+      // Allow any while learning
+      '@typescript-eslint/no-explicit-any': 'off',
+
+      // Use === instead of ==
+      eqeqeq: ['error', 'always'],
+
+      // Prefer const when variable is not reassigned
+      'prefer-const': 'warn',
+
+      // No accidental debugger
+      'no-debugger': 'warn',
+
+      // No unnecessary var
+      'no-var': 'error',
+
+      // React Fast Refresh rule
+      'react-refresh/only-export-components': [
+        'warn',
+        { allowConstantExport: true },
+      ],
+    }
   },
 ])

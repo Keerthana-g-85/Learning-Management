@@ -3,7 +3,7 @@ import Login from "./components/Login"
 import Home from "./components/Home"
 import { BrowserRouter , Routes , Route } from 'react-router'
 import {Provider} from 'react-redux'
-import {store} from './redux/Store.ts'
+import {store} from './redux/store.ts'
 
 export default function App(){
   return (

@@ -24,7 +24,7 @@ export const Create : RequestHandler = async (req,res) => {
             })
         }
 
-        var salt = bcrypt.genSaltSync(10)
+        const salt = bcrypt.genSaltSync(10)
         const hashedPassword = await bcrypt.hash(password , salt)
 
         const user = registerRepo.create({ name , email , password :hashedPassword , phoneNumber , address , role})

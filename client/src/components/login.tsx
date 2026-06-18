@@ -1,13 +1,12 @@
-import {useState,useEffect , createContext} from "react"
+import {useState} from "react"
 import { useNavigate ,Link , } from "react-router"
 import {Api} from './Api'
 import { TextField ,Container, Paper, Typography , Stack, Button, Snackbar } from "@mui/material";
 import axios from "axios";
 import image1 from '../assets/image1.png'
 import { useDispatch} from 'react-redux'
-import { addToken } from '../redux/LoginSlice'
+import { addToken } from '../redux/loginSlice'
 
-export const jwtContext = createContext('');
 
 export default function Login (){
     const [login , setLogin] = useState({ email : '' , password : ''})
@@ -52,6 +51,7 @@ export default function Login (){
                                         data: login })
 
                 dispatch(addToken( response.data.accesstoken))
+                localStorage.setItem('token' , response.data.accesstoken )
 
                 console.log('Login',response)
                 
