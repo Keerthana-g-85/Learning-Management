@@ -1,31 +1,53 @@
 import {useState,useEffect} from "react"
-import { useNavigate } from "react-router"
+import { useNavigate ,Link , } from "react-router"
 import api from './api'
-import { TextField ,Container, Paper, Typography , Stack, Button} from "@mui/material";
+import { TextField ,Container, Paper, Typography , Stack, Button } from "@mui/material";
 import axios from "axios";
+import image1 from '../assets/image1.png'
 
 export default function Login (){
     const [login , setLogin] = useState({ Email : '' , Password : ''})
-    const [error,setError] = useState(false)
-    const [errstatus , setStatus] = useState(0)
+
+    const [error , setError] = useState({ 'errEmail':false , 'errPassword':false})
+
+     const [errmessage , setErrmessage] = useState({'errEmail':'' , 'errPassword':''})
+
+
     const [jwt , setJwt] = useState('')
     const nav = useNavigate()
-    // useEffect(()=>{
-    //                 console.log(jwt)
-    //             },[jwt])
+    useEffect(()=>{
+                    console.log(jwt)
+                },[jwt])
 
     async function handleLogin (){
         
         try{
+            if (!login.Email) {
+                setError(prev => ({ ...prev, errEmail: true }));
+                setErrmessage(prev =>({...prev, errEmail:"Email is required"}));
+            } 
+            else {
+                setError(prev =>({...prev , errEmail:false}));
+                 setErrmessage(prev =>({...prev, errEmail:""}));
+            }
+
+            if (!login.Password) {
+                setError(prev =>({...prev , errPassword:true}));
+                setErrmessage(prev=>({...prev, errPassword:"Password is required"}));
+            }else {
+                setError(prev =>({...prev , errPassword:false}));
+                setErrmessage(prev=>({...prev, errPassword:""}));
+            }
+
+
             if (!login.Email || !login.Password){
                 console.log("Enter the values")
-                setError(true)
+                return
             }
             else{
-                setError(false)
                 const data =await api.post('/register/login',login)
+
                 console.log(data.data.accesstoken)
-                
                 setJwt(data.data.accesstoken)
                 
                 nav('/home')
@@ -33,8 +55,12 @@ export default function Login (){
 
         }catch(error){
             if (axios.isAxiosError(error)){
-                if (error.response?.status ){
-                    setStatus(error.response.status)           
+                if ((error.response?.data.message).includes('password')){
+                    setError(prev => ({ ...prev, errPassword: true }));
+                    setErrmessage(prev=>({...prev, errPassword:error.response?.data.message}));          
+                }else{
+                    setError(prev => ({ ...prev, errEmail: true }));
+                    setErrmessage(prev=>({...prev, errEmail:error.response?.data.message})); 
                 }
             }
         }
@@ -42,33 +68,56 @@ export default function Login (){
     }
     return(
         <>
-        <Container sx={{display:'flex' ,justifyContent: 'center' , alignItems: 'center'}}>
-            <Paper elevation={4} sx={{ p: 5, mt: 5, borderRadius: 3 , width:500 }}>
+        <Container sx={{display:'flex' ,
+                            justifyContent: 'center' , 
+                            alignItems: 'center' , 
+                            backgroundImage:`url(${image1})`, 
+                            backgroundSize: 'cover', 
+                            backgroundPosition: 'center',
+                            width: '100%',
+                            height: '100vh',}}>
+
+                    <Paper elevation={4} sx={{ p: 5, 
+                                        mt: 5, 
+                                        borderRadius: 3 , 
+                                        width:500,
+                                        backgroundColor: 'rgba(255, 255, 255, 0.55)', 
+                                        backdropFilter: 'blur(12px)',
+                                        border: '1px solid rgba(217, 209, 209, 0.3)'}}>
                 <Typography variant="h5" sx={{ fontWeight: 600, mb: 3}}>Login</Typography>
                 <Stack spacing={4}>
 
 
             <TextField 
                 fullWidth
-                id={error ? "outlined-error":"outlined-basic" }
-                variant="outlined"
+                id={error ? "standard-error":"standard-basic" }
+                variant="standard"
                 label="Email*" 
                 type='text' 
-                error={error || errstatus ===404 }
+                error={error.errEmail}
                 value={login.Email} 
-                helperText={error ? "Email required": errstatus ===404 ? "User not yet registered" : null  }
-                onChange={(e)=>setLogin({...login,Email:e.target.value})} />
+                helperText={errmessage.errEmail }
+                onChange={(e)=> { setLogin({...login,Email:e.target.value})
+                                  setError(prev =>({...prev , errEmail:false}));
+                                  setErrmessage(prev =>({...prev, errEmail:""}));}}/>
+
             <TextField 
                 fullWidth
-                id={error ? "outlined-error":"outlined-basic" }
-                variant="outlined"
+                id={error ? "standard-error":"standard-basic" }
+                variant="standard"
                 label="Password*" 
                 type='text' 
                 value={login.Password} 
-                error={error || errstatus == 401}
-                helperText={error ? "Password required":  errstatus == 401 ? "Password invalid": null }
-                onChange={(e)=>setLogin({...login,Password:e.target.value})}/>
+                error={error.errPassword}
+                helperText={errmessage.errPassword}
+                onChange={(e)=>{setLogin({...login,Password:e.target.value})
+                                setError(prev =>({...prev , errPassword:false}));
+                                setErrmessage(prev=>({...prev, errPassword:""}));}}/>
+
             <Button variant="contained" onClick={handleLogin}>Login</Button>
+            <Link   to="/register" > <Typography  variant="body2" 
+            sx={{display:'flex' ,justifyContent: 'center' , alignItems: 'center'}}>Not an existing user? Register</Typography></Link>
+            
             </Stack>
             </Paper>
             </Container>

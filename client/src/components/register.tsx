@@ -1,83 +1,71 @@
 import { useState } from "react"
 import api from "./api";
 import axios from 'axios'
-import {useNavigate} from "react-router"
+import {useNavigate , Link} from "react-router"
 import { TextField ,Container, Paper, Typography , Stack, Button} from "@mui/material";
+import image1 from '../assets/image1.png'
 
 export default function Register (){
 
-    const [Name ,setName] = useState('')
-    const [Email ,setEmail] = useState('')
-    const [Password ,setPassword] = useState('')
-    const [PhoneNumber ,setPhone] = useState('')
-    const [Address ,setAddress] = useState('')
-
-    const register = {Name , Email , Password , PhoneNumber , Address}
+    const [register , setRegister] = useState({ Name :'' , Email: '' , Password: '' , PhoneNumber:'' , Address:''})
     
-    const [errName,setErrname] = useState(false)
-    const [errEmail,setErremail] = useState(false)
-    const [errPassword,setErrpassword] = useState(false)
+    const [error , setError] = useState({'errName':false , 'errEmail':false , 'errPassword':false})
 
-    const [emailErrMessage , setEmailMessage] = useState('')
-    const [passwordErrMessage , setPasswordMessage] = useState('')
+    const [errmessage , setErrmessage] = useState({'errName':'' , 'errEmail':'' , 'errPassword':''})
 
-    const [errstatus , setStatus] = useState(0)
 
     const nav = useNavigate()
      async function handleRegister(){
         try{
-            if (!Name) {
-                setErrname(true);
-            } else {setErrname(false)}
+            if (!register.Name) {
+                setError(prev => ({ ...prev, errName: true }));
+                setErrmessage(prev=>({...prev, errName:"Name is required"}));
+            } setError(prev => ({ ...prev, errName: false }));
 
 
-            if (!Email) {
-                setErremail(true)
-                setEmailMessage("Email is required");
+            if (!register.Email) {
+                setError(prev => ({ ...prev, errEmail: true }));
+                setErrmessage(prev =>({...prev, errEmail:"Email is required"}));
             } 
-            else if (!Email.endsWith('@gmail.com')){
-                setErremail(true)
-                setEmailMessage("Email must end with @gmail.com")
-            }
             else {
-                setErremail(false)
-                setEmailMessage('')
+                setError(prev =>({...prev , errEmail:false}));
+                 setErrmessage(prev =>({...prev, errEmail:""}));
             }
 
 
-            if (!Password) {
-                setErrpassword(true);
-                setPasswordMessage("Password is required");
+            if (!register.Password) {
+                setError(prev =>({...prev , errPassword:true}));
+                setErrmessage(prev=>({...prev, errPassword:"Password is required"}));
             }
-            else if (Password.length < 8) {
-                setErrpassword(true);
-                setPasswordMessage("atleast 8 characters required");
+            else if (register.Password.length < 8) {
+               setError(prev =>({...prev , errPassword:true}));
+               setErrmessage(prev=>({...prev, errPassword:"atleast 8 characters required"}));
             }
-            else if (!/[A-Z]/.test(Password)) {
-                setErrpassword(true);
-                setPasswordMessage("atleast 1 uppercase required");
+            else if (!/[A-Z]/.test(register.Password)) {
+                setError(prev =>({...prev , errPassword:true}));
+                setErrmessage(prev=>({...prev, errPassword:"atleast 1 uppercase required"}));
             }
-            else if (!/[a-z]/.test(Password)) {
-                setErrpassword(true);
-                setPasswordMessage("atleast 1 lowercase required");
+            else if (!/[a-z]/.test(register.Password)) {
+                setError(prev =>({...prev , errPassword:true}));
+                setErrmessage(prev=>({...prev, errPassword:"atleast 1 lowercase required"}));
             }
-            else if (!/[0-9]/.test(Password)) {
-                setErrpassword(true);
-                setPasswordMessage("atleast 1 number required");
+            else if (!/[0-9]/.test(register.Password)) {
+                setError(prev =>({...prev , errPassword:true}));
+                setErrmessage(prev=>({...prev, errPassword:"atleast 1 number required"}));
             }
-            else if (!/[!@#$%^&*]/.test(Password)) {
-                setErrpassword(true);
-                setPasswordMessage("At least one special character required");
+            else if (!/[!@#$%^&*]/.test(register.Password)) {
+                setError(prev =>({...prev , errPassword:true}));
+                setErrmessage(prev=>({...prev, errPassword:"At least one special character required"}));
             }
             else {
-                setErrpassword(false);
-                setPasswordMessage("");
+                setError(prev =>({...prev , errPassword:false}));
+                setErrmessage(prev=>({...prev, errPassword:""}));
             }
 
 
             if (
-                !Name || !Email || !Password || !Email.endsWith('@gmail.com') || Password.length < 8 || !/[A-Z]/.test(Password)
-                || !/[a-z]/.test(Password) || !/[0-9]/.test(Password) || !/[!@#$%^&*]/.test(Password)) {
+                !register.Name || !register.Email || !register.Password || !register.Email.endsWith('.com') || register.Password.length < 8 || !/[A-Z]/.test(register.Password)
+                || !/[a-z]/.test(register.Password) || !/[0-9]/.test(register.Password) || !/[!@#$%^&*]/.test(register.Password)) {
                 return;
             }
             else{
@@ -88,9 +76,13 @@ export default function Register (){
 
         }
         } catch(error){
+            console.log(error)
             if (axios.isAxiosError(error)){
+                
                 {
-                    setStatus(error.response?.status || 0)           
+                    console.log(error.response)
+                    setError(prev => ({ ...prev, errEmail: true }));
+                    setErrmessage(prev=>({...prev, errEmail:error.response?.data.message}));   
                 }
             }
             console.log("Error while sending data to backend")
@@ -98,44 +90,65 @@ export default function Register (){
         }
     return(
         <>
-            <Container sx={{display:'flex' ,justifyContent: 'center' , alignItems: 'center'}}>
-                <Paper elevation={4} sx={{ p: 5, mt: 5, borderRadius: 3 , width:500 }}>
+            <Container sx={{display:'flex' ,
+                            justifyContent: 'center' , 
+                            alignItems: 'center' , 
+                            backgroundImage:`url(${image1})`, 
+                            backgroundSize: 'cover', 
+                            backgroundPosition: 'center',
+                            width: '100%',
+                            height: '100vh',}}>
+
+                <Paper elevation={4} sx={{ p: 5, 
+                                        mt: 5, 
+                                        borderRadius: 3 , 
+                                        width:500,
+                                        backgroundColor: 'rgba(255, 255, 255, 0.55)', 
+                                        backdropFilter: 'blur(12px)',
+                                        border: '1px solid rgba(24, 20, 20, 0.3)'}}>
                     <Typography variant="h5" sx={{ fontWeight: 600, mb: 3}}>Registration Form</Typography>
                     <Stack spacing={4}>
 
                     <TextField 
                         fullWidth
-                        id={errName ? "standard-error":"standard-basic" }
+                        id={error.errName? "standard-error":"standard-basic" }
                         variant="standard"
                         label="Name*"  
                         type='text' 
-                        value={Name} 
-                        error={errName}
-                        helperText={errName ? "Name required" : null }
-                        onChange={(e)=> setName(e.target.value)} />
+                        value={register.Name} 
+                        error={error.errName}
+                        helperText={errmessage.errName }
+                        onChange={(e)=> {setRegister({...register ,Name:e.target.value});
+                                        setError({...error , errName:false})
+                                        setErrmessage({...errmessage, errName:""});}}/>
                     
                     <TextField 
                         fullWidth
-                        id={errEmail ? "standard-error":"standard-basic" }
+                        id={error.errEmail ? "standard-error":"standard-basic" }
                         variant="standard"
                         label="Email*" 
                         type='text' 
-                        error={errEmail || errstatus > 0}
-                        value={Email} 
-                        helperText={emailErrMessage || (errstatus === 400 ? "User already exists" : null)}
-                        onChange={(e)=> setEmail(e.target.value)} />
+                        error={error.errEmail }
+                        value={register.Email} 
+                        helperText={errmessage.errEmail}
+                        onChange={(e)=>{ setRegister({...register ,Email:e.target.value}) ;
+                                         setError({...error , errEmail:false});
+                                         setErrmessage({...errmessage, errEmail:""});
+                                        }} />
                         
                     <TextField 
                         fullWidth
-                        id={errPassword ? "standard-error":"standard-basic" }
+                        id={error.errPassword ? "standard-error":"standard-basic" }
                         variant="standard"
                         label="Password*" 
                         type='password' 
-                        value={Password} 
-                        error={errPassword}
-                        helperText={passwordErrMessage}
-                        onChange={(e)=> {setPassword(e.target.value) ; 
-                            setErrpassword(false);}}/>
+                        value={register.Password} 
+                        error={error.errPassword}
+                        helperText={errmessage.errPassword}
+                        onChange={(e)=> { setRegister({...register ,Password:e.target.value}); 
+                                          setError({...error , errPassword:false});
+                                          setErrmessage({...errmessage, errPassword:""});}}/>
+                            
 
                     <TextField 
                         fullWidth
@@ -143,8 +156,8 @@ export default function Register (){
                         variant="standard"
                         type='text'
                         label="Phone" 
-                        value ={PhoneNumber} 
-                        onChange={(e)=> setPhone(e.target.value)}/>
+                        value ={register.PhoneNumber} 
+                        onChange={(e)=> setRegister({...register ,PhoneNumber:e.target.value})}/>
 
                     <TextField 
                         fullWidth
@@ -152,11 +165,14 @@ export default function Register (){
                         variant="standard"
                         label="Address" 
                         type='text'  
-                        value ={Address} 
-                        onChange={(e)=> setAddress(e.target.value)}/>
+                        value ={register.Address} 
+                        onChange={(e)=> setRegister({...register , Address:e.target.value})}/>
 
                     <Button variant="contained" onClick={handleRegister} >Register</Button>
-                    <Button variant="contained" onClick={()=>nav('/login')} >Login</Button>
+                     <Link   to="/" > <Typography  variant="body2" 
+                                                        sx={{display:'flex' ,
+                                                        justifyContent: 'center' ,
+                                                        alignItems: 'center'}}>Already Registerd? Login</Typography></Link>
 
                     </Stack>
                 </Paper>
