@@ -6,7 +6,7 @@ import axios from "axios";
 import image1 from '../assets/image1.png'
 
 export default function Login (){
-    const [login , setLogin] = useState({ Email : '' , Password : ''})
+    const [login , setLogin] = useState({ email : '' , password : ''})
 
     const [error , setError] = useState({ 'errEmail':false , 'errPassword':false ,'error': false });
     
@@ -23,7 +23,7 @@ export default function Login (){
     async function handleLogin (){
         
         try{
-            if (!login.Email) {
+            if (!login.email) {
                 setError(prev => ({ ...prev, errEmail: true }));
                 setErrmessage(prev =>({...prev, errEmail:"Email is required"}));
             } 
@@ -32,7 +32,7 @@ export default function Login (){
                  setErrmessage(prev =>({...prev, errEmail:""}));
             }
 
-            if (!login.Password) {
+            if (!login.password) {
                 setError(prev =>({...prev , errPassword:true}));
                 setErrmessage(prev=>({...prev, errPassword:"Password is required"}));
             }else {
@@ -41,7 +41,7 @@ export default function Login (){
             }
 
 
-            if (!login.Email || !login.Password){
+            if (!login.email || !login.password){
                 console.log("Enter the values")
                 return
             }
@@ -91,9 +91,9 @@ export default function Login (){
                 label="Email*" 
                 type='text' 
                 error={error.errEmail}
-                value={login.Email} 
+                value={login.email} 
                 helperText={errmessage.errEmail }
-                onChange={(e)=> { setLogin({...login,Email:e.target.value})
+                onChange={(e)=> { setLogin({...login,email:e.target.value})
                                   setError(prev =>({...prev , errEmail:false}));
                                   setErrmessage(prev =>({...prev, errEmail:""}));}}/>
 
@@ -103,10 +103,10 @@ export default function Login (){
                 variant="standard"
                 label="Password*" 
                 type='text' 
-                value={login.Password} 
+                value={login.password} 
                 error={error.errPassword}
                 helperText={errmessage.errPassword}
-                onChange={(e)=>{setLogin({...login,Password:e.target.value})
+                onChange={(e)=>{setLogin({...login,password:e.target.value})
                                 setError(prev =>({...prev , errPassword:false}));
                                 setErrmessage(prev=>({...prev, errPassword:""}));}}/>
 

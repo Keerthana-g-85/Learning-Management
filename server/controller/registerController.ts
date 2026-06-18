@@ -7,16 +7,16 @@ import jwt from 'jsonwebtoken'
 export const Create : RequestHandler = async (req,res) => {
     try{
         const registerRepo = database.getRepository(Register)
-        const { Name , Email , Password , PhoneNumber , Address , Role } = req.body
+        const { name , email , password , phoneNumber , address , role } = req.body
 
-        if (!Email || !Password || !Name ){
+        if (!email || !password || !name ){
             return res.status(400).send({
                 success : false ,
                 message : "Enter required values"           
             })
         }
 
-        const existing = await registerRepo.findOne({ where : { Email : Email }})
+        const existing = await registerRepo.findOne({ where : { email : email }})
         if (existing){
             return res.status(400).send({
                 success : false ,
@@ -25,9 +25,9 @@ export const Create : RequestHandler = async (req,res) => {
         }
 
         var salt = bcrypt.genSaltSync(10)
-        const hashedPassword = await bcrypt.hash(Password , salt)
+        const hashedPassword = await bcrypt.hash(password , salt)
 
-        const user = registerRepo.create({ Name , Email , Password :hashedPassword , PhoneNumber , Address , Role})
+        const user = registerRepo.create({ name , email , password :hashedPassword , phoneNumber , address , role})
 
         const newUser = await registerRepo.save(user)
 
@@ -53,16 +53,16 @@ export const Login : RequestHandler = async (req,res) => {
     try{
         const registerRepo = database.getRepository(Register)
 
-        const {Email , Password} = req.body 
+        const {email , password} = req.body 
 
-        if (!Email || !Password){
+        if (!email || !password){
             return res.status(401).send({
                 success : false ,
                 message : "Enter Email and Password"           
             })
         }
 
-        const exist = await registerRepo.findOneBy({Email : Email})
+        const exist = await registerRepo.findOneBy({email : email})
         console.log(exist)
         if (!exist){
             return res.status(404).send({
@@ -71,7 +71,7 @@ export const Login : RequestHandler = async (req,res) => {
             })
         }
 
-        const isMatch = await bcrypt.compare(Password,exist.Password)
+        const isMatch = await bcrypt.compare(password,exist.password)
         if (!isMatch){
             return res.status(401).send({
                 success : false ,
@@ -79,11 +79,11 @@ export const Login : RequestHandler = async (req,res) => {
             })
         }
 
-        const accesstoken = jwt.sign({id:exist.id , Name: exist.Name , Address: exist.Address , Phone : exist.PhoneNumber} ,
+        const accesstoken = jwt.sign({id:exist.id , Name: exist.name , Address: exist.address , Phone : exist.phoneNumber} ,
             process.env.JW_SECRET as string , {expiresIn : '1hr'}
         )
 
-        const refreshtoken = jwt.sign({id:exist.id , Name: exist.Name , Address: exist.Address , Phone : exist.PhoneNumber} ,
+        const refreshtoken = jwt.sign({id:exist.id , Name: exist.name , Address: exist.address , Phone : exist.phoneNumber} ,
             process.env.JW_REFRESH as string , {expiresIn : '7d'}
         )
 

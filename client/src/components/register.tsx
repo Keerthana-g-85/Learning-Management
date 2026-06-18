@@ -7,7 +7,7 @@ import image1 from '../assets/image1.png'
 
 export default function Register (){
 
-    const [register , setRegister] = useState({ Name :'' , Email: '' , Password: '' , PhoneNumber:'' , Address:''})
+    const [register , setRegister] = useState({ name :'' , email: '' , password: '' , phoneNumber:'' , address:''})
     
     const [error , setError] = useState({errName:false , errEmail:false , errPassword:false , error:false})
 
@@ -16,13 +16,13 @@ export default function Register (){
     const nav = useNavigate()
      async function handleRegister(){
         try{
-            if (!register.Name) {
+            if (!register.name) {
                 setError(prev => ({ ...prev, errName: true }));
                 setErrmessage(prev=>({...prev, errName:"Name is required"}));
             };
 
 
-            if (!register.Email) {
+            if (!register.email) {
                 setError(prev => ({ ...prev, errEmail: true }));
                 setErrmessage(prev =>({...prev, errEmail:"Email is required"}));
             } 
@@ -32,27 +32,27 @@ export default function Register (){
             }
 
 
-            if (!register.Password) {
+            if (!register.password) {
                 setError(prev =>({...prev , errPassword:true}));
                 setErrmessage(prev=>({...prev, errPassword:"Password is required"}));
             }
-            else if (register.Password.length < 8) {
+            else if (register.password.length < 8) {
                setError(prev =>({...prev , errPassword:true}));
                setErrmessage(prev=>({...prev, errPassword:"atleast 8 characters required"}));
             }
-            else if (!/[A-Z]/.test(register.Password)) {
+            else if (!/[A-Z]/.test(register.password)) {
                 setError(prev =>({...prev , errPassword:true}));
                 setErrmessage(prev=>({...prev, errPassword:"atleast 1 uppercase required"}));
             }
-            else if (!/[a-z]/.test(register.Password)) {
+            else if (!/[a-z]/.test(register.password)) {
                 setError(prev =>({...prev , errPassword:true}));
                 setErrmessage(prev=>({...prev, errPassword:"atleast 1 lowercase required"}));
             }
-            else if (!/[0-9]/.test(register.Password)) {
+            else if (!/[0-9]/.test(register.password)) {
                 setError(prev =>({...prev , errPassword:true}));
                 setErrmessage(prev=>({...prev, errPassword:"atleast 1 number required"}));
             }
-            else if (!/[!@#$%^&*]/.test(register.Password)) {
+            else if (!/[!@#$%^&*]/.test(register.password)) {
                 setError(prev =>({...prev , errPassword:true}));
                 setErrmessage(prev=>({...prev, errPassword:"At least one special character required"}));
             }
@@ -63,8 +63,8 @@ export default function Register (){
 
 
             if (
-                !register.Name || !register.Email || !register.Password || !register.Email.endsWith('.com') || register.Password.length < 8 || !/[A-Z]/.test(register.Password)
-                || !/[a-z]/.test(register.Password) || !/[0-9]/.test(register.Password) || !/[!@#$%^&*]/.test(register.Password)) {
+                !register.name || !register.email || !register.password || !register.email.endsWith('.com') || register.password.length < 8 || !/[A-Z]/.test(register.password)
+                || !/[a-z]/.test(register.password) || !/[0-9]/.test(register.password) || !/[!@#$%^&*]/.test(register.password)) {
                 return;
             }
             else{
@@ -117,10 +117,10 @@ export default function Register (){
                         variant="standard"
                         label="Name*"  
                         type='text' 
-                        value={register.Name} 
+                        value={register.name} 
                         error={error.errName}
                         helperText={errmessage.errName }
-                        onChange={(e)=> {setRegister({...register ,Name:e.target.value});
+                        onChange={(e)=> {setRegister({...register ,name:e.target.value});
                                         setError({...error , errName:false})
                                         setErrmessage({...errmessage, errName:""});}}/>
                     
@@ -131,9 +131,9 @@ export default function Register (){
                         label="Email*" 
                         type='text' 
                         error={error.errEmail }
-                        value={register.Email} 
+                        value={register.email} 
                         helperText={errmessage.errEmail}
-                        onChange={(e)=>{ setRegister({...register ,Email:e.target.value}) ;
+                        onChange={(e)=>{ setRegister({...register ,email:e.target.value}) ;
                                          setError({...error , errEmail:false});
                                          setErrmessage({...errmessage, errEmail:""});
                                         }} />
@@ -144,10 +144,10 @@ export default function Register (){
                         variant="standard"
                         label="Password*" 
                         type='password' 
-                        value={register.Password} 
+                        value={register.password} 
                         error={error.errPassword}
                         helperText={errmessage.errPassword}
-                        onChange={(e)=> { setRegister({...register ,Password:e.target.value}); 
+                        onChange={(e)=> { setRegister({...register ,password:e.target.value}); 
                                           setError({...error , errPassword:false});
                                           setErrmessage({...errmessage, errPassword:""});}}/>
                             
@@ -158,8 +158,8 @@ export default function Register (){
                         variant="standard"
                         type='text'
                         label="Phone" 
-                        value ={register.PhoneNumber} 
-                        onChange={(e)=> setRegister({...register ,PhoneNumber:e.target.value})}/>
+                        value ={register.phoneNumber} 
+                        onChange={(e)=> setRegister({...register ,phoneNumber:e.target.value})}/>
 
                     <TextField 
                         fullWidth
@@ -167,8 +167,8 @@ export default function Register (){
                         variant="standard"
                         label="Address" 
                         type='text'  
-                        value ={register.Address} 
-                        onChange={(e)=> setRegister({...register , Address:e.target.value})}/>
+                        value ={register.address} 
+                        onChange={(e)=> setRegister({...register , address:e.target.value})}/>
 
                     <Button variant="contained" onClick={handleRegister} >Register</Button>
                      <Link   to="/" > <Typography  variant="body2" 
@@ -182,8 +182,8 @@ export default function Register (){
                         message ={errmessage.error}
                         onClose={() => setError(prev=>({...prev,error:false}))}
                         anchorOrigin={{
-                            vertical: "top",
-                            horizontal: "center",
+                            vertical: "bottom",
+                            horizontal: "left",
                         }}>
                     </Snackbar>
 

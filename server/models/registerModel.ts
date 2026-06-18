@@ -10,29 +10,29 @@ export enum Role {
 export default class Register {
 
 @PrimaryGeneratedColumn('uuid')
-id! : string
+id : string
 
 @Column({ type: 'varchar' , nullable: false})
-Name! : string
+name : string
 
 @Column ({ type: 'varchar' , unique:true , nullable: false})
-Email! : string 
+email : string 
 
 @Column ({ type:'varchar' , nullable: false})
-Password! : string 
+password : string 
 
 @Column ({ type:'varchar'})
-PhoneNumber! : string
+phoneNumber : string
 
 @Column ({ type:'varchar'})
-Address! : string 
+address : string 
 
 @Column ({ type:'enum' , enum:Role , default:null })
-Role! :  Role
+role :  Role
 
 @CreateDateColumn()
-CreatedAt! : Date
+createdAt : Date
 
 @UpdateDateColumn()
-UpdatedAt! :Date
+updatedAt :Date
 }
