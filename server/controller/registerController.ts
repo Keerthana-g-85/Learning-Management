@@ -79,7 +79,7 @@ export const Login : RequestHandler = async (req,res) => {
             })
         }
 
-        const accesstoken = jwt.sign({id:exist.id , Name: exist.name , Address: exist.address , Phone : exist.phoneNumber} ,
+        const accesstoken = jwt.sign({id:exist.id , name: exist.name ,email : exist.email , password: exist.password , address: exist.address , phone : exist.phoneNumber} ,
             process.env.JW_SECRET as string , {expiresIn : '1hr'}
         )
 

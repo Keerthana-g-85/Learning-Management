@@ -2,7 +2,7 @@ import {createSlice} from '@reduxjs/toolkit'
 
 
 const initialState ={
-    token:''
+    token:'' , user :{ name :'' , email: '',address : '', phoneNumber:'' }
 } 
 
 const loginSlice = createSlice({
@@ -11,10 +11,16 @@ const loginSlice = createSlice({
     reducers :{
         addToken :(state , action ) =>{
             state.token = action.payload
+        },
+
+        addUser : (state,action) =>{
+            state.user = action.payload
         }
 
     }
 })
-export const {addToken} = loginSlice.actions
+
+
+export const {addToken , addUser} = loginSlice.actions
 
 export default loginSlice.reducer

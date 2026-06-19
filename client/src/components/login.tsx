@@ -5,7 +5,8 @@ import { TextField ,Container, Paper, Typography , Stack, Button, Snackbar } fro
 import axios from "axios";
 import image1 from '../assets/image1.png'
 import { useDispatch} from 'react-redux'
-import { addToken } from '../redux/loginSlice'
+import { addToken, addUser } from '../redux/LoginSlice'
+import { jwtDecode } from "jwt-decode";
 
 
 export default function Login (){
@@ -50,10 +51,11 @@ export default function Login (){
                                         endpoint: '/register/login',
                                         data: login })
 
-                dispatch(addToken( response.data.accesstoken))
                 localStorage.setItem('token' , response.data.accesstoken )
-
-                console.log('Login',response)
+                dispatch(addToken( localStorage.getItem('token')))
+                console.log('decoded')
+                const decoded = jwtDecode(response.data.accesstoken)
+                dispatch(addUser(decoded))
                 
                 nav('/home')
             }
