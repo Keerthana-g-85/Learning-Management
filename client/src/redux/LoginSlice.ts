@@ -23,4 +23,4 @@ const loginSlice = createSlice({
 
 export const {addToken , addUser} = loginSlice.actions
 
-export default loginSlice.reducer
+// export default loginSlice.reducer
