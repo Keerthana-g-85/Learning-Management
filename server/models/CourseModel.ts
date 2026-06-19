@@ -6,9 +6,9 @@ export enum Level {
     advanced = 'advanced'
 }
 @Entity()
-class Course{
+export default class Course{
 
-@Column({type: 'uuid'})
+@PrimaryGeneratedColumn('uuid')
 id : string
 
 @Column({type: 'varchar'})

@@ -1,7 +1,9 @@
 import express  from 'express';
 import dotenv from 'dotenv';
 import { DataSource , type DataSourceOptions} from 'typeorm';
-import Register from './models/registerModel.js';
+import Register from './models/RegisterModel.js';
+import Course from './models/CourseModel.js'
+import Enroll from './models/EnrollModel.js'
 import {registerRouter } from './Router/registerRouter.js'
 import cors from 'cors'
 import cookieParser from "cookie-parser";
@@ -31,7 +33,7 @@ const data : DataSourceOptions = {
     username : process.env.DB_USER as string ,
     port : Number(process.env.DB_PORT),
     synchronize : true ,                                //TypeORM automatically creates/updates tables.
-    entities : [Register]
+    entities : [Register , Course , Enroll ]
 }
 export const database = new DataSource(data)
 const port = process.env.PORT
