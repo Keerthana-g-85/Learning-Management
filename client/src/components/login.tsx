@@ -1,9 +1,9 @@
-import {useState} from "react"
+import { useState} from "react"
 import { useNavigate ,Link , } from "react-router"
 import {Api} from './Api'
-import { TextField ,Container, Paper, Typography , Stack, Button, Snackbar } from "@mui/material";
+import { TextField ,Box, Paper, Typography , Stack, Button, Snackbar } from "@mui/material";
 import axios from "axios";
-import image1 from '../assets/image1.png'
+import image3 from '../assets/image3.png'
 import { useDispatch} from 'react-redux'
 import { addToken, addUser } from '../redux/LoginSlice'
 import { jwtDecode } from "jwt-decode";
@@ -52,7 +52,7 @@ export default function Login (){
                                         data: login })
 
                 localStorage.setItem('token' , response.data.accesstoken )
-                dispatch(addToken( localStorage.getItem('token')))
+                dispatch(addToken(response.data.accesstoken ))
                 console.log('decoded')
                 const decoded = jwtDecode(response.data.accesstoken)
                 dispatch(addUser(decoded))
@@ -67,14 +67,14 @@ export default function Login (){
                     setError(prev=>({...prev,error:true}))
                     setErrmessage(prev=>({...prev, error:error.response?.data.message})); 
                 }
-            }
+            }    
         }
     return(
         <>
-        <Container sx={{display:'flex' ,
+        <Box sx={{display:'flex' ,
                             justifyContent: 'center' , 
                             alignItems: 'center' , 
-                            backgroundImage:`url(${image1})`, 
+                            backgroundImage:`url(${image3})`, 
                             backgroundSize: 'cover', 
                             backgroundPosition: 'center',
                             width: '100%',
@@ -84,7 +84,7 @@ export default function Login (){
                                         mt: 5, 
                                         borderRadius: 3 , 
                                         width:500,
-                                        backgroundColor: 'rgba(255, 255, 255, 0.55)', 
+                                        backgroundColor: 'rgba(252, 249, 249, 0.51)', 
                                         backdropFilter: 'blur(12px)',
                                         border: '1px solid rgba(217, 209, 209, 0.3)'}}>
                 <Typography variant="h5" sx={{ fontWeight: 600, mb: 3}}>Login</Typography>
@@ -93,7 +93,7 @@ export default function Login (){
 
             <TextField 
                 fullWidth
-                id={error ? "standard-error":"standard-basic" }
+                id={error.errEmail ? "standard-error":"standard-basic" }
                 variant="standard"
                 label="Email*" 
                 type='text' 
@@ -106,7 +106,7 @@ export default function Login (){
 
             <TextField 
                 fullWidth
-                id={error ? "standard-error":"standard-basic" }
+                id={error.errPassword ? "standard-error":"standard-basic" }
                 variant="standard"
                 label="Password*" 
                 type='text' 
@@ -123,7 +123,7 @@ export default function Login (){
 
             </Stack>
             </Paper>
-            </Container>
+            </Box>
             <Snackbar
                 open={error.error}
                 autoHideDuration={3000}

@@ -2,13 +2,22 @@ import Register from "./components/Register"
 import Login from "./components/Login"
 import Home from "./components/Home"
 import { BrowserRouter , Routes , Route } from 'react-router'
-import {Provider} from 'react-redux'
-import {store} from './redux/store.ts'
+import { useDispatch} from 'react-redux'
+import { addToken,addUser } from './redux/LoginSlice'
+import { jwtDecode } from "jwt-decode";
 
 export default function App(){
+  const dispatch = useDispatch()
+    const token = localStorage.getItem('token');
+
+    if (token) {
+        dispatch(addToken(token));
+        const decoded = jwtDecode(token);
+        dispatch(addUser(decoded));
+    }
+  
   return (
     <>
-    <Provider store={store}>
       <BrowserRouter>
       <Routes>
           <Route path='/' element={<Login/>}></Route>
@@ -16,7 +25,6 @@ export default function App(){
           <Route path='/home' element={<Home/>}></Route>
       </Routes>
       </BrowserRouter>
-    </Provider>
     </>
   )
 }

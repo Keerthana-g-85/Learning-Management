@@ -2,8 +2,8 @@ import { useState } from "react"
 import {Api} from "./Api";
 import axios from 'axios'
 import {useNavigate , Link} from "react-router"
-import { TextField ,Container, Paper, Typography , Stack, Button , Snackbar} from "@mui/material";
-import image1 from '../assets/image1.png'
+import { TextField ,Box, Paper, Typography , Stack, Button , Snackbar} from "@mui/material";
+import image3 from '../assets/image3.png'
 
 export default function Register (){
 
@@ -98,10 +98,10 @@ export default function Register (){
         
     return(
         <>
-            <Container sx={{display:'flex' ,
+            <Box sx={{display:'flex' ,
                             justifyContent: 'center' , 
                             alignItems: 'center' , 
-                            backgroundImage:`url(${image1})`, 
+                            backgroundImage:`url(${image3})`, 
                             backgroundSize: 'cover', 
                             backgroundPosition: 'center',
                             width: '100%',
@@ -111,7 +111,7 @@ export default function Register (){
                                         mt: 5, 
                                         borderRadius: 3 , 
                                         width:500,
-                                        backgroundColor: 'rgba(255, 255, 255, 0.55)', 
+                                        backgroundColor: 'rgba(252, 249, 249, 0.51)', 
                                         backdropFilter: 'blur(12px)',
                                         border: '1px solid rgba(24, 20, 20, 0.3)'}}>
                     <Typography variant="h5" sx={{ fontWeight: 600, mb: 3}}>Registration Form</Typography>
@@ -196,7 +196,7 @@ export default function Register (){
 
                     </Stack>
                 </Paper>
-            </Container>
+            </Box>
             <Snackbar
                         open={error.error}
                         autoHideDuration={3000}
