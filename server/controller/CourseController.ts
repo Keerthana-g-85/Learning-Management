@@ -38,3 +38,24 @@ export const Create : RequestHandler = async(req,res) =>{
     }
 
 }
+
+export const GetAll : RequestHandler = async(req,res) => {
+    try{
+        const courseRepo = database.getRepository(Course)
+
+        const AllCourses = await courseRepo.find()
+        console.log(AllCourses)
+
+        res.status(200).send({
+            success : true ,
+            message : "Courses",
+        })
+        
+
+    }catch(error){
+        res.status(500).send({
+            success:false ,
+            message : "Error while getting the course"
+        })
+    }
+}
