@@ -4,7 +4,8 @@ import { DataSource , type DataSourceOptions} from 'typeorm';
 import Register from './models/RegisterModel.js';
 import Course from './models/CourseModel.js'
 import Enroll from './models/EnrollModel.js'
-import {registerRouter } from './Router/registerRouter.js'
+import {registerRouter } from './Router/RegisterRouter.js'
+import {CourseRouter} from './Router/CourseRouter.js'
 import cors from 'cors'
 import cookieParser from "cookie-parser";
 
@@ -23,6 +24,7 @@ app.use(cors({origin:"http://localhost:5173",credentials: true}))
 app.use(cookieParser());
 
 app.use('/register' , registerRouter)
+app.use('/course',CourseRouter)
 
 // Database configuration
 const data : DataSourceOptions = {
