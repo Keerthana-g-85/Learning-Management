@@ -59,3 +59,34 @@ export const GetAll : RequestHandler = async(req,res) => {
         })
     }
 }
+
+export const Get : RequestHandler = async(req,res) =>{
+    try{
+        const courseRepo = database.getRepository(Course)
+        const id  = req.params.id as string
+        console.log(id)
+        const course = await courseRepo.findOneBy({id })
+        console.log(course)
+        if (!course){
+            return res.status(404).send({
+                success: false ,
+                message : 'Course not found'
+            })
+        }
+        res.status(200).send({
+            success : true ,
+            message : "Courses",
+            course 
+        })
+
+    }
+    catch(error){
+        console.log(error)
+        res.status(500).send({
+            success:false ,
+            message : "Error while getting the course"
+        })
+    }
+}
+
+
