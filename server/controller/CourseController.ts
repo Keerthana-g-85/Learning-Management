@@ -49,6 +49,7 @@ export const GetAll : RequestHandler = async(req,res) => {
         res.status(200).send({
             success : true ,
             message : "Courses",
+            AllCourses
         })
         
 
@@ -89,4 +90,35 @@ export const Get : RequestHandler = async(req,res) =>{
     }
 }
 
+export const Update : RequestHandler = async(req,res) =>{
+    try{
+        const courseRepo = database.getRepository(Course)
 
+        const { title , description , instructor_name , duration , level , thumbnail } = req.body
+        
+        const id  = req.params.id as string
+        console.log(id)
+        const course = await courseRepo.findOneBy({id })
+        console.log(course)
+        if (!course){
+            return res.status(404).send({
+                success: false ,
+                message : 'Course not found'
+            })
+        }
+        const UpdatedCourse =await  courseRepo.update({id : id },{title : title , description : description, instructor_name : instructor_name , duration:duration , level:level , thumbnail : thumbnail })
+        res.status(200).send({
+            success : true ,
+            message : "Courses",
+            UpdatedCourse
+        })
+
+    }
+    catch(error){
+        console.log(error)
+        res.status(500).send({
+            success:false ,
+            message : "Error while getting the course"
+        })
+    }
+}
