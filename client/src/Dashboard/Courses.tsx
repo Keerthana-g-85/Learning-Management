@@ -12,6 +12,16 @@ import CoPresentIcon from '@mui/icons-material/CoPresent';
 import {AccessTime} from '@mui/icons-material'
 import {Api} from '../components/Api'
 import { useNavigate  } from "react-router"
+
+interface Courses {
+    id : string ,
+    title : string ,
+    description : string ,
+    instructor_name: string ,
+    duration : string ,
+    thumbnail : string ,
+    level : string 
+}
 export default function Courses(){
     const nav = useNavigate()
 
@@ -43,7 +53,7 @@ export default function Courses(){
     return(
             <>
             <Box sx={{ display:'flex' , gap:5 ,  flexWrap: 'wrap',}}>
-            {course.map ((data)=>{ return(
+            {course.map ((data : Courses)=>{ return(
                 < div key={data.id}>
                     <Card sx={{ width: 450 , 
                         borderRadius:5 , 

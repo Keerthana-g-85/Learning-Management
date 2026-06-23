@@ -29,6 +29,13 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
+interface Students{
+    name : string,
+    email : string ,
+    address : string,
+    phoneNumber : string ,
+    role : string | null 
+}
 export default function Students(){
     const [student , setStudent] = useState([])
     useEffect(()=>{
@@ -57,7 +64,7 @@ export default function Students(){
           </TableRow>
         </TableHead>
         <TableBody>
-          {student.map((row) => (
+          {student.map((row :  Students) => (
             <StyledTableRow key={row.name}>
               <StyledTableCell component="th" scope="row">
                 {row.name}
