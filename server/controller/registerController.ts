@@ -1,5 +1,6 @@
 import { database } from '../server.js'
 import Register from '../models/RegisterModel.js'
+import {Role } from '../models/RegisterModel.js'
 import type { RequestHandler } from 'express'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
@@ -114,7 +115,7 @@ export const GetStudent : RequestHandler= async (req,res) =>{
     try{
         const registerRepo = database.getRepository(Register)
 
-        const students = await registerRepo.findBy({role : 'student'})
+        const students = await registerRepo.findBy({role : Role.student})
 
         res.status(200).send({
             success: true,
@@ -135,7 +136,7 @@ export const GetInstructor: RequestHandler= async (req,res) =>{
     try{
         const registerRepo = database.getRepository(Register)
 
-        const instructor = await registerRepo.findBy({role : 'instructor'})
+        const instructor = await registerRepo.findBy({role : Role.instructor })
 
         res.status(200).send({
             success: true,
@@ -172,3 +173,4 @@ export const Get: RequestHandler= async (req,res) =>{
         })
     }
 }
+
