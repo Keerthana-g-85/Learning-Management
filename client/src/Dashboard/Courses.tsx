@@ -78,17 +78,21 @@ export default function Courses(){
                             sx={{p:1 , borderRadius:5}}
                             image={data.thumbnail}/>
                             <Button
-                                variant="outlined"
-                                sx={{
-                                height:'20px',
-                                position: "absolute",
-                                bgcolor:'white',
-                                top: 10,
-                                left: 10,
-                                }}
-                                onClick={()=>{nav(`/courses/enroll/${data.id}`, {state:{data}})}}>
-                                Enroll
-                            </Button>
+  variant="contained"
+  sx={{
+    position: "absolute",
+    top: 12,
+    right: 12,
+    borderRadius: 3,
+    textTransform: "none",
+    fontSize: "1 rem",
+    fontWeight: 700,
+    bgcolor: "#fefefe",
+    color:'#0ea5e9'
+  }}
+>
+  Enroll
+</Button>
 
                         <CardContent sx={{ pl:2 , pt:1 }}>
                             <Chip label={data.level.toUpperCase()}

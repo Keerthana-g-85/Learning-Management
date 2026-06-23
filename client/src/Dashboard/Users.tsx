@@ -12,6 +12,9 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save'
 import { TextField } from "@mui/material";
+import PeopleIcon from "@mui/icons-material/People";
+import { Box, Typography} from '@mui/material'
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -67,8 +70,21 @@ export default function User(){
     }
     return(
         <>
-        <TableContainer component={Paper}>
-      <Table sx={{ minWidth: 700 }} aria-label="customized table">
+        <Paper elevation={6} sx={{ mt: 5, 
+            borderRadius: 2,
+            boxShadow: "0 20px 40px rgba(0,0,0,0.35)",
+            }}>
+            <Box sx={{ p: 2,
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 1,
+                    }}>
+                <PeopleIcon sx={{ color: "#0ea5e9" }} />
+                <Typography  variant="h6" sx={{
+                    fontWeight: 700, }}>Users</Typography>
+            </Box>
+        <TableContainer component={Paper} sx={{p:2 , borderRadius: 1}} >
+        <Table sx={{ minWidth: 700 }} aria-label="customized table">
         <TableHead>
           <TableRow>
             <StyledTableCell>Name</StyledTableCell>
@@ -84,10 +100,17 @@ export default function User(){
             <StyledTableRow key={row.id}>
               
               <StyledTableCell component="th" scope="row">
+                <Box sx={{ display: "flex",
+                             alignItems: "center",
+                             gap: 1,}}>
+                            <AccountCircleIcon sx={{ fontSize: 20, color: '#0ea5e9' }} />
+                   
                 {edit?.id === row?.id ?
                 <TextField size="small" id="standard-basic" variant="standard" 
                 value={edit.name} onChange={(e)=>setEdit({...edit, name:e.target.name})}/>:
                 row.name}
+                 
+                    </Box>
               </StyledTableCell>
 
               <StyledTableCell align="right">
@@ -133,6 +156,7 @@ export default function User(){
         </TableBody>
       </Table>
     </TableContainer> 
+    </Paper>
     </>
     )
 }

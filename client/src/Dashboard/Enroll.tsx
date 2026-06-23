@@ -9,7 +9,12 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import {Button, Divider} from '@mui/material'
+import {Button, Divider , Box, Typography} from '@mui/material'
+import PeopleIcon from "@mui/icons-material/People";
+import GroupAddIcon from '@mui/icons-material/GroupAdd';
+import GroupRemoveIcon from '@mui/icons-material/GroupRemove';
+import PersonIcon from '@mui/icons-material/Person';
+
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
     backgroundColor: theme.palette.common.black,
@@ -100,40 +105,85 @@ export default function Enroll(){
 
     return(
         <>
-        <h1>{course.title}</h1>
-        <p>{course.description}</p>
-         <TableContainer component={Paper}>
-      <Table sx={{ minWidth: 700 }} aria-label="customized table">
-        <TableHead>
-          <TableRow>
-            <StyledTableCell>Name</StyledTableCell>
-            <StyledTableCell align="right">Email</StyledTableCell>
-            <StyledTableCell align="right">Phone Number</StyledTableCell>
-            <StyledTableCell align="right">Address</StyledTableCell>
-            <StyledTableCell align="right">Enroll Date</StyledTableCell>
-            <StyledTableCell align="right">Action</StyledTableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {enroll.map((row :  Course) => (
-            <StyledTableRow key={row.id}>
-              <StyledTableCell component="th" scope="row">
-                {row.register.name}
-              </StyledTableCell>
-              <StyledTableCell align="right">{row.register.email}</StyledTableCell>
-              <StyledTableCell align="right">{row.register.phoneNumber }</StyledTableCell>
-              <StyledTableCell align="right">{row.register.address}</StyledTableCell>
-              <StyledTableCell align="right">{row.enroll_date}</StyledTableCell>
-              <StyledTableCell align="right"><Button color="error" variant="contained"
-               onClick={() => handleUnenroll(row.id)}>Unenroll</Button></StyledTableCell>
-            </StyledTableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
+        <Paper elevation={6} sx={{ mt: 2, 
+            borderRadius: 2,
+            boxShadow: "0 20px 40px rgba(0,0,0,0.35)",
+            }}>
+            <Box sx={{ p: 2,
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 1,
+                    }}>
+                <PeopleIcon sx={{ color: "#0ea5e9" }} />
+                <Typography  variant="h6" sx={{
+                    fontWeight: 700, }}>Enrolled Students</Typography>
+                <Box sx={{
+                px: 2,
+                py: 0.5,
+                bgcolor: "#0ea5e9",
+                color: "white",
+                borderRadius: 5,
+                fontSize: "0.8rem",
+                fontWeight: 600,}}> {enroll.length}</Box>
+            </Box>
+            <TableContainer component={Paper} sx={{p:2 , borderRadius: 1}} >
+            <Table sx={{ minWidth: 700 }} aria-label="customized table">
+                <TableHead>
+                <TableRow>
+                    <StyledTableCell>Name</StyledTableCell>
+                    <StyledTableCell align="right">Email</StyledTableCell>
+                    <StyledTableCell align="right">Phone Number</StyledTableCell>
+                    <StyledTableCell align="right">Address</StyledTableCell>
+                    <StyledTableCell align="right">Enroll Date</StyledTableCell>
+                    <StyledTableCell align="right">Action</StyledTableCell>
+                </TableRow>
+                </TableHead>
+                <TableBody>
+                {enroll.map((row :  Course) => (
+                    <StyledTableRow key={row.id}>
+                    <StyledTableCell component="th" scope="row">
+                    <Box sx={{ display: "flex",
+                             alignItems: "center",
+                             gap: 1,}}>
+                            <PersonIcon sx={{ fontSize: 20, color: '#0ea5e9' }} />
+                            {row.register.name}
+                    </Box></StyledTableCell>
+                    <StyledTableCell align="right">{row.register.email}</StyledTableCell>
+                    <StyledTableCell align="right">{row.register.phoneNumber }</StyledTableCell>
+                    <StyledTableCell align="right">{row.register.address}</StyledTableCell>
+                    <StyledTableCell align="right">{row.enroll_date}</StyledTableCell>
+                    <StyledTableCell align="right"><Button color="error" variant="contained" sx={{ gap:1}}
+                    onClick={() => handleUnenroll(row.id)}><GroupRemoveIcon/>Unenroll</Button></StyledTableCell>
+                    </StyledTableRow>
+                ))}
+                </TableBody>
+            </Table>
+            </TableContainer>
+        </Paper>
     <Divider/>
+    <Paper elevation={6} sx={{ mt: 5, 
+            borderRadius: 2,
+            boxShadow: "0 20px 40px rgba(0,0,0,0.35)",
+            }}>
+            <Box sx={{ p: 2,
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 1,
+                    }}>
+                <PeopleIcon sx={{ color: "#0ea5e9" }} />
+                <Typography  variant="h6" sx={{
+                    fontWeight: 700, }}>Not Enrolled Students</Typography>
+                <Box sx={{
+                px: 2,
+                py: 0.5,
+                bgcolor: "#0ea5e9",
+                color: "white",
+                borderRadius: 5,
+                fontSize: "0.8rem",
+                fontWeight: 600,}}> {notenroll.length}</Box>
+            </Box>
 
-        <TableContainer component={Paper}>
+        <TableContainer component={Paper}sx={{p:2 , borderRadius: 1}} >
         <Table sx={{ minWidth: 700 }} aria-label="customized table">
             <TableHead>
             <TableRow>
@@ -148,19 +198,25 @@ export default function Enroll(){
             {notenroll.map((row :  Students) => (
                 <StyledTableRow key={row.id}>
                 <StyledTableCell component="th" scope="row">
+                    <Box sx={{ display: "flex",
+                             alignItems: "center",
+                             gap: 1,}}>
+                            <PersonIcon sx={{ fontSize: 20, color: '#0ea5e9' }} />
                     {row.name}
+                    </Box>
                 </StyledTableCell>
                 <StyledTableCell align="right">{row.email}</StyledTableCell>
                 <StyledTableCell align="right">{row.phoneNumber }</StyledTableCell>
                 <StyledTableCell align="right">{row.address}</StyledTableCell>
-                <StyledTableCell align="right"><Button sx={{bgcolor: 'blue'}} variant="contained" 
-                 onClick={() => handleEnroll(row.id)}>Enroll</Button></StyledTableCell>
+                <StyledTableCell align="right"><Button sx={{bgcolor:'#0ea5e9' , gap:1}} variant="contained" 
+                 onClick={() => handleEnroll(row.id)}><GroupAddIcon /> Enroll </Button></StyledTableCell>
                 
                 </StyledTableRow>
             ))}
             </TableBody>
         </Table>
         </TableContainer>
+        </Paper>
 
         </>
     )

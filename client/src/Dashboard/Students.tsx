@@ -8,6 +8,9 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
+import PeopleIcon from "@mui/icons-material/People";
+import PersonIcon from '@mui/icons-material/Person';
+import { Box, Typography} from '@mui/material'
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -52,32 +55,49 @@ export default function Students(){
     },[])
     return(
         <>
-        <TableContainer component={Paper}>
-      <Table sx={{ minWidth: 700 }} aria-label="customized table">
+        <Paper elevation={6} sx={{ mt: 5, 
+            borderRadius: 2,
+            boxShadow: "0 20px 40px rgba(0,0,0,0.35)",
+            }}>
+            <Box sx={{ p: 2,
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 1,
+                    }}>
+                <PeopleIcon sx={{ color: "#0ea5e9" }} />
+                <Typography  variant="h6" sx={{
+                    fontWeight: 700, }}>Students</Typography>
+            </Box>
+        <TableContainer component={Paper} sx={{p:2 , borderRadius: 1}} >
+        <Table sx={{ minWidth: 700 }} aria-label="customized table">
         <TableHead>
           <TableRow>
             <StyledTableCell>Name</StyledTableCell>
             <StyledTableCell align="right">Email</StyledTableCell>
             <StyledTableCell align="right">Phone Number</StyledTableCell>
             <StyledTableCell align="right">Address</StyledTableCell>
-            <StyledTableCell align="right">Role</StyledTableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {student.map((row :  Students) => (
             <StyledTableRow key={row.name}>
               <StyledTableCell component="th" scope="row">
-                {row.name}
+                <Box sx={{ display: "flex",
+                             alignItems: "center",
+                             gap: 1,}}>
+                            <PersonIcon sx={{ fontSize: 20, color: '#0ea5e9' }} />
+                    {row.name}
+                    </Box>
               </StyledTableCell>
               <StyledTableCell align="right">{row.email}</StyledTableCell>
               <StyledTableCell align="right">{row.phoneNumber }</StyledTableCell>
               <StyledTableCell align="right">{row.address}</StyledTableCell>
-              <StyledTableCell align="right">{row.role}</StyledTableCell>
             </StyledTableRow>
           ))}
         </TableBody>
       </Table>
     </TableContainer>
+    </Paper>
     </>
     )
 }
