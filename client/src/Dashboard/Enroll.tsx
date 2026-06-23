@@ -9,6 +9,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
+import {Button, Divider} from '@mui/material'
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
     backgroundColor: theme.palette.common.black,
@@ -35,6 +36,7 @@ interface Students{
     email : string ,
     address : string,
     phoneNumber : string ,
+    enroll_date : string
     role : string | null 
 }
 interface Course {
@@ -48,6 +50,7 @@ export default function Enroll(){
     console.log(location.state.data);
 
     const [enroll, setEnroll] = useState([]);
+    const [notenroll , setNotenroll] = useState([])
 
     useEffect(()=>{
            const getCourse =async () =>{
@@ -59,6 +62,36 @@ export default function Enroll(){
             console.log(error)
         }}; getCourse()
         },[])
+    
+    useEffect(()=>{
+           const getCourse =async () =>{
+            try{
+            const response = await Api({method : 'get' , endpoint:`enroll/notenroll/${course.id}`})
+            const data = response.data.notenroll
+            setNotenroll(data)
+        }catch(error){
+            console.log(error)
+        }}; getCourse()
+        },[])
+    
+        async function handleUnenroll(id:string){
+            try{
+                const response = await Api({method:'delete' , endpoint:`enroll/delete/${id}`})
+                console.log(response)
+            }catch(error){
+                console.log(error)
+            }
+        }
+
+        async function handleEnroll(id:string){
+            try{
+            const response = await Api({method : 'post' , endpoint:`enroll/create/` ,data:{"register":`${id}` , "course":`${course.id}`}})
+            console.log(response)
+            }catch(error){
+                console.log(error)
+            }
+
+        }
 
     return(
         <>
@@ -73,6 +106,7 @@ export default function Enroll(){
             <StyledTableCell align="right">Phone Number</StyledTableCell>
             <StyledTableCell align="right">Address</StyledTableCell>
             <StyledTableCell align="right">Enroll Date</StyledTableCell>
+            <StyledTableCell align="right">Action</StyledTableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -85,11 +119,44 @@ export default function Enroll(){
               <StyledTableCell align="right">{row.register.phoneNumber }</StyledTableCell>
               <StyledTableCell align="right">{row.register.address}</StyledTableCell>
               <StyledTableCell align="right">{row.enroll_date}</StyledTableCell>
+              <StyledTableCell align="right"><Button color="error" variant="contained"
+               onClick={() => handleUnenroll(row.id)}>Unenroll</Button></StyledTableCell>
             </StyledTableRow>
           ))}
         </TableBody>
       </Table>
     </TableContainer>
+    <Divider/>
+
+        <TableContainer component={Paper}>
+        <Table sx={{ minWidth: 700 }} aria-label="customized table">
+            <TableHead>
+            <TableRow>
+                <StyledTableCell>Name</StyledTableCell>
+                <StyledTableCell align="right">Email</StyledTableCell>
+                <StyledTableCell align="right">Phone Number</StyledTableCell>
+                <StyledTableCell align="right">Address</StyledTableCell>
+                <StyledTableCell align="right">Action</StyledTableCell>
+            </TableRow>
+            </TableHead>
+            <TableBody>
+            {notenroll.map((row :  Students) => (
+                <StyledTableRow key={row.id}>
+                <StyledTableCell component="th" scope="row">
+                    {row.name}
+                </StyledTableCell>
+                <StyledTableCell align="right">{row.email}</StyledTableCell>
+                <StyledTableCell align="right">{row.phoneNumber }</StyledTableCell>
+                <StyledTableCell align="right">{row.address}</StyledTableCell>
+                <StyledTableCell align="right"><Button sx={{bgcolor: 'blue'}} variant="contained" 
+                 onClick={() => handleEnroll(row.id)}>Enroll</Button></StyledTableCell>
+                
+                </StyledTableRow>
+            ))}
+            </TableBody>
+        </Table>
+        </TableContainer>
+
         </>
     )
 }

@@ -3,6 +3,7 @@ import {database} from '../server.js'
 import Register from '../models/RegisterModel.js';
 import Course from '../models/CourseModel.js'
 import type { RequestHandler } from 'express';
+import {Role } from '../models/RegisterModel.js'
 
 export const Create:RequestHandler = async (req, res) => {
     try{
@@ -84,6 +85,57 @@ export const GetCourse : RequestHandler = async (req,res) =>{
         res.status(500).send({
             success: false ,
             message : "error occured during getting"
+        })
+    }
+}
+
+export const GetNotenroll : RequestHandler = async (req,res) =>{
+    try{
+        const enrollRepo = database.getRepository(Enroll)
+        const studentRepo = database.getRepository(Register)
+        const courseId = req.params.id as string
+
+        const course_student = await enrollRepo.find({where : { course: { id: courseId}}, relations: { register: true} })
+
+        const allStudents = await studentRepo.find({ where: {role: Role.student}});
+        const notenroll = allStudents.filter((student) => !course_student.some(
+            (enroll) => enroll.register.id === student.id
+            )
+        );
+
+        return res.status(200).send({
+            success:true,
+            message:"All students details",
+            notenroll
+        })
+
+    }catch(error){
+        console.log(error)
+        res.status(500).send({
+            success: false ,
+            message : "error occured during getting"
+        })
+    }
+}
+
+export const Delete : RequestHandler = async (req,res) =>{
+    try{
+        const id = req.params.id
+        const enrollRepo = database.getRepository(Enroll)
+        await enrollRepo.delete(id)
+    
+    return res.status(200).send({
+            success:true,
+            message:"student unenrolled",
+        })
+
+
+    }
+    catch(error){
+        console.log(error)
+        res.status(500).send({
+            success: false ,
+            message : "error while deleting"
         })
     }
 }
