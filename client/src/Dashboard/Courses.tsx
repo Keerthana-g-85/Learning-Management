@@ -9,6 +9,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import Divider from "@mui/material/Divider";
 import CoPresentIcon from '@mui/icons-material/CoPresent';
+import AddIcon from '@mui/icons-material/Add';
 import {AccessTime} from '@mui/icons-material'
 import {Api} from '../components/Api'
 import { useNavigate  } from "react-router"
@@ -52,6 +53,11 @@ export default function Courses(){
 
     return(
             <>
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 3 }}>
+            <Button  variant="contained" sx={{  mr:2,
+                                bgcolor:"#0ea5e9"
+                                }} onClick ={()=> nav('/addcourse')}><AddIcon/>Add Course</Button>
+            </Box>
             <Box sx={{ display:'flex' , gap:5 ,  flexWrap: 'wrap',}}>
             {course.map ((data : Courses)=>{ return(
                 < div key={data.id}>
@@ -134,12 +140,15 @@ export default function Courses(){
                                 flex: 1,
                                 alignItems: "center",
                                 gap: 1,
+                                bgcolor:"#0ea5e9",
+                                color:"white",
                                 }} 
                                 onClick={()=>{nav(`/update/${data.id}` , {state:{data}})}}startIcon={<EditIcon />} >  Edit</Button>
                     <Button variant="outlined" sx={{ color: "#ef5252" ,display: "flex",
                                 flex: 1,
                                 alignItems: "center",
-                                gap: 1 , border:'1px solid #ef5252' }} startIcon={<DeleteIcon />} 
+                                gap: 1 ,
+                                border:'1px solid #ef5252' }} startIcon={<DeleteIcon />} 
                                 onClick={()=>{handleDelete(data.id)}}> Delete</Button>
                 </Box>
                </CardContent>

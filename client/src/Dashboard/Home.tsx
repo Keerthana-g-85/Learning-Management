@@ -13,7 +13,6 @@ import ListItemText from "@mui/material/ListItemText";
 import HomeIcon from "@mui/icons-material/Home";
 import SchoolIcon from "@mui/icons-material/School";
 import PeopleIcon from "@mui/icons-material/People";
-import AddCircleIcon from '@mui/icons-material/AddCircle';
 import CoPresentIcon from '@mui/icons-material/CoPresent';
 
 import { Outlet, useNavigate } from "react-router-dom";
@@ -26,7 +25,6 @@ export default function Home() {
   const menuItems = [
     { text: "Home", icon: <HomeIcon />, path: "/home" },
     { text: "Courses", icon: <SchoolIcon />, path: "/courses" },
-    { text: "AddCourse" , icon: <AddCircleIcon/> , path : "/addcourse"},
     { text: "Users" , icon:< PeopleIcon/> ,path:"/user"},
     { text: "Students", icon: <PeopleIcon />, path: "/students" },
     { text: "Instructors", icon:<CoPresentIcon/> , path:"/instructors"}
