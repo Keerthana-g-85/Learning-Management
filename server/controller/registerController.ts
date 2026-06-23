@@ -174,3 +174,33 @@ export const Get: RequestHandler= async (req,res) =>{
     }
 }
 
+export const UpdateUser : RequestHandler = async( req , res) =>{
+    try{
+        const registerRepo = database.getRepository(Register)
+        const { name , email , phoneNumber , address , role } = req.body
+
+        const id  = req.params.id as string
+        console.log(id)
+        const user = await registerRepo.findOneBy({id })
+        console.log(user)
+        if (!user){
+            return res.status(404).send({
+                success: false ,
+                message : 'User not found'
+            })
+        }
+        const UpdatedUser =await  registerRepo.update({id : id },{name : name , email : email, phoneNumber: phoneNumber , address:address , role:role })
+        res.status(200).send({
+            success : true ,
+            message : "Users",
+            UpdatedUser
+        })
+
+    }catch(error){
+        console.log(error)
+        res.status(500).send({
+            success: false ,
+            message : "Error while updating",
+        })
+    }
+}

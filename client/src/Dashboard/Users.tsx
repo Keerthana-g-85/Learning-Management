@@ -8,6 +8,8 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -62,6 +64,7 @@ export default function User(){
             <StyledTableCell align="right">Phone Number</StyledTableCell>
             <StyledTableCell align="right">Address</StyledTableCell>
             <StyledTableCell align="right">Role</StyledTableCell>
+            <StyledTableCell align="right">Actions</StyledTableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -74,6 +77,7 @@ export default function User(){
               <StyledTableCell align="right">{row.phoneNumber }</StyledTableCell>
               <StyledTableCell align="right">{row.address}</StyledTableCell>
               <StyledTableCell align="right">{row.role}</StyledTableCell>
+              <StyledTableCell align="right"><EditIcon/><DeleteIcon/></StyledTableCell>
             </StyledTableRow>
           ))}
         </TableBody>
