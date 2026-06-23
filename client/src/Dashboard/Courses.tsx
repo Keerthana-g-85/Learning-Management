@@ -78,21 +78,18 @@ export default function Courses(){
                             sx={{p:1 , borderRadius:5}}
                             image={data.thumbnail}/>
                             <Button
-  variant="contained"
-  sx={{
-    position: "absolute",
-    top: 12,
-    right: 12,
-    borderRadius: 3,
-    textTransform: "none",
-    fontSize: "1 rem",
-    fontWeight: 700,
-    bgcolor: "#fefefe",
-    color:'#0ea5e9'
-  }}
->
-  Enroll
-</Button>
+                                variant="contained"
+                                sx={{
+                                    position: "absolute",
+                                    top: 12,
+                                    right: 12,
+                                    borderRadius: 3,
+                                    textTransform: "none",
+                                    fontSize: "1 rem",
+                                    fontWeight: 700,
+                                    bgcolor: "#fefefe",
+                                    color:'#0ea5e9'
+                                }}>Enroll</Button>
 
                         <CardContent sx={{ pl:2 , pt:1 }}>
                             <Chip label={data.level.toUpperCase()}
