@@ -52,32 +52,31 @@ export default function Enroll(){
     const [enroll, setEnroll] = useState([]);
     const [notenroll , setNotenroll] = useState([])
 
-    useEffect(()=>{
-           const getCourse =async () =>{
-            try{
-            const response = await Api({method : 'get' , endpoint:`enroll/getcourse/${course.id}`})
-            const data = response.data.course_student
-            setEnroll(data)
-        }catch(error){
-            console.log(error)
-        }}; getCourse()
-        },[])
     
-    useEffect(()=>{
-           const getCourse =async () =>{
-            try{
-            const response = await Api({method : 'get' , endpoint:`enroll/notenroll/${course.id}`})
-            const data = response.data.notenroll
-            setNotenroll(data)
+        const getEnroll =async () =>{
+        try{
+        const response = await Api({method : 'get' , endpoint:`enroll/getcourse/${course.id}`})
+        const data = response.data.course_student
+        setEnroll(data)
         }catch(error){
             console.log(error)
-        }}; getCourse()
-        },[])
+        }}; 
+    
+        const getUnenroll = async () =>{
+        try{
+        const response = await Api({method : 'get' , endpoint:`enroll/notenroll/${course.id}`})
+        const data = response.data.notenroll
+        setNotenroll(data)
+        }catch(error){
+            console.log(error)
+        }}; 
     
         async function handleUnenroll(id:string){
             try{
                 const response = await Api({method:'delete' , endpoint:`enroll/delete/${id}`})
                 console.log(response)
+                getEnroll()
+                getUnenroll()
             }catch(error){
                 console.log(error)
             }
@@ -85,13 +84,19 @@ export default function Enroll(){
 
         async function handleEnroll(id:string){
             try{
-            const response = await Api({method : 'post' , endpoint:`enroll/create/` ,data:{"register":`${id}` , "course":`${course.id}`}})
-            console.log(response)
+                const response = await Api({method : 'post' , endpoint:`enroll/create/` ,data:{"register":`${id}` , "course":`${course.id}`}})
+                console.log(response)
+                getEnroll()
+                getUnenroll()
             }catch(error){
                 console.log(error)
             }
-
         }
+
+         useEffect(()=>{ 
+            getEnroll()
+            getUnenroll()
+        },[])
 
     return(
         <>
