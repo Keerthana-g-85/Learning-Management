@@ -2,7 +2,7 @@ import {Entity , Column, CreateDateColumn, UpdateDateColumn, PrimaryGeneratedCol
 
 export enum Role {
     admin = "admin",
-    user = "user",
+    student = "student",
     instructor = "instructor"
 
 }

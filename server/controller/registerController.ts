@@ -109,3 +109,66 @@ export const Login : RequestHandler = async (req,res) => {
         })
     }
 }
+
+export const GetStudent : RequestHandler= async (req,res) =>{
+    try{
+        const registerRepo = database.getRepository(Register)
+
+        const students = await registerRepo.findBy({role : 'student'})
+
+        res.status(200).send({
+            success: true,
+            message : "Students" ,
+            students
+        })
+
+    }catch(error){
+        console.log(error)
+        res.status(500).send({
+            success: false ,
+            message : "Error while getting students",
+        })
+    }
+}
+
+export const GetInstructor: RequestHandler= async (req,res) =>{
+    try{
+        const registerRepo = database.getRepository(Register)
+
+        const instructor = await registerRepo.findBy({role : 'instructor'})
+
+        res.status(200).send({
+            success: true,
+            message : "all instructors" ,
+            instructor
+        })
+
+    }catch(error){
+        console.log(error)
+        res.status(500).send({
+            success: false ,
+            message : "Error while getting instructor",
+        })
+    }
+}
+
+export const Get: RequestHandler= async (req,res) =>{
+    try{
+        const registerRepo = database.getRepository(Register)
+
+        const user = await registerRepo.find()
+
+        res.status(200).send({
+            success: true,
+            message : "ALL users" ,
+            user
+        })
+
+    }catch(error){
+        console.log(error)
+        res.status(500).send({
+            success: false ,
+            message : "Error while getting users",
+        })
+    }
+}

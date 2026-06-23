@@ -11,7 +11,9 @@ import Divider from "@mui/material/Divider";
 import CoPresentIcon from '@mui/icons-material/CoPresent';
 import {AccessTime} from '@mui/icons-material'
 import {Api} from '../components/Api'
+import { useNavigate  } from "react-router"
 export default function Courses(){
+    const nav = useNavigate()
 
     const [course , setCourse] = useState([])
     useEffect(()=>{
@@ -25,6 +27,18 @@ export default function Courses(){
     }}; getCourse()
     },[])
 
+    async function handleDelete(id : string){
+        console.log(id)
+        try{
+        await Api ({method :'delete',endpoint:'/course/delete/'+`${id}` })
+        console.log('/course/delete/'+`${id}`)
+        const response = await Api({method : 'get' , endpoint:'course/getall'})
+        const data = response.data.AllCourses
+        setCourse(data)
+        }catch(error){
+            console.log(error)
+        }
+    }
 
     return(
             <>
@@ -34,7 +48,7 @@ export default function Courses(){
                     <Card sx={{ width: 450 , 
                         borderRadius:5 , 
                         boxShadow: "0 20px 40px rgba(0,0,0,0.35)",
-                        background:"linear-gradient(135deg, #0f172a 0%, #0b1220 100%)",
+                        background:"#010102",
                         border:'1px solid #1e2224',
                         transition: "0.3s",
                         "&:hover": {
@@ -43,7 +57,7 @@ export default function Courses(){
                         <CardMedia
                             component="img"
                             alt="green iguana"
-                            height="280"
+                            height="180"
                             sx={{p:1 , borderRadius:5}}
                             image={data.thumbnail}/>
 
@@ -106,21 +120,23 @@ export default function Courses(){
                             gap: 1,
                             bm:1,
                              }}>
-                    <Button variant="outlined" sx={{ color: 'orange' , display: "flex",
+                    <Button variant="outlined" sx={{  display: "flex",
                                 flex: 1,
                                 alignItems: "center",
                                 gap: 1,
-                                border:'1px solid blue'
-                                }} startIcon={<EditIcon />}>  Edit</Button>
-                    <Button variant="outlined" sx={{ color: 'red' ,display: "flex",
+                                }} 
+                                onClick={()=>{nav(`/update/${data.id}` , {state:{data}})}}startIcon={<EditIcon />} >  Edit</Button>
+                    <Button variant="outlined" sx={{ color: "#ef5252" ,display: "flex",
                                 flex: 1,
                                 alignItems: "center",
-                                gap: 1 , border:'1px solid red' }} startIcon={<DeleteIcon />}> Delete</Button>
+                                gap: 1 , border:'1px solid #ef5252' }} startIcon={<DeleteIcon />} 
+                                onClick={()=>{handleDelete(data.id)}}> Delete</Button>
                 </Box>
                </CardContent>
                 </Card>
                 </div>)})
             }
+            
             </Box>
         </>
     )

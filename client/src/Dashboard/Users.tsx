@@ -29,14 +29,14 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-export default function Students(){
-    const [student , setStudent] = useState([])
+export default function User(){
+    const [instructor , setInstructor] = useState([])
     useEffect(()=>{
         const getStudent = async()=>{
             try{
-                const response = await Api({method:'get' , endpoint:'/register/getstudent'})
+                const response = await Api({method:'get' , endpoint:'/register/get'})
                 console.log(response)
-                setStudent(response.data.students)
+                setInstructor(response.data.user)
             }catch(error){
                 console.log(error)
             }
@@ -57,7 +57,7 @@ export default function Students(){
           </TableRow>
         </TableHead>
         <TableBody>
-          {student.map((row) => (
+          {instructor.map((row) => (
             <StyledTableRow key={row.name}>
               <StyledTableCell component="th" scope="row">
                 {row.name}
@@ -70,7 +70,8 @@ export default function Students(){
           ))}
         </TableBody>
       </Table>
-    </TableContainer>
+    </TableContainer> 
     </>
     )
 }
+

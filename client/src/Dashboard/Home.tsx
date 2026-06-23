@@ -10,10 +10,11 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-
 import HomeIcon from "@mui/icons-material/Home";
 import SchoolIcon from "@mui/icons-material/School";
 import PeopleIcon from "@mui/icons-material/People";
+import AddCircleIcon from '@mui/icons-material/AddCircle';
+import CoPresentIcon from '@mui/icons-material/CoPresent';
 
 import { Outlet, useNavigate } from "react-router-dom";
 
@@ -25,18 +26,21 @@ export default function Home() {
   const menuItems = [
     { text: "Home", icon: <HomeIcon />, path: "/home" },
     { text: "Courses", icon: <SchoolIcon />, path: "/courses" },
+    { text: "AddCourse" , icon: <AddCircleIcon/> , path : "/addcourse"},
+    { text: "Users" , icon:< PeopleIcon/> ,path:"/user"},
     { text: "Students", icon: <PeopleIcon />, path: "/students" },
+    { text: "Instructors", icon:<CoPresentIcon/> , path:"/instructors"}
   ];
 
   return (
-    <Box sx={{ display: "flex" , bgcolor:'black' }}>
+    <Box sx={{ display: "flex" }}>
       <CssBaseline />
         <AppBar
           position="fixed"
           sx={{ zIndex: (theme) => theme.zIndex.drawer + 1,}}>
           <Toolbar>
             <Typography variant="h6" noWrap>
-              Student Management System
+              Learning Management System
             </Typography>
           </Toolbar>
         </AppBar>
@@ -51,7 +55,7 @@ export default function Home() {
             },}}>
         <Toolbar />
 
-        <Box sx={{ overflow: "auto" }}>
+        <Box sx={{ overflow: "auto"}}>
           <List>
             {menuItems.map((item) => (
               <ListItem key={item.text} >

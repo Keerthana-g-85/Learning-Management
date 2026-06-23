@@ -3,10 +3,14 @@ import Login from "./components/Login"
 import Home from "./Dashboard/Home"
 import Course from './Dashboard/Courses'
 import Students from "./Dashboard/Students"
+import AddCourse from "./Dashboard/AddCourse"
+import UpdateCourse from "./Dashboard/UpdateCourse"
+import User from "./Dashboard/Users"
 import { BrowserRouter , Routes , Route } from 'react-router'
 import { useDispatch} from 'react-redux'
 import { addToken,addUser } from './redux/LoginSlice'
 import { jwtDecode } from "jwt-decode";
+import Instructor from "./Dashboard/Instructor"
 
 export default function App(){
   const dispatch = useDispatch()
@@ -27,8 +31,12 @@ export default function App(){
           <Route path='/home' element={<Home/>}></Route>
           <Route element={<Home />}>
                 <Route path="/home" element={<Home />} />
-                <Route path="/courses" element={<Course />} />
+                <Route path="/courses" element={<Course />}/>
+                <Route path='/update/:id' element={<UpdateCourse/>} />
+                <Route path="/addcourse" element={<AddCourse/>} />
                 <Route path="/students" element={<Students />} />
+                <Route path="/instructors" element={<Instructor />} />
+                <Route path="/user" element={<User/>} />
           </Route>
       </Routes>
       </BrowserRouter>
