@@ -9,11 +9,11 @@ id : string
 
 @ManyToOne(()=>Register)
 @JoinColumn({name: 'student_id'})
-register : string
+register : Register
 
 @ManyToOne(()=> Course)
 @JoinColumn({name : 'course_id'})
-course : string
+course : Course
 
 @Column({type:'date'})
 enroll_date : Date

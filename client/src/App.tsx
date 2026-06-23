@@ -6,6 +6,7 @@ import Students from "./Dashboard/Students"
 import AddCourse from "./Dashboard/AddCourse"
 import UpdateCourse from "./Dashboard/UpdateCourse"
 import User from "./Dashboard/Users"
+import Enroll from "./Dashboard/Enroll"
 import { BrowserRouter , Routes , Route } from 'react-router'
 import { useDispatch} from 'react-redux'
 import { addToken,addUser } from './redux/LoginSlice'
@@ -37,6 +38,7 @@ export default function App(){
                 <Route path="/students" element={<Students />} />
                 <Route path="/instructors" element={<Instructor />} />
                 <Route path="/user" element={<User/>} />
+                <Route path="/courses/enroll/:id" element={<Enroll/>} />
           </Route>
       </Routes>
       </BrowserRouter>

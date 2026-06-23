@@ -6,6 +6,7 @@ import Course from './models/CourseModel.js'
 import Enroll from './models/EnrollModel.js'
 import {registerRouter } from './Router/RegisterRouter.js'
 import {CourseRouter} from './Router/CourseRouter.js'
+import { EnrollRouter  } from './Router/EnrollRouter.js';
 import cors from 'cors'
 import cookieParser from "cookie-parser";
 
@@ -25,6 +26,7 @@ app.use(cookieParser());
 
 app.use('/register' , registerRouter)
 app.use('/course',CourseRouter)
+app.use('/enroll',EnrollRouter)
 
 // Database configuration
 const data : DataSourceOptions = {

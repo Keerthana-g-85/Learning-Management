@@ -62,6 +62,7 @@ export default function Courses(){
             {course.map ((data : Courses)=>{ return(
                 < div key={data.id}>
                     <Card sx={{ width: 450 , 
+                        position: "relative",
                         borderRadius:5 , 
                         boxShadow: "0 20px 40px rgba(0,0,0,0.35)",
                         background:"#010102",
@@ -76,8 +77,20 @@ export default function Courses(){
                             height="180"
                             sx={{p:1 , borderRadius:5}}
                             image={data.thumbnail}/>
+                            <Button
+                                variant="outlined"
+                                sx={{
+                                height:'20px',
+                                position: "absolute",
+                                bgcolor:'white',
+                                top: 10,
+                                left: 10,
+                                }}
+                                onClick={()=>{nav(`/courses/enroll/${data.id}`, {state:{data}})}}>
+                                Enroll
+                            </Button>
 
-                        <CardContent sx={{ p: 4 }}>
+                        <CardContent sx={{ pl:2 , pt:1 }}>
                             <Chip label={data.level.toUpperCase()}
                             sx={{ bgcolor: "#0ea5e9",
                             color: "white",

@@ -35,7 +35,9 @@ export default function Home() {
       <CssBaseline />
         <AppBar
           position="fixed"
-          sx={{ zIndex: (theme) => theme.zIndex.drawer + 1,}}>
+          sx={{ zIndex: (theme) => theme.zIndex.drawer + 1,
+            bgcolor: 'black'
+          }}>
           <Toolbar>
             <Typography variant="h6" noWrap>
               Learning Management System
