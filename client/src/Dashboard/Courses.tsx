@@ -1,5 +1,5 @@
 import { useState , useEffect } from 'react';
-import {Box , Chip} from '@mui/material'
+import {Box , Chip , Snackbar} from '@mui/material'
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
@@ -13,6 +13,12 @@ import AddIcon from '@mui/icons-material/Add';
 import {AccessTime} from '@mui/icons-material'
 import {Api} from '../components/Api'
 import { useNavigate  } from "react-router"
+import Dialog from "@mui/material/Dialog";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogActions from "@mui/material/DialogActions";
+
 
 interface Courses {
     id : string ,
@@ -27,25 +33,41 @@ export default function Courses(){
     const nav = useNavigate()
 
     const [course , setCourse] = useState([])
+    const [open, setOpen] = useState('');
+    const [message , setMessage] = useState('')
+    // const [progress, setProgress] = useState(false);
+
     useEffect(()=>{
        const getCourse =async () =>{
         try{
         const response = await Api({method : 'get' , endpoint:'course/getall'})
         const data = response.data.AllCourses
         setCourse(data)
+        //  setMessage(response.data.message)
     }catch(error){
         console.log(error)
     }}; getCourse()
     },[])
+    useEffect(() => {
+    const timer = setInterval(() => {
+    //   setProgress(true);
+    }, 800);
+    return () => {
+      clearInterval(timer);
+    };
+  }, [handleDelete]);
 
     async function handleDelete(id : string){
         console.log(id)
+        // setProgress(true)
         try{
-        await Api ({method :'delete',endpoint:'/course/delete/'+`${id}` })
+        const deleteResponse = await Api ({method :'delete',endpoint:'/course/delete/'+`${id}` })
         console.log('/course/delete/'+`${id}`)
         const response = await Api({method : 'get' , endpoint:'course/getall'})
         const data = response.data.AllCourses
+        setMessage(deleteResponse.data.message)
         setCourse(data)
+        setOpen('')
         }catch(error){
             console.log(error)
         }
@@ -53,7 +75,8 @@ export default function Courses(){
 
     return(
             <>
-            <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 3 }}>
+            <Box sx={{width:'100%',height:'90vh' , bgcolor:'white' , p:0, margin: 0,overflow: 'auto'}}>
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 3  , }}>
             <Button  variant="contained" sx={{  mr:2,
                                 bgcolor:"#0ea5e9"
                                 }} onClick ={()=> nav('/addcourse')}><AddIcon/>Add Course</Button>
@@ -89,7 +112,7 @@ export default function Courses(){
                                     fontWeight: 700,
                                     bgcolor: "#fefefe",
                                     color:'#0ea5e9'
-                                }}>Enroll</Button>
+                                }}onClick={()=>{nav(`/courses/enroll/${data.id}` , {state:{data}})}}>Enroll</Button>
 
                         <CardContent sx={{ pl:2 , pt:1 }}>
                             <Chip label={data.level.toUpperCase()}
@@ -157,20 +180,46 @@ export default function Courses(){
                                 bgcolor:"#0ea5e9",
                                 color:"white",
                                 }} 
-                                onClick={()=>{nav(`/update/${data.id}` , {state:{data}})}}startIcon={<EditIcon />} >  Edit</Button>
+                                onClick={()=>{nav(`/update/${data.id}` , {state:{data }})}}startIcon={<EditIcon />} >  Edit</Button>
                     <Button variant="outlined" sx={{ color: "#ef5252" ,display: "flex",
                                 flex: 1,
                                 alignItems: "center",
                                 gap: 1 ,
                                 border:'1px solid #ef5252' }} startIcon={<DeleteIcon />} 
-                                onClick={()=>{handleDelete(data.id)}}> Delete</Button>
+                                onClick={(e)=>{e.preventDefault();
+                                        setOpen(data.id);}}> Delete</Button>
+                    
                 </Box>
                </CardContent>
                 </Card>
                 </div>)})
             }
-            
             </Box>
+            <Dialog open={Boolean(open)} onClose={() => setOpen('')}>
+            <DialogTitle>Delete Course </DialogTitle>
+            <DialogContent>
+                <DialogContentText>
+                Are you sure you want to Delete course
+                </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+                <Button onClick={() => setOpen('')} sx={{bgcolor:"#626769" , color:'white'}} > Cancel</Button>
+                <Button variant="contained" sx={{ bgcolor: "#ef5252" ,display: "flex",
+                                border:'1px solid #ef5252' }}  startIcon={<DeleteIcon />} 
+                                onClick={()=>handleDelete(open)}> "Delete"
+                </Button>
+            </DialogActions>
+            </Dialog>
+        </Box>
+        <Snackbar
+            open={Boolean(message)}
+            autoHideDuration={3000}
+            message ={message}
+            onClose={() => setMessage('')}
+            anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'right',
+            }}/>
         </>
     )
 }

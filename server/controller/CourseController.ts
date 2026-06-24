@@ -49,7 +49,7 @@ export const GetAll : RequestHandler = async(req,res) => {
 
         res.status(200).send({
             success : true ,
-            message : "Courses",
+            message : "All Courses",
             AllCourses
         })
         
@@ -110,7 +110,7 @@ export const Update : RequestHandler = async(req,res) =>{
         const UpdatedCourse =await  courseRepo.update({id : id },{title : title , description : description, instructor_name : instructor_name , duration:duration , level:level , thumbnail : thumbnail })
         res.status(200).send({
             success : true ,
-            message : "Courses",
+            message : "Course updated",
             UpdatedCourse
         })
 
@@ -119,7 +119,7 @@ export const Update : RequestHandler = async(req,res) =>{
         console.log(error)
         res.status(500).send({
             success:false ,
-            message : "Error while getting the course"
+            message : "Error while updating the course"
         })
     }
 }

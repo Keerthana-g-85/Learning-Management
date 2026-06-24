@@ -14,6 +14,8 @@ import PeopleIcon from "@mui/icons-material/People";
 import GroupAddIcon from '@mui/icons-material/GroupAdd';
 import GroupRemoveIcon from '@mui/icons-material/GroupRemove';
 import PersonIcon from '@mui/icons-material/Person';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { useNavigate  } from "react-router"
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -50,6 +52,7 @@ interface Course {
     enroll_date : string
 }
 export default function Enroll(){
+    const nav = useNavigate()
     const location = useLocation();
     const course = location.state.data;
     console.log(location.state.data);
@@ -105,6 +108,14 @@ export default function Enroll(){
 
     return(
         <>
+        <Box sx={{ display: 'flex', justifyContent: 'flex-start',p:1 }}>
+            <Button  variant="contained" sx={{ 
+                                bgcolor:"#0ea5e9",
+                                borderRadius: 2,
+                                width:'100px',
+                                gap:1
+                                }} onClick ={()=> nav('/courses')}><ArrowBackIcon/>Back</Button>
+            </Box>
         <Paper elevation={6} sx={{ mt: 2, 
             borderRadius: 2,
             boxShadow: "0 20px 40px rgba(0,0,0,0.35)",

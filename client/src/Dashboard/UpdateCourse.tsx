@@ -1,13 +1,18 @@
 import { useState } from 'react'
-import type{FormEvent} from 'react'
 import axios from 'axios'
 import {Api} from '../components/Api'
-import { TextField ,Box, Paper, Typography , Stack, Button , FormHelperText} from "@mui/material";
+import { TextField ,Box, Paper, Typography , Stack, Button , FormHelperText , Snackbar} from "@mui/material";
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import { useLocation, useNavigate } from 'react-router';
+import Dialog from "@mui/material/Dialog";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogActions from "@mui/material/DialogActions";
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 export default function UpdateCourse(){
 
@@ -19,8 +24,10 @@ export default function UpdateCourse(){
     const [course , setCourse] = useState({title :data.title , description : data.description , instructor_name: data.instructor_name , duration:data.duration ,level:data.level , thumbnail:data.thumbnail})
     const [error , setError] = useState({title : false , description : false , instructor_name: false , duration: false ,level: false  , thumbnail: false})
     const [errmessage , setMessage] = useState({title : '' , description : '' , instructor_name:'' , duration:'' ,level:'' , thumbnail:''})
+    const [open, setOpen] = useState(false);
+    const [notify , setNotification] = useState('')
    
-    async function handleClick(event: FormEvent<HTMLFormElement>){
+    async function handleClick(event: React.MouseEvent){
         event.preventDefault()
         try{
             if (!course.title){
@@ -53,6 +60,7 @@ export default function UpdateCourse(){
             else{
             const response = await Api({method : 'put' , endpoint:`/course/update/${data.id}` , data : course})
             console.log(response)
+            setNotification(response.data.message)
             }
             }catch(error){
                 if (axios.isAxiosError(error)){
@@ -62,28 +70,39 @@ export default function UpdateCourse(){
             }
             console.log(course)
             setCourse({title : '' , description : '' , instructor_name:'' , duration:'' ,level:'' , thumbnail:''})
-            nav('/courses')
+            nav('/courses',{state: notify})
+    }
+    function handleSubmit (e:React.MouseEvent){
+        e.preventDefault();
+    setOpen(true);
     }
     
     return(
         <>
-        <Box  sx={{display:'flex' ,
+        <Box sx={{width:'100%',height:'90vh' , bgcolor:'black' , p:0, margin: 0,overflow: 'auto'}}>
+         <Box sx={{ display: 'flex', justifyContent: 'flex-start',p:4 }}>
+            <Button  variant="contained" sx={{ 
+                                bgcolor:"#0ea5e9",
+                                borderRadius: 2,
+                                width:'100px',
+                                gap:1
+                                }} onClick ={()=> nav('/courses')}><ArrowBackIcon/>Back</Button>
+            </Box>
+         <Box  sx={{display:'flex' ,
                             justifyContent: 'center' , 
                             alignItems: 'center' , 
-                            backgroundImage:`linear-gradient(rgba(21, 21, 21, 0), rgba(0, 0, 0, 0.25)), url(${data.thumbnail})`, 
                             backgroundSize: 'cover', 
                             backgroundPosition: 'center',
-                            width: '100%',
-                            height: '100vh',
                             }}>
-            
-            <Paper elevation={4} sx={{ p: 3, 
+            <Paper elevation={4} sx={{ p: 3, mt:3,
+                                        bgcolor:'white',
                                         borderRadius: 3 , 
-                                        width:600,
-                                        backgroundColor: 'rgba(255, 252, 252, 0.71)', 
+                                        width:'100%',
+                                        maxWidth: 1100,
+                                        height: '600px',
                                         backdropFilter: 'blur(12px)',
                                         border: '1px solid rgba(217, 209, 209, 0.3)'}}>
-                <form onSubmit={handleClick}>
+                <form >
                 <Stack spacing={4}>
                     
                     <Typography variant="h5" sx={{ fontWeight: 600, mb: 3}}>Update Course</Typography>
@@ -111,6 +130,8 @@ export default function UpdateCourse(){
                        onChange={(e)=>{setCourse({...course ,description : e.target.value})
                        setError({...error , description:false})
                        setMessage(prev => ({...prev , description:""}))}}/>
+            
+            <Box sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 3,}}>
 
             <TextField id="outlined-basic" 
                        fullWidth
@@ -152,6 +173,7 @@ export default function UpdateCourse(){
                 </Select>
                 <FormHelperText error={error.level}>{errmessage.level}</FormHelperText>
                 </FormControl>
+            </Box>
 
             <TextField id="outlined-basic" 
                        fullWidth
@@ -164,12 +186,43 @@ export default function UpdateCourse(){
                        onChange={(e)=>{setCourse({...course , thumbnail : e.target.value})
                        setError({...error , thumbnail:false})
                        setMessage(prev => ({...prev , thumbnail:""}))}}/>
-            <Button variant="contained" type="submit">Update</Button>
+            <Box sx={{ display: "flex", justifyContent: "flex-end", }}>
+            <Button variant="contained"
+                    sx={{
+                    bgcolor:"#0ea5e9",
+                    borderRadius: 2,
+                    }}
+                    onClick={handleSubmit}>Update</Button>
+            </Box>
+            
             </Stack>
              </form>
                 
             </Paper>
         </Box>
+        <Dialog open={open} onClose={() => setOpen(false)}>
+            <DialogTitle> Update Course </DialogTitle>
+            <DialogContent>
+                <DialogContentText>
+                Are you sure you want to update the changes?
+                </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+                <Button onClick={() => setOpen(false)} sx={{bgcolor:"#626769" , color:'white'}} > Cancel</Button>
+                <Button variant="contained" sx={{bgcolor:"#0ea5e9"}} onClick={handleClick}> Update</Button>
+            </DialogActions>
+            </Dialog>
+        </Box>
+        <Snackbar
+                    open={Boolean(notify)}
+                    autoHideDuration={3000}
+                    message ={notify}
+                    sx={{bgcolor:'red'}}
+                    onClose={() => setNotification('')}
+                    anchorOrigin={{
+                        vertical: 'bottom',
+                        horizontal: 'right',
+                    }}/>
         </>
     )
 }

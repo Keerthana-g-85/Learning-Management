@@ -7,8 +7,13 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
+import { useNavigate  } from "react-router"
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import CssBaseline from '@mui/material/CssBaseline';
+import image3 from '../assets/image2.png'
 
 export default function AddCourse(){
+    const nav = useNavigate()
     const [course , setCourse] = useState({title : '' , description : '' , instructor_name:'' , duration:'' ,level:'' , thumbnail:''})
     const [error , setError] = useState({title : false , description : false , instructor_name: false , duration: false ,level: false  , thumbnail: false})
     const [errmessage , setMessage] = useState({title : '' , description : '' , instructor_name:'' , duration:'' ,level:'' , thumbnail:''})
@@ -55,31 +60,43 @@ export default function AddCourse(){
     
     return(
         <>
+        <CssBaseline />
+        <Box sx={{width:'100%',height:'90vh' , bgcolor:'black' , p:0, margin: 0,overflow: 'auto' , backgroundImage:`url(${image3})`,backgroundSize: 'cover', 
+                            backgroundPosition: 'center',}}>
+        <Box sx={{ display: 'flex', justifyContent: 'flex-start',p:4 }}>
+            <Button  variant="contained" sx={{ 
+                                bgcolor:"#0ea5e9",
+                                borderRadius: 2,
+                                width:'100px',
+                                gap:1
+                                }} onClick ={()=> nav('/courses')}><ArrowBackIcon/>Back</Button>
+            </Box>
         <Box  sx={{display:'flex' ,
                             justifyContent: 'center' , 
                             alignItems: 'center' , 
                             backgroundSize: 'cover', 
                             backgroundPosition: 'center',
-                            width: '100%',
-                            mt:6
                             }}>
-            <Paper elevation={4} sx={{ p: 3, 
-                                       
+            <Paper elevation={4} sx={{ p: 3, mt:3,
+                                        bgcolor:'#f5f7f9',
                                         borderRadius: 3 , 
-                                        width:600,
-                                        backgroundColor: 'rgba(255, 252, 252, 0.76)', 
+                                        width:'100%',
+                                        maxWidth: 1100,
+                                        height: '600px',
                                         backdropFilter: 'blur(12px)',
                                         border: '1px solid rgba(217, 209, 209, 0.3)'}}>
                 <form onSubmit={handleClick}>
                 <Stack spacing={4}>
                     
-                    <Typography variant="h5" sx={{ fontWeight: 600, mb: 3}}>Add Course</Typography>
+                    <Box sx={{ mb: 2 }}>
+                    <Typography variant="h4" sx={{ fontWeight: 700, color: "#1e293b"}}> Add Course </Typography>
+                    </Box>
             <TextField id={error ? "outlined-error" : "outlined-basic"}
                        fullWidth
-                       label="Title" 
+                       label="Title*" 
                        variant="outlined" 
                        error = {error.title}
-                       sx={{  }}
+                       
                        value={course.title}
                        helperText={errmessage.title}
                        onChange={(e)=>{setCourse({...course ,title : e.target.value})
@@ -88,9 +105,9 @@ export default function AddCourse(){
 
             <TextField id="outlined-multiline-flexible"
                        fullWidth
-                       label="Description"
+                       label="Description*"
                        multiline
-                       maxRows={4} 
+                       rows={4} 
                        sx={{  }}
                        value={course.description}
                        error = {error.description}
@@ -98,10 +115,11 @@ export default function AddCourse(){
                        onChange={(e)=>{setCourse({...course ,description : e.target.value})
                        setError({...error , description:false})
                        setMessage(prev => ({...prev , description:""}))}}/>
+            <Box sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 3,}}>
 
             <TextField id="outlined-basic" 
                        fullWidth
-                       label="Instructor Name" 
+                       label="Instructor Name*" 
                        variant="outlined" 
                        sx={{  }}
                        value={course.instructor_name}
@@ -113,7 +131,7 @@ export default function AddCourse(){
 
             <TextField id="outlined-basic" 
                        fullWidth
-                       label="Duration" 
+                       label="Duration*" 
                        variant="outlined" 
                        sx={{ }}
                        value={course.duration}
@@ -124,11 +142,11 @@ export default function AddCourse(){
                        setMessage(prev => ({...prev , duration:""}))}}/>
 
             <FormControl fullWidth>
-                <InputLabel error={error.level} >Level</InputLabel>
+                <InputLabel error={error.level} >Level*</InputLabel>
                 <Select
                     fullWidth
                     value={course.level}
-                    label="Level"
+                    label="Level*"
                     error = {error.level}
                     onChange={(e)=>{setCourse({...course , level : e.target.value})
                        setError({...error , level:false})
@@ -142,7 +160,7 @@ export default function AddCourse(){
 
             <TextField id="outlined-basic" 
                        fullWidth
-                       label="Thumbnail" 
+                       label="Thumbnail*" 
                        variant="outlined" 
                        sx={{ }}
                        value={course.thumbnail}
@@ -151,11 +169,24 @@ export default function AddCourse(){
                        onChange={(e)=>{setCourse({...course , thumbnail : e.target.value})
                        setError({...error , thumbnail:false})
                        setMessage(prev => ({...prev , thumbnail:""}))}}/>
-            <Button variant="contained" type="submit">Add</Button>
+            </Box>
+            <Box sx={{ display: "flex", justifyContent: "flex-end", }}>
+                <Button
+                    variant="contained"
+                    type="submit"
+                    sx={{
+                    bgcolor:"#0ea5e9",
+                    borderRadius: 2,
+                    }}
+                    onClick={()=>{nav('/courses')}}>
+                    Add Course
+                </Button>
+                </Box>
             </Stack>
              </form>
                 
             </Paper>
+        </Box>
         </Box>
         </>
     )
