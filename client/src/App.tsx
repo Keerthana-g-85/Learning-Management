@@ -1,19 +1,19 @@
 import Register from "./components/Register"
 import Login from "./components/Login"
-import Home from "./Dashboard/Home"
+import Home from "./Admin/Home"
 import InstructorHome from "./Instructor/Home"
 import InstructorEnroll from "./Instructor/Enroll"
-import Course from './Dashboard/Courses'
-import Students from "./Dashboard/Students"
+import Course from './Admin/Courses'
+import Students from "./Admin/Students"
 import AddCourse from "./Instructor/AddCourse"
 import UpdateCourse from "./Instructor/UpdateCourse"
-import User from "./Dashboard/Users"
-import Enroll from "./Dashboard/Enroll"
+import User from "./Admin/Users"
+import Enroll from "./Admin/Enroll"
 import { BrowserRouter , Routes , Route } from 'react-router'
 import { useDispatch , useSelector} from 'react-redux'
 import { addToken,addUser } from './redux/LoginSlice'
 import { jwtDecode } from "jwt-decode";
-import Instructor from "./Dashboard/Instructor"
+import Instructor from "./Admin/Instructor"
 import {useEffect} from 'react'
 import InstructorCourse from "./Instructor/Courses"
 
@@ -65,6 +65,23 @@ else if (user.role ==='instructor'){
       </BrowserRouter>
     </>
   )
-
+}
+else if (user.role ==='student'){
+  return (
+    <>
+      <BrowserRouter>
+      <Routes>
+          <Route path='/' element={<Login/>}></Route>
+          <Route path='/register' element={<Register/>}></Route>
+          <Route element={<InstructorHome />}>
+                <Route path="/instructorcourses" element={<InstructorCourse />}/>
+                <Route path='/update/:id' element={<UpdateCourse/>} />
+                <Route path="/addcourse" element={<AddCourse/>} /> 
+                <Route path="/courses/enroll/:id" element={<InstructorEnroll/>} />
+          </Route>
+      </Routes>
+      </BrowserRouter>
+    </>
+  )
 }
 }

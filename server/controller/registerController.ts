@@ -204,3 +204,32 @@ export const UpdateUser : RequestHandler = async( req , res) =>{
         })
     }
 }
+
+export const Delete : RequestHandler = async (req,res) =>{
+    try{
+        const userRepo = database.getRepository(Register)
+        const id  = req.params.id as string
+        const student = await userRepo.findOneBy({id: id})
+
+        if(!student){
+            return res.status(404).send({
+            success: false,
+            message:"User not present",
+        })
+        }
+
+        await userRepo.delete(id)
+
+        res.status(200).send({
+            success: true ,
+            message : "User Deleted"
+        })
+
+    }catch(error){
+        console.log(error)
+        res.status(500).send({
+            success : false ,
+            message : "error while deleting"
+        })
+    }
+}

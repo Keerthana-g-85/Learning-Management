@@ -51,7 +51,7 @@ export default function User(){
   const { Api } = useApi();
     const [user , setUser] = useState([])
     const [edit , setEdit] = useState<Users | null>(null)
-    useEffect(()=>{
+    
         const getUsers = async()=>{
             try{
                 const response = await Api({method:'get' , endpoint:'/register/get'})
@@ -61,15 +61,22 @@ export default function User(){
                 console.log(error)
             }
         }
+    useEffect(()=>{
         getUsers()
     },[])
+
     async function handleSave(){
       if (edit === null) { return }
       const response = await Api({method : 'put' ,endpoint :`/register/update/${edit?.id}` , data: edit })
       console.log(response)
-      const getresponse = await Api({method:'get' , endpoint:'/register/get'})
-      setUser(getresponse.data.user)
+      getUsers()
       setEdit(null)
+    }
+    
+    async function handleDelete(id :String){
+      const response = await Api({method: 'delete' , endpoint:`/register/delete/${id}`})
+      console.log(response)
+      getUsers()
     }
     return(
         <>
@@ -144,7 +151,7 @@ export default function User(){
                     <EditIcon onClick={() => setEdit(row)} />
                   )
                 }
-                <DeleteIcon/>
+                <DeleteIcon onClick={()=> handleDelete(row.id)}/>
               </StyledTableCell>
             </StyledTableRow>
           ))}

@@ -7,11 +7,11 @@ export default class Enroll{
 @PrimaryGeneratedColumn('uuid')
 id : string 
 
-@ManyToOne(()=>Register)
+@ManyToOne(()=>Register ,{onDelete: 'CASCADE'})
 @JoinColumn({name: 'student_id'})
 register : Register
 
-@ManyToOne(()=> Course)
+@ManyToOne(()=> Course , {onDelete: 'CASCADE'})
 @JoinColumn({name : 'course_id'})
 course : Course
 
