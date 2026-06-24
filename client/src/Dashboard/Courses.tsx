@@ -6,7 +6,6 @@ import CardMedia from '@mui/material/CardMedia';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import DeleteIcon from '@mui/icons-material/Delete';
-import EditIcon from '@mui/icons-material/Edit';
 import Divider from "@mui/material/Divider";
 import CoPresentIcon from '@mui/icons-material/CoPresent';
 import {AccessTime} from '@mui/icons-material'

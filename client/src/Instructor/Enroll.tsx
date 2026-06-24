@@ -11,7 +11,6 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import {Button, Box, Typography} from '@mui/material'
 import PeopleIcon from "@mui/icons-material/People";
-import GroupRemoveIcon from '@mui/icons-material/GroupRemove';
 import PersonIcon from '@mui/icons-material/Person';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useNavigate  } from "react-router"
