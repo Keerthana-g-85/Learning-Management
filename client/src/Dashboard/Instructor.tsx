@@ -41,7 +41,7 @@ interface Instructor{
 export default function Instructor(){
     const [instructor , setInstructor] = useState([])
     useEffect(()=>{
-        const getStudent = async()=>{
+        const getInstructor = async()=>{
             try{
                 const response = await Api({method:'get' , endpoint:'/register/getinstructor'})
                 console.log(response)
@@ -50,7 +50,7 @@ export default function Instructor(){
                 console.log(error)
             }
         }
-        getStudent()
+        getInstructor()
     },[])
     return(
         <>

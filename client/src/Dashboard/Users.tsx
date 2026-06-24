@@ -49,7 +49,7 @@ export default function User(){
     const [user , setUser] = useState([])
     const [edit , setEdit] = useState<Users | null>(null)
     useEffect(()=>{
-        const getStudent = async()=>{
+        const getUsers = async()=>{
             try{
                 const response = await Api({method:'get' , endpoint:'/register/get'})
                 console.log(response)
@@ -58,7 +58,7 @@ export default function User(){
                 console.log(error)
             }
         }
-        getStudent()
+        getUsers()
     },[])
     async function handleSave(){
       if (edit === null) { return }
