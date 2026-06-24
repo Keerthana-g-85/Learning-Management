@@ -56,7 +56,6 @@ export default function Enroll(){
     console.log(location.state.data);
     const { Api } = useApi();
     const [enroll, setEnroll] = useState([]);
-    const [notenroll , setNotenroll] = useState([])
 
     
         const getEnroll =async () =>{
@@ -67,19 +66,9 @@ export default function Enroll(){
         }catch(error){
             console.log(error)
         }}; 
-    
-        const getUnenroll = async () =>{
-        try{
-        const response = await Api({method : 'get' , endpoint:`enroll/notenroll/${course.id}`})
-        const data = response.data.notenroll
-        setNotenroll(data)
-        }catch(error){
-            console.log(error)
-        }}; 
 
          useEffect(()=>{ 
             getEnroll()
-            getUnenroll()
         },[])
 
     return(
