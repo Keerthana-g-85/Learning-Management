@@ -11,8 +11,6 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import SchoolIcon from "@mui/icons-material/School";
-import PeopleIcon from "@mui/icons-material/People";
-import CoPresentIcon from '@mui/icons-material/CoPresent';
 
 import { Outlet, useNavigate } from "react-router-dom";
 
@@ -22,10 +20,7 @@ export default function Home() {
   const navigate = useNavigate();
 
   const menuItems = [
-    { text: "Courses", icon: <SchoolIcon />, path: "/courses" },
-    { text: "Users" , icon:< PeopleIcon/> ,path:"/user"},
-    { text: "Students", icon: <PeopleIcon />, path: "/students" },
-    { text: "Instructors", icon:<CoPresentIcon/> , path:"/instructors"}
+    { text: "Courses", icon: <SchoolIcon />, path: "/InstructorCourse" },
   ];
 
   return (

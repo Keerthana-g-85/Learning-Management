@@ -11,7 +11,10 @@ import Paper from '@mui/material/Paper';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save'
-import { TextField } from "@mui/material";
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
 import PeopleIcon from "@mui/icons-material/People";
 import { Box, Typography} from '@mui/material'
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
@@ -105,40 +108,32 @@ export default function User(){
                              alignItems: "center",
                              gap: 1,}}>
                             <AccountCircleIcon sx={{ fontSize: 20, color: '#0ea5e9' }} />
-                   
-                {edit?.id === row?.id ?
-                <TextField size="small" id="standard-basic" variant="standard" 
-                value={edit.name} onChange={(e)=>setEdit({...edit, name:e.target.name})}/>:
-                row.name}
-                 
+                    {row.name}
                     </Box>
               </StyledTableCell>
 
               <StyledTableCell align="right">
-                {edit?.id === row.id ?
-                (<TextField size="small" id="standard-basic" variant="standard"
-                value={edit.email} onChange={(e) => setEdit({ ...edit, email: e.target.value, })}/>):
-                row.email}
+                { row.email}
               </StyledTableCell>
 
               <StyledTableCell align="right">
-                {edit?.id === row.id ? 
-                <TextField size="small" id="standard-basic" variant="standard" 
-                value={edit.phoneNumber} onChange={(e)=>setEdit({...edit, phoneNumber:e.target.value})}/>:
-                row.phoneNumber }
+                {row.phoneNumber }
               </StyledTableCell>
 
               <StyledTableCell align="right">
-                {edit?.id === row?.id ?
-                <TextField size="small" id="standard-basic" variant="standard" 
-                value ={edit.address} onChange={(e)=>setEdit({...edit, address:e.target.value})}/>:
-                row.address}
+                {row.address}
               </StyledTableCell>
 
               <StyledTableCell align="right">
                   {edit?.id === row?.id ? 
-                  <TextField size="small" id="standard-basic" variant="standard" 
-                  value={edit.role} onChange={(e)=>setEdit({...edit, role:e.target.value})} />:
+                <FormControl >
+                <Select
+                    value={edit.role}
+                    onChange={(e)=>setEdit({...edit, role:e.target.value})}>
+                    <MenuItem value={'instructor'}> Instructor</MenuItem>
+                    <MenuItem value={'student'}>Student</MenuItem>
+                </Select>
+                </FormControl>:
                   row.role}
               </StyledTableCell>
 

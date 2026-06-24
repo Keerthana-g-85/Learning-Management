@@ -179,7 +179,7 @@ export default function AddCourse(){
                     bgcolor:"#0ea5e9",
                     borderRadius: 2,
                     }}
-                    onClick={()=>{nav('/courses')}}>
+                    onClick={()=>{nav('/instructorcourses')}}>
                     Add Course
                 </Button>
                 </Box>

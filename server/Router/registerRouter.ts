@@ -5,6 +5,7 @@ export const registerRouter = express.Router()
 
 registerRouter.post('/create', Create)
 registerRouter.post('/login', Login)
+
 registerRouter.get('/getstudent', authentication,GetStudent)
 registerRouter.get('/getinstructor',authentication,GetInstructor)
 registerRouter.get('/get',authentication,Get)

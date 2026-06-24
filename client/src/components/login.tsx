@@ -57,7 +57,7 @@ export default function Login (){
                 const decoded = jwtDecode(response.data.accesstoken)
                 dispatch(addUser(decoded))
                 
-                nav('/home')
+                nav('/courses')
             }
 
         }catch(error){

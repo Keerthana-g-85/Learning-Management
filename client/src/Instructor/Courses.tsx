@@ -9,6 +9,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import Divider from "@mui/material/Divider";
 import CoPresentIcon from '@mui/icons-material/CoPresent';
+import AddIcon from '@mui/icons-material/Add';
 import {AccessTime} from '@mui/icons-material'
 import useApi from '../components/Api'
 import { useNavigate  } from "react-router"
@@ -75,7 +76,12 @@ export default function Courses(){
 
     return(
             <>
-            
+            <Box sx={{width:'100%',height:'90vh' , bgcolor:'white' , p:0, margin: 0,overflow: 'auto'}}>
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 3  , }}>
+            <Button  variant="contained" sx={{  mr:2,
+                                bgcolor:"#0ea5e9"
+                                }} onClick ={()=> nav('/addcourse')}><AddIcon/>Add Course</Button>
+            </Box>
             <Box sx={{ display:'flex' , gap:5 ,  flexWrap: 'wrap',}}>
             {course.map ((data : Courses)=>{ return(
                 < div key={data.id}>
@@ -168,6 +174,14 @@ export default function Courses(){
                             gap: 1,
                             bm:1,
                              }}>
+                    <Button variant="outlined" sx={{  display: "flex",
+                                flex: 1,
+                                alignItems: "center",
+                                gap: 1,
+                                bgcolor:"#0ea5e9",
+                                color:"white",
+                                }} 
+                                onClick={()=>{nav(`/update/${data.id}` , {state:{data }})}}startIcon={<EditIcon />} >  Edit</Button>
                     <Button variant="outlined" sx={{ color: "#ef5252" ,display: "flex",
                                 flex: 1,
                                 alignItems: "center",
@@ -197,7 +211,7 @@ export default function Courses(){
                 </Button>
             </DialogActions>
             </Dialog>
-        
+        </Box>
         <Snackbar
             open={Boolean(message)}
             autoHideDuration={3000}
