@@ -1,6 +1,6 @@
 import { useLocation } from "react-router-dom";
 import { useState , useEffect } from "react"
-import { Api } from '../components/Api'
+import useApi from '../components/Api'
 import { styled } from '@mui/material/styles';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -56,7 +56,7 @@ export default function Enroll(){
     const location = useLocation();
     const course = location.state.data;
     console.log(location.state.data);
-
+    const { Api } = useApi();
     const [enroll, setEnroll] = useState([]);
     const [notenroll , setNotenroll] = useState([])
 

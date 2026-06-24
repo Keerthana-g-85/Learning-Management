@@ -1,5 +1,5 @@
 import { useState } from "react"
-import {Api} from "./Api";
+import useApi from './Api'
 import axios from 'axios'
 import {useNavigate , Link} from "react-router"
 import { TextField ,Box, Paper, Typography , Stack, Button , Snackbar} from "@mui/material";
@@ -12,7 +12,7 @@ export default function Register (){
     const [error , setError] = useState({errName:false , errEmail:false , errPassword:false , error:false})
 
     const [errmessage , setErrmessage] = useState({'errName':'' , 'errEmail':'' , 'errPassword':'' , 'error':''})
-
+    const { Api } = useApi();
     const nav = useNavigate()
      async function handleRegister(){
         try{

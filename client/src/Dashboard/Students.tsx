@@ -1,5 +1,5 @@
 import { useEffect, useState  } from "react"
-import {Api} from '../components/Api'
+import useApi from '../components/Api'
 import { styled } from '@mui/material/styles';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -41,6 +41,7 @@ interface Students{
 }
 export default function Students(){
     const [student , setStudent] = useState([])
+    const { Api } = useApi();
     useEffect(()=>{
         const getStudent = async()=>{
             try{

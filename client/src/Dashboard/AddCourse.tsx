@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import type{FormEvent} from 'react'
 import axios from 'axios'
-import {Api} from '../components/Api'
+import useApi from '../components/Api'
 import { TextField ,Box, Paper, Typography , Stack, Button , FormHelperText} from "@mui/material";
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
@@ -14,6 +14,7 @@ import image3 from '../assets/image2.png'
 
 export default function AddCourse(){
     const nav = useNavigate()
+    const { Api } = useApi();
     const [course , setCourse] = useState({title : '' , description : '' , instructor_name:'' , duration:'' ,level:'' , thumbnail:''})
     const [error , setError] = useState({title : false , description : false , instructor_name: false , duration: false ,level: false  , thumbnail: false})
     const [errmessage , setMessage] = useState({title : '' , description : '' , instructor_name:'' , duration:'' ,level:'' , thumbnail:''})

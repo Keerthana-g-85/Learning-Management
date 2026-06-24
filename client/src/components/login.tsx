@@ -1,6 +1,6 @@
 import { useState} from "react"
 import { useNavigate ,Link , } from "react-router"
-import {Api} from './Api'
+import useApi from './Api'
 import { TextField ,Box, Paper, Typography , Stack, Button, Snackbar } from "@mui/material";
 import axios from "axios";
 import image3 from '../assets/image3.png'
@@ -13,7 +13,7 @@ export default function Login (){
     const [login , setLogin] = useState({ email : '' , password : ''})
 
     const [error , setError] = useState({ 'errEmail':false , 'errPassword':false ,'error': false });
-    
+    const { Api } = useApi();
 
     const [errmessage , setErrmessage] = useState({'errEmail':'' , 'errPassword':'' , error:''})
 

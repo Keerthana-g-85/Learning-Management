@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import axios from 'axios'
-import {Api} from '../components/Api'
+import useApi from '../components/Api'
 import { TextField ,Box, Paper, Typography , Stack, Button , FormHelperText , Snackbar} from "@mui/material";
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
@@ -20,6 +20,7 @@ export default function UpdateCourse(){
     const nav = useNavigate()
     const data =location?.state?.data
     console.log(data)
+    const { Api } = useApi();
 
     const [course , setCourse] = useState({title :data.title , description : data.description , instructor_name: data.instructor_name , duration:data.duration ,level:data.level , thumbnail:data.thumbnail})
     const [error , setError] = useState({title : false , description : false , instructor_name: false , duration: false ,level: false  , thumbnail: false})

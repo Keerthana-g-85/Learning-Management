@@ -11,7 +11,7 @@ import Divider from "@mui/material/Divider";
 import CoPresentIcon from '@mui/icons-material/CoPresent';
 import AddIcon from '@mui/icons-material/Add';
 import {AccessTime} from '@mui/icons-material'
-import {Api} from '../components/Api'
+import useApi from '../components/Api'
 import { useNavigate  } from "react-router"
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
@@ -35,6 +35,7 @@ export default function Courses(){
     const [course , setCourse] = useState([])
     const [open, setOpen] = useState('');
     const [message , setMessage] = useState('')
+    const { Api } = useApi();
     // const [progress, setProgress] = useState(false);
 
     useEffect(()=>{

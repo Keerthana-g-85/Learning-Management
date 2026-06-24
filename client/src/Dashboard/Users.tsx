@@ -1,5 +1,5 @@
 import { useEffect, useState  } from "react"
-import {Api} from '../components/Api'
+import useApi from '../components/Api'
 import { styled } from '@mui/material/styles';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -46,6 +46,7 @@ interface Users{
 }
 
 export default function User(){
+  const { Api } = useApi();
     const [user , setUser] = useState([])
     const [edit , setEdit] = useState<Users | null>(null)
     useEffect(()=>{

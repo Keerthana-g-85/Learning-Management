@@ -1,5 +1,5 @@
 import { useEffect, useState  } from "react"
-import {Api} from '../components/Api'
+import useApi from '../components/Api'
 import { styled } from '@mui/material/styles';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -40,6 +40,7 @@ interface Instructor{
 }
 export default function Instructor(){
     const [instructor , setInstructor] = useState([])
+    const { Api } = useApi();
     useEffect(()=>{
         const getInstructor = async()=>{
             try{
