@@ -76,10 +76,10 @@ export default function Courses(){
 
     return(
             <>
-            <Box sx={{width:'100%',height:'90vh' , bgcolor:'white' , p:0, margin: 0,overflow: 'auto'}}>
+            <Box sx={{width:'100%',height:'90vh' , p:0, margin: 0,overflow: 'auto'}}>
             <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 3  , }}>
             <Button  variant="contained" sx={{  mr:2,
-                                bgcolor:"#0ea5e9"
+                                bgcolor:'#233D4D'
                                 }} onClick ={()=> nav('/addcourse')}><AddIcon/>Add Course</Button>
             </Box>
             <Box sx={{ display:'flex' , gap:5 ,  flexWrap: 'wrap',}}>

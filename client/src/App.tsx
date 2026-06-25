@@ -61,6 +61,7 @@ else if (user.role ==='instructor'){
           <Route path='/' element={<Login/>}></Route>
           <Route path='/register' element={<Register/>}></Route>
           <Route element={<InstructorHome />}>
+                <Route path='/profile' element={<Profile/>}/>
                 <Route path="/courses" element={<InstructorCourse />}/>
                 <Route path='/update/:id' element={<UpdateCourse/>} />
                 <Route path="/addcourse" element={<AddCourse/>} /> 

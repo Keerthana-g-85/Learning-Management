@@ -28,9 +28,8 @@ export default function UpdateCourse(){
     const [open, setOpen] = useState(false);
     const [notify , setNotification] = useState('')
    
-    async function handleClick(event: React.MouseEvent){
-        event.preventDefault()
-        try{
+   function handleSubmit (e:React.MouseEvent){
+        e.preventDefault()
             if (!course.title){
                 setError(prev => ({...prev , title:true}))
                 setMessage(prev => ({...prev , title:"Title is required"}))
@@ -59,10 +58,17 @@ export default function UpdateCourse(){
                 return
             }
             else{
+                setOpen(true);
+            }
+        }
+    
+
+    async function handleClick(e: React.MouseEvent){
+            e.preventDefault();
+            try{
             const response = await Api({method : 'put' , endpoint:`/course/update/${data.id}` , data : course})
             console.log(response)
             setNotification(response.data.message)
-            }
             }catch(error){
                 if (axios.isAxiosError(error)){
                 console.log(error)
@@ -73,17 +79,14 @@ export default function UpdateCourse(){
             setCourse({title : '' , description : '' , instructor_name:'' , duration:'' ,level:'' , thumbnail:''})
             nav('/courses',{state: notify})
     }
-    function handleSubmit (e:React.MouseEvent){
-        e.preventDefault();
-    setOpen(true);
-    }
+   
     
     return(
         <>
-        <Box sx={{width:'100%',height:'90vh' , bgcolor:'black' , p:0, margin: 0,overflow: 'auto'}}>
+        <Box sx={{width:'100%',height:'90vh'  , p:0, margin: 0,overflow: 'auto'}}>
          <Box sx={{ display: 'flex', justifyContent: 'flex-start',p:4 }}>
             <Button  variant="contained" sx={{ 
-                                bgcolor:"#0ea5e9",
+                                bgcolor:'#233D4D',
                                 borderRadius: 2,
                                 width:'100px',
                                 gap:1
@@ -96,10 +99,10 @@ export default function UpdateCourse(){
                             backgroundPosition: 'center',
                             }}>
             <Paper elevation={4} sx={{ p: 3, mt:3,
-                                        bgcolor:'white',
+                                        bgcolor:'#EAECF0',
                                         borderRadius: 3 , 
                                         width:'100%',
-                                        maxWidth: 1100,
+                                        maxWidth: 800,
                                         height: '600px',
                                         backdropFilter: 'blur(12px)',
                                         border: '1px solid rgba(217, 209, 209, 0.3)'}}>
@@ -138,7 +141,7 @@ export default function UpdateCourse(){
                        fullWidth
                        label="Instructor Name" 
                        variant="outlined" 
-                       sx={{  }}
+                       disabled
                        value={course.instructor_name}
                        error = {error.instructor_name}
                        helperText={errmessage.instructor_name}
@@ -174,23 +177,24 @@ export default function UpdateCourse(){
                 </Select>
                 <FormHelperText error={error.level}>{errmessage.level}</FormHelperText>
                 </FormControl>
-            </Box>
+            
 
             <TextField id="outlined-basic" 
                        fullWidth
                        label="Thumbnail" 
                        variant="outlined" 
-                       sx={{ }}
                        value={course.thumbnail}
                        error = {error.thumbnail}
                        helperText={errmessage.thumbnail}
                        onChange={(e)=>{setCourse({...course , thumbnail : e.target.value})
                        setError({...error , thumbnail:false})
                        setMessage(prev => ({...prev , thumbnail:""}))}}/>
+            </Box>
+
             <Box sx={{ display: "flex", justifyContent: "flex-end", }}>
             <Button variant="contained"
                     sx={{
-                    bgcolor:"#0ea5e9",
+                    bgcolor:'#233D4D',
                     borderRadius: 2,
                     }}
                     onClick={handleSubmit}>Update</Button>
@@ -210,7 +214,7 @@ export default function UpdateCourse(){
             </DialogContent>
             <DialogActions>
                 <Button onClick={() => setOpen(false)} sx={{bgcolor:"#626769" , color:'white'}} > Cancel</Button>
-                <Button variant="contained" sx={{bgcolor:"#0ea5e9"}} onClick={handleClick}> Update</Button>
+                <Button variant="contained" sx={{bgcolor:'#233D4D'}} onClick={handleClick}> Update</Button>
             </DialogActions>
             </Dialog>
         </Box>

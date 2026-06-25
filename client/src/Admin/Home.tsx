@@ -16,6 +16,7 @@ import CoPresentIcon from '@mui/icons-material/CoPresent';
 import TextField from '@mui/material/TextField'
 import Avatar from '@mui/material/Avatar';
 import { Outlet, useNavigate } from "react-router-dom";
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 const drawerWidth = 240;
 
@@ -29,7 +30,7 @@ export default function Home() {
     { text: "Instructors", icon:<CoPresentIcon sx={{color:'white'}}/> , path:"/instructors"},
   ];
   const profileItems =[
-    { text: "Profile", icon: <PeopleIcon sx={{color:'white'}} />, path: "/profile" },
+    { text: "Profile", icon: <AccountCircleIcon sx={{color:'white'}} />, path: "/profile" },
   ]
 
   return (
@@ -41,7 +42,7 @@ export default function Home() {
            bgcolor:'#233D4D',
           }}>
           <Toolbar>
-            <Typography variant="h6" noWrap sx={{color:''}}>
+            <Typography variant="h6" noWrap >
               Learning Management System
             </Typography>
             <TextField
