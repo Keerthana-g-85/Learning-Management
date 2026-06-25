@@ -11,6 +11,7 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import SchoolIcon from "@mui/icons-material/School";
+import Avatar from '@mui/material/Avatar';
 
 import { Outlet, useNavigate } from "react-router-dom";
 
@@ -29,12 +30,13 @@ export default function Home() {
         <AppBar
           position="fixed"
           sx={{ zIndex: (theme) => theme.zIndex.drawer + 1,
-            bgcolor: 'black'
+            bgcolor: '#0ea5e9'
           }}>
           <Toolbar>
             <Typography variant="h6" noWrap>
               Learning Management System
             </Typography>
+            <Avatar sx={{color:'white'}}src="/broken-image.jpg" />
           </Toolbar>
         </AppBar>
 

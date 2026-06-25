@@ -19,6 +19,7 @@ import InstructorCourse from "./Instructor/Courses"
 import StudentCourse from './Students/Courses'
 import StudentHome from './Students/Home'
 import StudentEnroll from './Students/Enroll'
+import Profile from './components/Profile'
 
 export default function App(){
   const dispatch = useDispatch()
@@ -40,6 +41,7 @@ export default function App(){
           <Route path='/' element={<Login/>}></Route>
           <Route path='/register' element={<Register/>}></Route>
           <Route element={<Home />}>
+                <Route path='/profile' element={<Profile/>}/>
                 <Route path="/courses" element={<Course />}/>
                 <Route path="/students" element={<Students />} />
                 <Route path="/instructors" element={<Instructor />} />
@@ -76,6 +78,7 @@ else if (user.role ==='student'){
       <Routes>
           <Route path='/' element={<Login/>}></Route>
           <Route path='/register' element={<Register/>}></Route>
+          <Route path='/profile' element={<Profile/>}/>
           <Route element={<StudentHome />}>
                 <Route path="/courses" element={<StudentCourse />}/>
                 <Route path="/enroll" element={<StudentEnroll/>}/>
