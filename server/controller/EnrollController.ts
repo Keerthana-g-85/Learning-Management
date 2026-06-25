@@ -128,14 +128,41 @@ export const Delete : RequestHandler = async (req,res) =>{
             success:true,
             message:"student unenrolled",
         })
-
-
     }
     catch(error){
         console.log(error)
         res.status(500).send({
             success: false ,
             message : "error while deleting"
+        })
+    }
+}
+
+export const GetStudent : RequestHandler = async (req,res) =>{
+    try{
+        const enrollRepo = database.getRepository(Enroll)
+        const studentId= req.params.id as string
+
+        const student_course = await enrollRepo.find({where : { register: { id: studentId }}, relations: { course: true } })
+
+        if (student_course.length === 0) {
+        return res.status(404).send({
+            success: false,
+            message: "Student is not enrolled in any course"
+        });
+        }
+
+        return res.status(200).send({
+            success:true,
+            message:"All students details",
+            student_course
+        })
+
+    }catch(error){
+        console.log(error)
+        res.status(500).send({
+            success: false ,
+            message : "error occured during getting"
         })
     }
 }

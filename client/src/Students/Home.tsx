@@ -21,6 +21,7 @@ export default function Home() {
 
   const menuItems = [
     { text: "Courses", icon: <SchoolIcon />, path: "/courses" },
+    { text: "Enrolled Courses", icon: <SchoolIcon />, path: "/enroll" },
   ];
 
   return (

@@ -16,6 +16,9 @@ import { jwtDecode } from "jwt-decode";
 import Instructor from "./Admin/Instructor"
 import {useEffect} from 'react'
 import InstructorCourse from "./Instructor/Courses"
+import StudentCourse from './Students/Courses'
+import StudentHome from './Students/Home'
+import StudentEnroll from './Students/Enroll'
 
 export default function App(){
   const dispatch = useDispatch()
@@ -56,7 +59,7 @@ else if (user.role ==='instructor'){
           <Route path='/' element={<Login/>}></Route>
           <Route path='/register' element={<Register/>}></Route>
           <Route element={<InstructorHome />}>
-                <Route path="/instructorcourses" element={<InstructorCourse />}/>
+                <Route path="/courses" element={<InstructorCourse />}/>
                 <Route path='/update/:id' element={<UpdateCourse/>} />
                 <Route path="/addcourse" element={<AddCourse/>} /> 
                 <Route path="/courses/enroll/:id" element={<InstructorEnroll/>} />
@@ -73,11 +76,10 @@ else if (user.role ==='student'){
       <Routes>
           <Route path='/' element={<Login/>}></Route>
           <Route path='/register' element={<Register/>}></Route>
-          <Route element={<InstructorHome />}>
-                <Route path="/instructorcourses" element={<InstructorCourse />}/>
-                <Route path='/update/:id' element={<UpdateCourse/>} />
-                <Route path="/addcourse" element={<AddCourse/>} /> 
-                <Route path="/courses/enroll/:id" element={<InstructorEnroll/>} />
+          <Route element={<StudentHome />}>
+                <Route path="/courses" element={<StudentCourse />}/>
+                <Route path="/enroll" element={<StudentEnroll/>}/>
+                
           </Route>
       </Routes>
       </BrowserRouter>
