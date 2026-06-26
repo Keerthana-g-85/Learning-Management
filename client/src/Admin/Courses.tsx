@@ -19,7 +19,9 @@ import DialogActions from "@mui/material/DialogActions";
 import { useSelector } from "react-redux";
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
-
+import Checkbox from '@mui/material/Checkbox';
+import FormGroup from '@mui/material/FormGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
 
 interface Courses {
     id : string ,
@@ -28,7 +30,8 @@ interface Courses {
     instructor_name: string ,
     duration : string ,
     thumbnail : string ,
-    level : string 
+    level : string,
+    name:string
 }
 export default function Courses(){
     const nav = useNavigate()
@@ -38,6 +41,8 @@ export default function Courses(){
     const [message , setMessage] = useState('')
     const [debounce , setDebounce] = useState('')
     const [page, setPage] = useState(1);
+    const [filter , setFilter] = useState<string[]>([])
+    const [instructor , setInstructor] = useState([])
     const { Api } = useApi();
 
     const search = useSelector((state: any) => state.search.search);
@@ -103,20 +108,66 @@ export default function Courses(){
         }; searchTitle()
     },[debounce])
 
-    const per_page = 3
+    const per_page = 6
     const intial = (page - 1 )* per_page
     const final = page * per_page    
     const total_page = Math.ceil(course.length / per_page)
     console.log(total_page)
-    const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
+    const handleChange = (e: React.ChangeEvent<unknown>, value: number) => {
+        e.preventDefault()
         setPage(value);
     };
 
     const currentPage = course.slice (intial , final)
 
+    useEffect (()=>{
+        const instructor = async ()=>{ 
+        const response = await Api({method:'get' , endpoint:'/register/getinstructor'})
+        console.log(response.data.instructor);
 
+        const name=(response.data.instructor).map((data:Courses)=>data.name)
+        console.log(name)
+        setInstructor(name)
+        // const data =response.data.instructor.reduce((acc:Array<string> , data ) => acc.concat(data.name),[])
+        // console.log(data);
+        
+
+        }; instructor()
+    },[])
+
+    function handleFilter(data:string){
+        if (filter.includes(data)){
+            const filtered = filter.filter((item)=>item !== data)
+            setFilter(filtered)
+        }
+        else{
+             setFilter([...filter, data]);
+        }
+    }
+    const filterCourse = async ()=>{
+        const response = await Api({method:'get' , endpoint :`/course/filter/${filter.join(',')}` })
+        console.log(response.data.courses)
+        setCourse(response.data.courses)
+    }
+    useEffect(()=>{
+        if (filter.length > 0) {
+        filterCourse();
+    } else {
+        getCourse();
+    }
+    },[filter])
     return(
             <>
+            <Box sx={{ display:'flex' , height:'80px' , justifyContent:'right'}}>
+                {instructor.map((data , index )=>
+                    <>
+                    <FormGroup  key={index}>
+                        <FormControlLabel control={<Checkbox checked={filter.includes(data)}
+                         onChange={()=>handleFilter(data)}/>} label={data} />
+                    </FormGroup>
+                    </>
+                )}
+            </Box>
             
             <Box sx={{ display:'flex' , gap:5 ,  flexWrap: 'wrap',}}>
             {currentPage.map ((data : Courses)=>{ return(
@@ -134,7 +185,7 @@ export default function Courses(){
                         <CardMedia
                             component="img"
                             alt="green iguana"
-                            height="250"
+                            height="180"
                             sx={{p:1 , borderRadius:5}}
                             image={data.thumbnail}/>
                             <Button
@@ -168,7 +219,7 @@ export default function Courses(){
                         <Typography sx={{
                             color: "#94a3b8",
                             fontSize: "1rem",
-                            lineHeight: 1.7,
+                            lineHeight: 1.6,
                             minHeight: 70,}}>
                         {data.description}
                         </Typography>
@@ -178,7 +229,7 @@ export default function Courses(){
                             display: "flex",
                             alignItems: "center",
                             gap: 1,
-                            p:2
+                            mb:2
                             }}>
                             <Typography sx={{ fontWeight: 600,
                                 display: "flex",
@@ -208,7 +259,7 @@ export default function Courses(){
                             display: "flex",
                             alignItems: "center",
                             gap: 1,
-                            p:1
+                            mb:1
                              }}>
                     <Button variant="outlined" sx={{ color: "#ef5252" ,display: "flex",
                                 flex: 1,

@@ -2,6 +2,7 @@ import Course from '../models/CourseModel.js'
 import {database} from '../server.js'
 import type{ RequestHandler } from 'express'
 import { ILike } from "typeorm";
+import { In } from "typeorm";
 
 export const Create : RequestHandler = async(req,res) =>{
     try{
@@ -153,3 +154,22 @@ export const Delete : RequestHandler = async(req,res) =>{
         })
     }
 }
+
+export const FilterCourse : RequestHandler = async (req, res) => {
+    try {
+        const instructors = req.params.instructors.split(",");
+        const courseRepo = database.getRepository(Course)
+        const courses = await courseRepo.find({ where:{instructor_name: In(instructors)}});
+
+        res.status(200).json({
+            success: true ,
+            message :'Filtered by Instructor name',
+            courses
+        });
+    } catch (error) {
+        res.status(500).send({
+            success:false,
+            message: 'Error while filtering'
+        });
+    }
+};
