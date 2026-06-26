@@ -90,4 +90,14 @@ else if (user.role ==='student'){
     </>
   )
 }
+else {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+      </Routes>
+    </BrowserRouter>
+  );
+}
 }

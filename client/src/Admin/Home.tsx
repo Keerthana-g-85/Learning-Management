@@ -19,10 +19,20 @@ import { Outlet, useNavigate } from "react-router-dom";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { useDispatch , useSelector} from "react-redux";
 import { addSearch } from "../redux/SearchSlice";
+import Dialog from "@mui/material/Dialog";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogActions from "@mui/material/DialogActions";
+import { useState } from 'react'
+import Button from '@mui/material/Button'
+import LogoutIcon from '@mui/icons-material/Logout';
 
 const drawerWidth = 240;
 
 export default function Home() {
+  const [open, setOpen] = useState(false);
+
   const navigate = useNavigate();
   const dispatch = useDispatch()
   const search = useSelector((state: any) => state.search.search);
@@ -35,9 +45,16 @@ export default function Home() {
   ];
   const profileItems =[
     { text: "Profile", icon: <AccountCircleIcon sx={{color:'white'}} />, path: "/profile" },
+    { text: "Logout", icon: <AccountCircleIcon sx={{color:'white'}}/>, path:'' }
   ]
+  
+      function handleDelete(){
+          localStorage.clear()
+          navigate('/')
+      }
 
   return (
+    <>
     <Box sx={{ display: "flex" , bgcolor:'#FFFAF3' , width:'100%' , height:'100vh' , }}>
       <CssBaseline />
         <AppBar
@@ -106,7 +123,7 @@ export default function Home() {
             {profileItems.map((item) => (
               <ListItem key={item.text} >
                 <ListItemButton
-                  onClick={() => navigate(item.path)}>
+                  onClick={() => item.text ==='Logout' ? setOpen(true) :navigate(item.path)}>
                   <ListItemIcon>
                     {item.icon}
                   </ListItemIcon>
@@ -127,5 +144,21 @@ export default function Home() {
         <Outlet /> 
       </Box>
     </Box>
+    <Dialog open={Boolean(open)} onClose={() => setOpen(false)}>
+            <DialogTitle>Logout </DialogTitle>
+            <DialogContent>
+                <DialogContentText>
+                Are you sure you want to Logout
+                </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+                <Button onClick={() => setOpen(false)} sx={{bgcolor:"#626769" , color:'white'}} > Cancel</Button>
+                <Button variant="contained" sx={{ bgcolor: "#ef5252" ,display: "flex",
+                                border:'1px solid #ef5252' }}  
+                                onClick={handleDelete}> Logout<LogoutIcon/>
+                </Button>
+            </DialogActions>
+            </Dialog>
+    </>
   );
 }

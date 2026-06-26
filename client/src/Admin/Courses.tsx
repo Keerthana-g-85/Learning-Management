@@ -46,9 +46,6 @@ export default function Courses(){
     const { Api } = useApi();
 
     const search = useSelector((state: any) => state.search.search);
-    // const [progress, setProgress] = useState(false);
-
-    
        const getCourse =async () =>{
         try{
         const response = await Api({method : 'get' , endpoint:'course/getall'})
