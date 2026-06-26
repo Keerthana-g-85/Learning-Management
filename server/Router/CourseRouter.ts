@@ -5,8 +5,11 @@ import express from 'express'
 export const CourseRouter = express.Router()
 
 CourseRouter.post('/create',authentication ,Create)
+
 CourseRouter.get('/getall',authentication,GetAll)
 CourseRouter.get('/get/:search',authentication,Get)
-CourseRouter.put('/update/:id',authentication,Update)
-CourseRouter.delete('/delete/:id',authentication,Delete)
 CourseRouter.get('/filter/:instructors',authentication,FilterCourse)
+
+CourseRouter.put('/update/:id',authentication,Update)
+
+CourseRouter.delete('/delete/:id',authentication,Delete)

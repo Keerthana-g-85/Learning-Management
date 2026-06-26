@@ -1,15 +1,17 @@
 import express  from 'express';
 import dotenv from 'dotenv';
-import { DataSource , type DataSourceOptions} from 'typeorm';
-import Register from './models/RegisterModel.js';
-import Course from './models/CourseModel.js'
-import Enroll from './models/EnrollModel.js'
-import {registerRouter } from './Router/RegisterRouter.js'
-import {CourseRouter} from './Router/CourseRouter.js'
-import { EnrollRouter  } from './Router/EnrollRouter.js';
 import cors from 'cors'
 import cookieParser from "cookie-parser";
 
+import { DataSource , type DataSourceOptions} from 'typeorm';
+
+import Register from './models/RegisterModel.js';
+import Course from './models/CourseModel.js'
+import Enroll from './models/EnrollModel.js'
+
+import { registerRouter } from './Router/RegisterRouter.js'
+import { CourseRouter } from './Router/CourseRouter.js'
+import { EnrollRouter  } from './Router/EnrollRouter.js';
 
 dotenv.config()
 
@@ -39,6 +41,7 @@ const data : DataSourceOptions = {
     synchronize : true ,                                //TypeORM automatically creates/updates tables.
     entities : [Register , Course , Enroll ]
 }
+
 export const database = new DataSource(data)
 const port = process.env.PORT
 
@@ -58,4 +61,3 @@ const connection = async () => {
 }
 
 connection()
-

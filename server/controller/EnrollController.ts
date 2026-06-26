@@ -1,9 +1,10 @@
-import Enroll from '../models/EnrollModel.js'
-import {database} from '../server.js'
+import type { RequestHandler } from 'express';
+import { database } from '../server.js'
+
 import Register from '../models/RegisterModel.js';
 import Course from '../models/CourseModel.js'
-import type { RequestHandler } from 'express';
-import {Role } from '../models/RegisterModel.js'
+import Enroll from '../models/EnrollModel.js'
+import { Role } from '../models/RegisterModel.js'
 
 export const Create:RequestHandler = async (req, res) => {
     try{

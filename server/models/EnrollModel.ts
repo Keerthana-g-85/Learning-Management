@@ -1,6 +1,7 @@
 import {Column ,Entity , ManyToOne, PrimaryGeneratedColumn , CreateDateColumn , UpdateDateColumn, JoinColumn} from 'typeorm'
 import Register from './RegisterModel.js'
 import Course from './CourseModel.js'
+
 @Entity()
 export default class Enroll{
 

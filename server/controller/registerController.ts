@@ -1,9 +1,11 @@
-import { database } from '../server.js'
-import Register from '../models/RegisterModel.js'
-import {Role } from '../models/RegisterModel.js'
-import type { RequestHandler } from 'express'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
+import type { RequestHandler } from 'express'
+
+import { database } from '../server.js'
+import Register from '../models/RegisterModel.js'
+import { Role } from '../models/RegisterModel.js'
+
 
 export const Create : RequestHandler = async (req,res) => {
     try{

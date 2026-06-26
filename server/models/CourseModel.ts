@@ -5,6 +5,7 @@ export enum Level {
     intermediate = 'intermediate',
     advanced = 'advanced'
 }
+
 @Entity()
 export default class Course{
 

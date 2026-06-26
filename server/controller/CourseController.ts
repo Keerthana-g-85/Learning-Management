@@ -1,6 +1,8 @@
-import Course from '../models/CourseModel.js'
-import {database} from '../server.js'
 import type{ RequestHandler } from 'express'
+
+import {database} from '../server.js'
+import Course from '../models/CourseModel.js'
+
 import { ILike } from "typeorm";
 import { In } from "typeorm";
 
