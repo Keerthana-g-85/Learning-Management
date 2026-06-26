@@ -52,7 +52,7 @@ export default function Enroll(){
     console.log(id)
     const [enroll, setEnroll] = useState([]);
 
-    useEffect(()=>{
+    
         const getEnroll =async () =>{
         try{
         const response = await Api({method : 'get' , endpoint:`enroll/getstudent/${id}`})
@@ -61,8 +61,20 @@ export default function Enroll(){
         console.log(data)
         }catch(error){
             console.log(error)
-        }}; getEnroll()
+        }}; 
+    useEffect(()=>{getEnroll()
     },[])
+
+    async function handleUnenroll(id:string){
+            try{
+                const response = await Api({method:'delete' , endpoint:`enroll/delete/${id}`})
+                console.log(response)
+                getEnroll()
+               
+            }catch(error){
+                console.log(error)
+            }
+        }
     
 
     return(
@@ -120,7 +132,9 @@ export default function Enroll(){
                     <StyledTableCell align="right">{row.course.level}</StyledTableCell>
                     <StyledTableCell align="right">{row.course.duration}</StyledTableCell>
                     <StyledTableCell align="right">{row.enroll_date}</StyledTableCell>
-                    <StyledTableCell align="right"><Button color="error" variant="contained" sx={{ gap:1}}
+                    <StyledTableCell align="right">
+                        <Button color="error" variant="contained" sx={{ gap:1}}
+                    onClick={()=>handleUnenroll(row.id)}
                     ><GroupRemoveIcon/>Unenroll</Button></StyledTableCell>
                     </StyledTableRow>
                 ))}

@@ -79,8 +79,8 @@ else if (user.role ==='student'){
       <Routes>
           <Route path='/' element={<Login/>}></Route>
           <Route path='/register' element={<Register/>}></Route>
-          <Route path='/profile' element={<Profile/>}/>
           <Route element={<StudentHome />}>
+                <Route path='/profile' element={<Profile/>}/>
                 <Route path="/courses" element={<StudentCourse />}/>
                 <Route path="/enroll" element={<StudentEnroll/>}/>
                 

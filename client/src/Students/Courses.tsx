@@ -10,6 +10,11 @@ import CoPresentIcon from '@mui/icons-material/CoPresent';
 import {AccessTime} from '@mui/icons-material'
 import useApi from '../components/Api'
 import { useSelector } from "react-redux";
+import Dialog from "@mui/material/Dialog";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogActions from "@mui/material/DialogActions";
 
 interface Courses {
     id : string ,
@@ -24,7 +29,7 @@ export default function Courses(){
 
     const user = useSelector((state: any) => state.login.user);
 
-
+    const [open, setOpen] = useState('');
     const [course , setCourse] = useState([])
     const [message , setMessage] = useState('')
     const { Api } = useApi();
@@ -36,20 +41,23 @@ export default function Courses(){
         const response = await Api({method : 'get' , endpoint:'course/getall'})
         const data = response.data.AllCourses
         setCourse(data)
-        //  setMessage(response.data.message)
+        setMessage(response.data.message)
     }catch(error){
         console.log(error)
     }}; getCourse()
     },[])
     console.log()
+
     async function handleEnroll(id:string){
         console.log(id)
             try{
                 const response = await Api({method : 'post' , endpoint:`enroll/create/` ,data:{"register":`${user.id}` , "course":`${id}`}})
                 console.log(response)
+                setOpen('')
             }catch(error){
                 console.log(error)
             }
+            
         }
         
     return(
@@ -127,7 +135,7 @@ export default function Courses(){
                             </Typography>
                         </Box>
                         
-                <Box  sx={{
+                {/* <Box  sx={{
                             display: "flex",
                             alignItems: "center",
                             gap: 1,
@@ -140,14 +148,24 @@ export default function Courses(){
                                 bgcolor:"#0ea5e9",
                                 color:"white",
                                 }} 
-                                onClick={()=>{handleEnroll(data.id)}} > Enroll</Button>
-                    
-                    
-                </Box>
+                                onClick={()=>setOpen(data.id)} > Enroll</Button>   
+                </Box> */}
                </CardContent>
                 </Card>
                 </div>)})
             }
+            <Dialog open={Boolean(open)} onClose={() => setOpen('')}>
+            <DialogTitle> Add Course </DialogTitle>
+            <DialogContent>
+                <DialogContentText>
+                Are you sure you want to Add course?
+                </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+                <Button onClick={() => setOpen('')} sx={{bgcolor:"#626769" , color:'white'}} > Cancel</Button>
+                <Button variant="contained" sx={{bgcolor:"#0ea5e9"}} onClick={()=>{handleEnroll(open)}}>Enroll</Button>
+            </DialogActions>
+            </Dialog>
             </Box>
         
         <Snackbar
