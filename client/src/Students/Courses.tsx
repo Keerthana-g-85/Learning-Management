@@ -135,7 +135,7 @@ export default function Courses(){
                             </Typography>
                         </Box>
                         
-                {/* <Box  sx={{
+                <Box  sx={{
                             display: "flex",
                             alignItems: "center",
                             gap: 1,
@@ -149,7 +149,7 @@ export default function Courses(){
                                 color:"white",
                                 }} 
                                 onClick={()=>setOpen(data.id)} > Enroll</Button>   
-                </Box> */}
+                </Box>
                </CardContent>
                 </Card>
                 </div>)})

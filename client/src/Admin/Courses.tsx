@@ -16,6 +16,9 @@ import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogActions from "@mui/material/DialogActions";
+import { useSelector } from "react-redux";
+import Pagination from '@mui/material/Pagination';
+import Stack from '@mui/material/Stack';
 
 
 interface Courses {
@@ -33,10 +36,14 @@ export default function Courses(){
     const [course , setCourse] = useState([])
     const [open, setOpen] = useState('');
     const [message , setMessage] = useState('')
+    const [debounce , setDebounce] = useState('')
+    const [page, setPage] = useState(1);
     const { Api } = useApi();
+
+    const search = useSelector((state: any) => state.search.search);
     // const [progress, setProgress] = useState(false);
 
-    useEffect(()=>{
+    
        const getCourse =async () =>{
         try{
         const response = await Api({method : 'get' , endpoint:'course/getall'})
@@ -45,11 +52,12 @@ export default function Courses(){
         //  setMessage(response.data.message)
     }catch(error){
         console.log(error)
-    }}; getCourse()
+    }}; 
+    useEffect(()=>{
+        getCourse()
     },[])
     useEffect(() => {
     const timer = setInterval(() => {
-    //   setProgress(true);
     }, 800);
     return () => {
       clearInterval(timer);
@@ -58,7 +66,6 @@ export default function Courses(){
 
     async function handleDelete(id : string){
         console.log(id)
-        // setProgress(true)
         try{
         const deleteResponse = await Api ({method :'delete',endpoint:'/course/delete/'+`${id}` })
         console.log('/course/delete/'+`${id}`)
@@ -71,12 +78,48 @@ export default function Courses(){
             console.log(error)
         }
     }
+    useEffect(()=>{
+        const timer = setTimeout(()=>{
+            setDebounce(search)          
+        },1000)
+        return ()=> clearTimeout(timer)
+    },[search])
+
+    useEffect(()=>{
+        const searchTitle = async() =>{
+            try{
+                if(debounce.trim() !==''){
+                const response = await Api({method:'get', endpoint:`/course/get/${debounce}` })
+                console.log('search',response.data.course)
+                const data = response.data.course
+                setCourse(data)
+                }else{
+                      getCourse()
+                }
+
+            }catch(error){
+                console.log(error)
+            }
+        }; searchTitle()
+    },[debounce])
+
+    const per_page = 3
+    const intial = (page - 1 )* per_page
+    const final = page * per_page    
+    const total_page = Math.ceil(course.length / per_page)
+    console.log(total_page)
+    const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
+        setPage(value);
+    };
+
+    const currentPage = course.slice (intial , final)
+
 
     return(
             <>
             
             <Box sx={{ display:'flex' , gap:5 ,  flexWrap: 'wrap',}}>
-            {course.map ((data : Courses)=>{ return(
+            {currentPage.map ((data : Courses)=>{ return(
                 < div key={data.id}>
                     <Card sx={{ width: 450 , 
                         position: "relative",
@@ -91,7 +134,7 @@ export default function Courses(){
                         <CardMedia
                             component="img"
                             alt="green iguana"
-                            height="180"
+                            height="250"
                             sx={{p:1 , borderRadius:5}}
                             image={data.thumbnail}/>
                             <Button
@@ -125,7 +168,7 @@ export default function Courses(){
                         <Typography sx={{
                             color: "#94a3b8",
                             fontSize: "1rem",
-                            lineHeight: 1.6,
+                            lineHeight: 1.7,
                             minHeight: 70,}}>
                         {data.description}
                         </Typography>
@@ -135,7 +178,7 @@ export default function Courses(){
                             display: "flex",
                             alignItems: "center",
                             gap: 1,
-                            mb:2
+                            p:2
                             }}>
                             <Typography sx={{ fontWeight: 600,
                                 display: "flex",
@@ -165,7 +208,7 @@ export default function Courses(){
                             display: "flex",
                             alignItems: "center",
                             gap: 1,
-                            bm:1,
+                            p:1
                              }}>
                     <Button variant="outlined" sx={{ color: "#ef5252" ,display: "flex",
                                 flex: 1,
@@ -196,6 +239,15 @@ export default function Courses(){
                 </Button>
             </DialogActions>
             </Dialog>
+            <Box sx={{display:'flex' ,justifyContent:'center' , p:9 }}>
+            <Stack spacing={2}>
+                <Pagination count={total_page} page={page} onChange={handleChange}  sx={{'& .MuiPaginationItem-root': {
+                        fontSize: '1.6rem',    
+                        height: '4rem',      
+                        minWidth: '4rem',  
+                        }}} />
+            </Stack>
+            </Box>
         
         <Snackbar
             open={Boolean(message)}

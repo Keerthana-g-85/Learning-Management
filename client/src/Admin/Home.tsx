@@ -17,12 +17,16 @@ import TextField from '@mui/material/TextField'
 import Avatar from '@mui/material/Avatar';
 import { Outlet, useNavigate } from "react-router-dom";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import { useDispatch , useSelector} from "react-redux";
+import { addSearch } from "../redux/SearchSlice";
 
 const drawerWidth = 240;
 
 export default function Home() {
   const navigate = useNavigate();
-
+  const dispatch = useDispatch()
+  const search = useSelector((state: any) => state.search.search);
+  console.log(search)
   const menuItems = [
     { text: "Courses", icon: <SchoolIcon  sx={{color:'white'}}/>, path: "/courses" },
     { text: "Users" , icon:< PeopleIcon sx={{color:'white'}}/> ,path:"/user"},
@@ -58,7 +62,9 @@ export default function Home() {
           color: 'white',
           '& fieldset': { border: 'none' }, // Remove default border
         },
-      }}></TextField>
+      }}
+      value={search}
+      onChange={(e)=>{dispatch(addSearch(e.target.value))}}></TextField>
             <Box sx={{ flexGrow: 1 }} />
             
             <Box sx={{display:'flex' , alignItems:'right' }}>

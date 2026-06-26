@@ -1,6 +1,7 @@
 import Course from '../models/CourseModel.js'
 import {database} from '../server.js'
 import type{ RequestHandler } from 'express'
+import { ILike } from "typeorm";
 
 export const Create : RequestHandler = async(req,res) =>{
     try{
@@ -65,9 +66,9 @@ export const GetAll : RequestHandler = async(req,res) => {
 export const Get : RequestHandler = async(req,res) =>{
     try{
         const courseRepo = database.getRepository(Course)
-        const id  = req.params.id as string
-        console.log(id)
-        const course = await courseRepo.findOneBy({id })
+        const search  = req.params.search as string
+        console.log(search)
+        const course = await courseRepo.find({ where: { title: ILike(`${search}%`)}});
         console.log(course)
         if (!course){
             return res.status(404).send({

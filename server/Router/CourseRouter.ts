@@ -6,6 +6,6 @@ export const CourseRouter = express.Router()
 
 CourseRouter.post('/create',authentication ,Create)
 CourseRouter.get('/getall',authentication,GetAll)
-CourseRouter.get('/get/:id',authentication,Get)
+CourseRouter.get('/get/:search',authentication,Get)
 CourseRouter.put('/update/:id',authentication,Update)
 CourseRouter.delete('/delete/:id',authentication,Delete)
