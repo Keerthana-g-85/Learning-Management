@@ -41,12 +41,14 @@ interface Courses {
 
 export default function Courses(){
 
-    const [course , setCourse] = useState<[]>([])
+    const [course , setCourse] = useState<Courses[]>([])
     const [page, setPage] = useState<number>(1);
     const [filter , setFilter] = useState<string[]>([])
     const [instructor , setInstructor] = useState<string[]>([])
     const [message , setMessage] = useState<string>('')
     const [open, setOpen] = useState<string>('');
+    const [searchdata , setSearchdata] = useState<Courses[]>([])
+    const [filterdata , setFilterdata] = useState<Courses[]>([])
 
     const { Api } = useApi();
     
@@ -101,7 +103,8 @@ export default function Courses(){
                 const response = await Api({method:'get', endpoint:`/course/get/${debounce}` })
                 console.log('search',response.data.course)
                 const data = response.data.course
-                setCourse(data)
+                setSearchdata(data)
+                
             }else{
                     getCourse()
             }   
@@ -129,8 +132,8 @@ export default function Courses(){
         setInstructor(name)
     }; 
 
-    useEffect (()=>{
-        instructorName()    
+    useEffect(()=>{
+        instructorName()
     },[])
 
     function handleFilter(data:string){
@@ -146,16 +149,30 @@ export default function Courses(){
     const filterCourse = async ()=>{
         const response = await Api({method:'get' , endpoint :`/course/filter/${filter.join(',')}` })
         console.log(response.data.courses)
-        setCourse(response.data.courses)
+        const data=response.data.courses
+        setFilterdata(data)
     }
 
+    useEffect(() => {
+        filterCourse()
+    },[filter])
+
     useEffect(()=>{
-        if (filter.length > 0) {
-        filterCourse();
-        } else {
+        if (debounce && filter.length > 0){
+            const common  = searchdata.filter(course =>
+            filterdata.some(filter => filter.id === course.id));
+            setCourse(common)
+        }
+        else if (debounce){
+            setCourse(searchdata)
+        }
+        else if(filter.length > 0) {
+            setCourse(filterdata)
+        }
+         else {
             getCourse();
         }
-    },[filter])
+    },[filterdata , searchdata , debounce , filter])
 
     return(
         <>
