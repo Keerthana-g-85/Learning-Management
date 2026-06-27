@@ -17,6 +17,8 @@ import TableRow from '@mui/material/TableRow';
 import Checkbox from '@mui/material/Checkbox';
 import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
+import Pagination from '@mui/material/Pagination';
+import Stack from '@mui/material/Stack';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save'
@@ -62,7 +64,14 @@ export default function User(){
   const [filter , setFilter] = useState<string[]>([])
   const [searchdata , setSearchdata] = useState<Users[]>([])
   const [filterdata , setFilterdata] = useState<Users[]>([])
+  const [page, setPage] = useState<number>(1);
+
   const role = ['student' , 'instructor']
+  const perPage = 7;
+  const initial = (page - 1) * perPage;
+  const final = page * perPage;
+  const total_page = Math.ceil(user.length / perPage);
+  const currentPage = user.slice(initial, final);
 
   const { Api } = useApi();
 
@@ -110,48 +119,56 @@ export default function User(){
         }
     }; 
 
-    function handleFilter(data:string){
-        if (filter.includes(data)){
-            const filtered = filter.filter((item)=>item !== data)
-            setFilter(filtered)
-        }
-        else{
-             setFilter([...filter, data]);
-        }
-    }
+  function handleFilter(data:string){
+      if (filter.includes(data)){
+          const filtered = filter.filter((item)=>item !== data)
+          setFilter(filtered)
+      }
+      else{
+            setFilter([...filter, data]);
+      }
+  }
 
-    const filterUser = async ()=>{
-        const response = await Api({method:'get' , endpoint :`/register/filter/${filter.join(',')}` })
-        console.log(response.data.users)
-        setFilterdata(response.data.users);
-    }
+  const filterUser = async ()=>{
+      const response = await Api({method:'get' , endpoint :`/register/filter/${filter.join(',')}` })
+      console.log(response.data.users)
+      setFilterdata(response.data.users);
+  }
 
-    useEffect(() => {
-    searchUser();
-    }, [debounce]);
+  useEffect(() => {
+  searchUser();
+  setPage(1);
+  }, [debounce]);
 
-    useEffect(() => {
-    if (filter.length > 0) {
-        filterUser();
-    }
-    }, [filter]);
+  useEffect(() => {
+  if (filter.length > 0) {
+      filterUser();
+      setPage(1);
+  }
+  }, [filter]);
 
-    useEffect(()=>{
-        if (debounce && filter.length > 0){
-            const common  = searchdata.filter(course =>
-            filterdata.some(filter => filter.id === course.id));
-            setUser(common)
-        }
-        else if (debounce){
-            setUser(searchdata)
-        }
-        else if(filter.length > 0) {
-            setUser(filterdata)
-        }
-         else {
-            getUsers();
-        }
-    },[filterdata , searchdata , debounce , filter])
+  useEffect(()=>{
+      if (debounce && filter.length > 0){
+          const common  = searchdata.filter(course =>
+          filterdata.some(filter => filter.id === course.id));
+          setUser(common)
+      }
+      else if (debounce){
+          setUser(searchdata)
+      }
+      else if(filter.length > 0) {
+          setUser(filterdata)
+      }
+        else {
+          getUsers();
+      }
+  },[filterdata , searchdata , debounce , filter])
+
+  const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
+    event.preventDefault();
+    setPage(value);
+  };
+
 
   return(
     <>
@@ -165,7 +182,7 @@ export default function User(){
                     </>
                 )}
             </Box>
-      <Paper elevation={6} sx={{ mt: 5, 
+      <Paper elevation={6} sx={{ mt: 0, 
         borderRadius: 2,
         boxShadow: "0 20px 40px rgba(0,0,0,0.35)",
         }}>
@@ -195,7 +212,7 @@ export default function User(){
           </TableRow>
         </TableHead>
         <TableBody>
-        {user.map((row: Users) => (
+        {currentPage.map((row: Users) => (
           <StyledTableRow key={row.id}>
             <StyledTableCell component="th" scope="row">
               <Box sx={{ display: "flex",
@@ -245,6 +262,18 @@ export default function User(){
         </TableBody>
         </Table>
         </TableContainer> 
+        <Box sx={{display:'flex' ,justifyContent:'center' , p:3 }}>
+                <Stack spacing={2}>
+                    <Pagination count={total_page} 
+                        page={page} 
+                        onChange={handleChange}  
+                        sx={{'& .MuiPaginationItem-root': {
+                        fontSize: '1rem',    
+                        height: '4rem',      
+                        minWidth: '4rem',  
+                        }}} />
+                </Stack>
+            </Box>
       </Paper>
     </>
   )
