@@ -292,12 +292,12 @@ export default function Enroll(){
                 </TableContainer>
             </Paper>
             <Snackbar open={Boolean(message)}
-                            autoHideDuration={3000}
-                            message ={message}
-                            onClose={() => dispatch(getMessage(''))}
-                            anchorOrigin={{
-                                vertical: 'bottom',
-                                horizontal: 'right'}}/>
+                autoHideDuration={3000}
+                message ={message}
+                onClose={() => dispatch(getMessage(''))}
+                anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'right'}}/>
         </>
     )
 }

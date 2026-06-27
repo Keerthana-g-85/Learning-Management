@@ -3,6 +3,8 @@ import { Outlet, useNavigate } from "react-router-dom";
 import { useDispatch , useSelector} from "react-redux";
 import { addSearch } from "../redux/SearchSlice";
 
+import logo from "../assets/logo.png";
+
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import TextField from '@mui/material/TextField';
@@ -28,6 +30,8 @@ import PeopleIcon from "@mui/icons-material/People";
 import CoPresentIcon from '@mui/icons-material/CoPresent';
 import Avatar from '@mui/material/Avatar';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import SearchIcon from '@mui/icons-material/Search';
+import InputAdornment from "@mui/material/InputAdornment";
 
 const drawerWidth = 240;
 
@@ -39,6 +43,7 @@ export default function Home() {
   const dispatch = useDispatch();
 
   const search = useSelector((state: any) => state.search.search);
+  const name = useSelector((state:any)=>state.login.user.name)
   console.log(search)
 
   const menuItems = [
@@ -67,16 +72,43 @@ export default function Home() {
            bgcolor:'#233D4D',
           }}>
           <Toolbar>
-            <Typography variant="h6" noWrap >
-              Learning Management System
+            <Box sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: 1,
+              mr: 15, }}>
+            <Box component="img"
+            src={logo}
+            alt="LMS Logo"
+            sx={{ width: 50,
+            height: 50,
+            borderRadius:'25px'
+            }}/>
+            <Typography variant="body2"
+              sx={{ color: "#CBD5E1",
+              fontWeight: 700,
+              lineHeight: 1.2,
+              fontFamily: "Poppins, sans-serif",
+              letterSpacing: "0.15em",
+              fontSize:'22px'}}>
+              LMS
             </Typography>
+            </Box>
             <TextField
               variant="outlined"
               size="small"
               placeholder="Search..."
+              slotProps={{
+              input: {
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon sx={{ color: "#CBD5E1" }} />
+                  </InputAdornment>
+                ),
+              },}}
               sx={{
               bgcolor: 'rgba(255,255,255,0.15)',
-              borderRadius: 1,
+              borderRadius: "30px",
               width:600,
               border:'none',
               '& .MuiOutlinedInput-root': {
@@ -88,7 +120,13 @@ export default function Home() {
             </TextField>
 
             <Box sx={{ flexGrow: 1 }} />
-            <Box sx={{display:'flex' , alignItems:'right' }}>
+            <Box sx={{display:'flex' , alignItems: "center" , gap:2 }}>
+              <Typography variant="body2"
+                sx={{ color: "#CBD5E1",
+                fontWeight: 600, 
+                fontSize:'16px'}}>
+                Welcome {name}
+               </Typography>
               <Avatar sx={{color:'white',}}src="/broken-image.jpg" onClick={()=>{navigate('/profile')}} />
             </Box>
           </Toolbar>

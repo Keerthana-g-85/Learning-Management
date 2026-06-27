@@ -267,49 +267,49 @@ export default function User(){
           ))}
         </TableBody>
         </Table>
+        <Box sx={{display:'flex' ,justifyContent:'center' , p:1 }}>
+          <Stack spacing={2}>
+            <Pagination count={total_page} 
+              page={page} 
+              onChange={handleChange}  
+              sx={{'& .MuiPaginationItem-root': {
+              fontSize: '1rem',    
+              height: '3rem',      
+              minWidth: '3rem',  
+              }}} />
+          </Stack>
+        </Box>
         </TableContainer> 
-        <Box sx={{display:'flex' ,justifyContent:'center' , p:3 }}>
-                <Stack spacing={2}>
-                    <Pagination count={total_page} 
-                        page={page} 
-                        onChange={handleChange}  
-                        sx={{'& .MuiPaginationItem-root': {
-                        fontSize: '1rem',    
-                        height: '4rem',      
-                        minWidth: '4rem',  
-                        }}} />
-                </Stack>
-            </Box>
       </Paper>
       <Dialog open={Boolean(open)} onClose={() => setOpen('')}>
-                <DialogTitle>Delete User</DialogTitle>
-                <DialogContent>
-                    <DialogContentText>
-                        Are you sure you want to Delete User
-                    </DialogContentText>
-                </DialogContent>
+        <DialogTitle>Delete User</DialogTitle>
+        <DialogContent>
+            <DialogContentText>
+                Are you sure you want to Delete User
+            </DialogContentText>
+        </DialogContent>
 
-                <DialogActions>
-                    <Button variant="contained"
-                        sx={{bgcolor:"#626769" , 
-                        color:'white'}} 
-                        onClick={() => setOpen('')}> Cancel
-                    </Button>
-                    <Button variant="contained" 
-                        sx={{ bgcolor: "#ef5252" ,
-                            display: "flex",
-                            border:'1px solid #ef5252' }}  startIcon={<DeleteIcon />} 
-                            onClick={()=>handleDelete(open)}> "Delete"
-                    </Button>
-                </DialogActions>
-            </Dialog>
+        <DialogActions>
+            <Button variant="contained"
+                sx={{bgcolor:"#626769" , 
+                color:'white'}} 
+                onClick={() => setOpen('')}> Cancel
+            </Button>
+            <Button variant="contained" 
+                sx={{ bgcolor: "#ef5252" ,
+                    display: "flex",
+                    border:'1px solid #ef5252' }}  startIcon={<DeleteIcon />} 
+                    onClick={()=>handleDelete(open)}> "Delete"
+            </Button>
+        </DialogActions>
+      </Dialog>
        <Snackbar open={Boolean(message)}
-                            autoHideDuration={3000}
-                            message ={message}
-                            onClose={() => dispatch(getMessage(''))}
-                            anchorOrigin={{
-                                vertical: 'bottom',
-                                horizontal: 'right'}}/>
+          autoHideDuration={3000}
+          message ={message}
+          onClose={() => dispatch(getMessage(''))}
+          anchorOrigin={{
+              vertical: 'bottom',
+              horizontal: 'right'}}/>
     </>
   )
 }
