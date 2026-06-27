@@ -1,6 +1,6 @@
 import { useState , useEffect } from 'react';
 import { useNavigate  } from "react-router"
-import { useSelector } from "react-redux";
+import { useSelector , useDispatch  } from "react-redux";
 
 import useApi from '../components/Api'
 import useDebounce from '../components/Debounce';
@@ -28,6 +28,7 @@ import DialogActions from "@mui/material/DialogActions";
 import DeleteIcon from '@mui/icons-material/Delete';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import CoPresentIcon from '@mui/icons-material/CoPresent';
+import { getMessage } from '../redux/MessageSlice';
 
 interface Courses {
     id : string ,
@@ -45,7 +46,6 @@ export default function Courses(){
     const [course , setCourse] = useState<Courses[]>([])
     const [filter , setFilter] = useState<string[]>([])
     const [instructor , setInstructor] = useState<string[]>([])
-    const [message , setMessage] = useState<string>('')
     const [open, setOpen] = useState<string>('');
     const [searchdata , setSearchdata] = useState<Courses[]>([])
     const [filterdata , setFilterdata] = useState<Courses[]>([])
@@ -53,8 +53,10 @@ export default function Courses(){
     const { Api } = useApi();
     
     const nav = useNavigate()
+    const dispatch = useDispatch()
 
     const search = useSelector((state: any) => state.search.search);
+    const message = useSelector((state:any)=>state.message.message)
     const debounce = useDebounce(search)
 
     // pagination
@@ -66,7 +68,7 @@ export default function Courses(){
             const response = await Api({method : 'get' , endpoint:'course/getall'})
             const data = response.data.AllCourses
             setCourse(data)
-            setMessage(response.data.message)
+            dispatch((getMessage(response.data.message)))
         }catch(error){
             console.log(error)
         }
@@ -84,7 +86,7 @@ export default function Courses(){
                 console.log('/course/delete/'+`${id}`)
                 const response = await Api({method : 'get' , endpoint:'course/getall'})
                 const data = response.data.AllCourses
-                setMessage(deleteResponse.data.message)
+                dispatch((getMessage(deleteResponse.data.message)))
                 setCourse(data)
                 setOpen('')
             }catch(error){
@@ -331,7 +333,7 @@ export default function Courses(){
             <Snackbar open={Boolean(message)}
                 autoHideDuration={3000}
                 message ={message}
-                onClose={() => setMessage('')}
+                onClose={() => dispatch(getMessage(''))}
                 anchorOrigin={{
                     vertical: 'bottom',
                     horizontal: 'right'}}/>
