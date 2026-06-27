@@ -1,6 +1,14 @@
-import { useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router";
+import { useLocation } from "react-router-dom";
+
 import useApi from "../components/Api";
+import usePagination from "../components/Pagination";
+
+import Paper from "@mui/material/Paper";
+import Button from "@mui/material/Button";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
 import { styled } from "@mui/material/styles";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -8,12 +16,11 @@ import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
-import { Button, Box, Typography } from "@mui/material";
+import Pagination from "@mui/material/Pagination";
+import Stack from "@mui/material/Stack";
 import PeopleIcon from "@mui/icons-material/People";
 import PersonIcon from "@mui/icons-material/Person";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { useNavigate } from "react-router";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -50,12 +57,19 @@ interface Course {
   enroll_date: string;
 }
 export default function Enroll() {
+  const [enroll, setEnroll] = useState<[]>([]);
+
+  const { Api } = useApi();
+
+  const { page, total_page, currentData, handleChange } = usePagination(
+    enroll,
+    3,
+  );
+
   const nav = useNavigate();
   const location = useLocation();
   const course = location.state.data;
   console.log(location.state.data);
-  const { Api } = useApi();
-  const [enroll, setEnroll] = useState([]);
 
   const getEnroll = async () => {
     try {
@@ -136,7 +150,7 @@ export default function Enroll() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {enroll.map((row: Course) => (
+              {currentData.map((row: Course) => (
                 <StyledTableRow key={row.id}>
                   <StyledTableCell component="th" scope="row">
                     <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
@@ -160,6 +174,22 @@ export default function Enroll() {
               ))}
             </TableBody>
           </Table>
+          <Box sx={{ display: "flex", justifyContent: "center", p: 1 }}>
+            <Stack spacing={2}>
+              <Pagination
+                count={total_page}
+                page={page}
+                onChange={handleChange}
+                sx={{
+                  "& .MuiPaginationItem-root": {
+                    fontSize: "1rem",
+                    height: "3rem",
+                    minWidth: "4rem",
+                  },
+                }}
+              />
+            </Stack>
+          </Box>
         </TableContainer>
       </Paper>
     </>

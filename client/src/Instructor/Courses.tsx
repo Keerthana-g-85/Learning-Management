@@ -183,264 +183,254 @@ export default function Courses() {
     <>
       <Box
         sx={{
-          width: "100%",
-          height: "90vh",
-          p: 0,
-          margin: 0,
-          overflow: "auto",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          mb: 3,
+          p: 2,
         }}
       >
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            mb: 3,
-            p: 2,
-          }}
-        >
-          <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-            <Typography
-              sx={{
-                fontWeight: 700,
-                color: "#233D4D",
-                minWidth: "90px",
-              }}
-            >
-              Instructor
-            </Typography>
-            {instructor.map((data, index) => (
-              <>
-                <FormGroup key={index}>
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        checked={filter.includes(data)}
-                        onChange={() => handleFilter(data)}
-                      />
-                    }
-                    label={data}
-                  />
-                </FormGroup>
-              </>
-            ))}
-          </Box>
-          <Button
-            variant="contained"
-            sx={{ mr: 2, bgcolor: "#233D4D" }}
-            onClick={() => nav("/addcourse")}
+        <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+          <Typography
+            sx={{
+              fontWeight: 700,
+              color: "#233D4D",
+              minWidth: "90px",
+            }}
           >
-            <AddIcon />
-            Add Course
-          </Button>
+            Instructor
+          </Typography>
+          {instructor.map((data, index) => (
+            <>
+              <FormGroup key={index}>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={filter.includes(data)}
+                      onChange={() => handleFilter(data)}
+                    />
+                  }
+                  label={data}
+                />
+              </FormGroup>
+            </>
+          ))}
         </Box>
-        <Box sx={{ display: "flex", gap: 5, flexWrap: "wrap" }}>
-          {currentData.map((data: Courses) => {
-            return (
-              <div key={data.id}>
-                <Card
+        <Button
+          variant="contained"
+          sx={{ mr: 2, bgcolor: "#233D4D" }}
+          onClick={() => nav("/addcourse")}
+        >
+          <AddIcon />
+          Add Course
+        </Button>
+      </Box>
+      <Box sx={{ display: "flex", gap: 5, flexWrap: "wrap" }}>
+        {currentData.map((data: Courses) => {
+          return (
+            <div key={data.id}>
+              <Card
+                sx={{
+                  width: 450,
+                  position: "relative",
+                  borderRadius: 5,
+                  boxShadow: "0 20px 40px rgba(0,0,0,0.35)",
+                  background: "#010102",
+                  border: "1px solid #1e2224",
+                  transition: "0.3s",
+                  "&:hover": {
+                    transform: "translateY(-8px)",
+                  },
+                  color: "white",
+                }}
+              >
+                <CardMedia
+                  component="img"
+                  alt="green iguana"
+                  height="180"
+                  sx={{ p: 1, borderRadius: 5 }}
+                  image={data.thumbnail}
+                />
+                <Button
+                  variant="contained"
                   sx={{
-                    width: 450,
-                    position: "relative",
-                    borderRadius: 5,
-                    boxShadow: "0 20px 40px rgba(0,0,0,0.35)",
-                    background: "#010102",
-                    border: "1px solid #1e2224",
-                    transition: "0.3s",
-                    "&:hover": {
-                      transform: "translateY(-8px)",
-                    },
-                    color: "white",
+                    position: "absolute",
+                    top: 12,
+                    right: 12,
+                    borderRadius: 3,
+                    textTransform: "none",
+                    fontSize: "1 rem",
+                    fontWeight: 700,
+                    bgcolor: "#fefefe",
+                    color: "#0ea5e9",
+                  }}
+                  onClick={() => {
+                    nav(`/courses/enroll/${data.id}`, { state: { data } });
                   }}
                 >
-                  <CardMedia
-                    component="img"
-                    alt="green iguana"
-                    height="180"
-                    sx={{ p: 1, borderRadius: 5 }}
-                    image={data.thumbnail}
-                  />
-                  <Button
-                    variant="contained"
+                  Enroll
+                </Button>
+
+                <CardContent sx={{ pl: 2, pt: 1 }}>
+                  <Chip
+                    label={data.level.toUpperCase()}
                     sx={{
-                      position: "absolute",
-                      top: 12,
-                      right: 12,
-                      borderRadius: 3,
-                      textTransform: "none",
-                      fontSize: "1 rem",
+                      bgcolor: "#0ea5e9",
+                      color: "white",
                       fontWeight: 700,
-                      bgcolor: "#fefefe",
-                      color: "#0ea5e9",
+                      mb: 1,
                     }}
-                    onClick={() => {
-                      nav(`/courses/enroll/${data.id}`, { state: { data } });
+                  />
+
+                  <Typography
+                    sx={{
+                      fontSize: "2rem",
+                      fontWeight: 700,
+                      fontFamily: "Outfit, sans-serif",
+                      mb: 1,
                     }}
                   >
-                    Enroll
-                  </Button>
+                    {data.title}
+                  </Typography>
 
-                  <CardContent sx={{ pl: 2, pt: 1 }}>
-                    <Chip
-                      label={data.level.toUpperCase()}
+                  <Typography
+                    sx={{
+                      color: "#94a3b8",
+                      fontSize: "1rem",
+                      lineHeight: 1.6,
+                      minHeight: 70,
+                    }}
+                  >
+                    {data.description}
+                  </Typography>
+                  <Divider sx={{ color: "grey" }} />
+
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 1,
+                      mb: 2,
+                    }}
+                  >
+                    <Typography
                       sx={{
-                        bgcolor: "#0ea5e9",
-                        color: "white",
-                        fontWeight: 700,
-                        mb: 1,
+                        fontWeight: 600,
+                        display: "flex",
+                        flex: 1,
+                        alignItems: "center",
+                        gap: 1,
+                        color: "#94a3b8",
+                      }}
+                    >
+                      <CoPresentIcon />
+                      {data.instructor_name}
+                    </Typography>
+                    <Divider
+                      orientation="vertical"
+                      flexItem
+                      sx={{
+                        bgcolor: "rgba(255, 255, 255, 0.63)",
+                        size: "large",
                       }}
                     />
-
                     <Typography
                       sx={{
-                        fontSize: "2rem",
-                        fontWeight: 700,
-                        fontFamily: "Outfit, sans-serif",
-                        mb: 1,
-                      }}
-                    >
-                      {data.title}
-                    </Typography>
-
-                    <Typography
-                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        flex: 1,
+                        gap: 1,
+                        fontWeight: 600,
                         color: "#94a3b8",
-                        fontSize: "1rem",
-                        lineHeight: 1.6,
-                        minHeight: 70,
                       }}
                     >
-                      {data.description}
+                      <AccessTimeIcon sx={{ color: "#0ea5e9" }} />{" "}
+                      {data.duration}
                     </Typography>
-                    <Divider sx={{ color: "grey" }} />
+                  </Box>
 
-                    <Box
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 1,
+                      bm: 1,
+                    }}
+                  >
+                    <Button
+                      variant="outlined"
                       sx={{
                         display: "flex",
+                        flex: 1,
                         alignItems: "center",
                         gap: 1,
-                        mb: 2,
+                        bgcolor: "#0ea5e9",
+                        color: "white",
                       }}
+                      onClick={() => {
+                        nav(`/update/${data.id}`, { state: { data } });
+                      }}
+                      startIcon={<EditIcon />}
                     >
-                      <Typography
-                        sx={{
-                          fontWeight: 600,
-                          display: "flex",
-                          flex: 1,
-                          alignItems: "center",
-                          gap: 1,
-                          color: "#94a3b8",
-                        }}
-                      >
-                        <CoPresentIcon />
-                        {data.instructor_name}
-                      </Typography>
-                      <Divider
-                        orientation="vertical"
-                        flexItem
-                        sx={{
-                          bgcolor: "rgba(255, 255, 255, 0.63)",
-                          size: "large",
-                        }}
-                      />
-                      <Typography
-                        sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          flex: 1,
-                          gap: 1,
-                          fontWeight: 600,
-                          color: "#94a3b8",
-                        }}
-                      >
-                        <AccessTimeIcon sx={{ color: "#0ea5e9" }} />{" "}
-                        {data.duration}
-                      </Typography>
-                    </Box>
-
-                    <Box
+                      {" "}
+                      Edit
+                    </Button>
+                    <Button
+                      variant="outlined"
                       sx={{
+                        color: "#ef5252",
                         display: "flex",
+                        flex: 1,
                         alignItems: "center",
                         gap: 1,
-                        bm: 1,
+                        border: "1px solid #ef5252",
+                      }}
+                      startIcon={<DeleteIcon />}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setOpen(data.id);
                       }}
                     >
-                      <Button
-                        variant="outlined"
-                        sx={{
-                          display: "flex",
-                          flex: 1,
-                          alignItems: "center",
-                          gap: 1,
-                          bgcolor: "#0ea5e9",
-                          color: "white",
-                        }}
-                        onClick={() => {
-                          nav(`/update/${data.id}`, { state: { data } });
-                        }}
-                        startIcon={<EditIcon />}
-                      >
-                        {" "}
-                        Edit
-                      </Button>
-                      <Button
-                        variant="outlined"
-                        sx={{
-                          color: "#ef5252",
-                          display: "flex",
-                          flex: 1,
-                          alignItems: "center",
-                          gap: 1,
-                          border: "1px solid #ef5252",
-                        }}
-                        startIcon={<DeleteIcon />}
-                        onClick={(e) => {
-                          e.preventDefault();
-                          setOpen(data.id);
-                        }}
-                      >
-                        {" "}
-                        Delete
-                      </Button>
-                    </Box>
-                  </CardContent>
-                </Card>
-              </div>
-            );
-          })}
-        </Box>
-        <Dialog open={Boolean(open)} onClose={() => setOpen("")}>
-          <DialogTitle>Delete Course </DialogTitle>
-          <DialogContent>
-            <DialogContentText>
-              Are you sure you want to Delete course
-            </DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button
-              onClick={() => setOpen("")}
-              sx={{ bgcolor: "#626769", color: "white" }}
-            >
-              {" "}
-              Cancel
-            </Button>
-            <Button
-              variant="contained"
-              sx={{
-                bgcolor: "#ef5252",
-                display: "flex",
-                border: "1px solid #ef5252",
-              }}
-              startIcon={<DeleteIcon />}
-              onClick={() => handleDelete(open)}
-            >
-              {" "}
-              "Delete"
-            </Button>
-          </DialogActions>
-        </Dialog>
+                      {" "}
+                      Delete
+                    </Button>
+                  </Box>
+                </CardContent>
+              </Card>
+            </div>
+          );
+        })}
       </Box>
+      <Dialog open={Boolean(open)} onClose={() => setOpen("")}>
+        <DialogTitle>Delete Course </DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Are you sure you want to Delete course
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => setOpen("")}
+            sx={{ bgcolor: "#626769", color: "white" }}
+          >
+            {" "}
+            Cancel
+          </Button>
+          <Button
+            variant="contained"
+            sx={{
+              bgcolor: "#ef5252",
+              display: "flex",
+              border: "1px solid #ef5252",
+            }}
+            startIcon={<DeleteIcon />}
+            onClick={() => handleDelete(open)}
+          >
+            {" "}
+            "Delete"
+          </Button>
+        </DialogActions>
+      </Dialog>
       <Box sx={{ display: "flex", justifyContent: "center", p: 5 }}>
         <Stack spacing={2}>
           <Pagination

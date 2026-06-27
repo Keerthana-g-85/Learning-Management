@@ -50,7 +50,6 @@ export default function Home() {
       path: "/courses",
     },
   ];
-
   const profileItems = [
     {
       text: "Profile",
