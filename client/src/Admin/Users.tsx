@@ -57,9 +57,11 @@ interface Users{
 }
 
 export default function User(){
-  const [user , setUser] = useState<[]>([])
+  const [user , setUser] = useState<Users[]>([])
   const [edit , setEdit] = useState<Users | null>(null)
   const [filter , setFilter] = useState<string[]>([])
+  const [searchdata , setSearchdata] = useState<Users[]>([])
+  const [filterdata , setFilterdata] = useState<Users[]>([])
   const role = ['student' , 'instructor']
 
   const { Api } = useApi();
@@ -101,10 +103,8 @@ export default function User(){
                 const response = await Api({method:'get', endpoint:`/register/getsearch/${debounce}` })
                 console.log('search',response.data)
                 const data = response.data.users
-                setUser(data)
-            }else{
-                    getUsers()
-            }   
+                setSearchdata(data);
+            }
         }catch(error){
             console.log(error)
         }
@@ -123,18 +123,36 @@ export default function User(){
     const filterUser = async ()=>{
         const response = await Api({method:'get' , endpoint :`/register/filter/${filter.join(',')}` })
         console.log(response.data.users)
-        setUser(response.data.users)
+        setFilterdata(response.data.users);
     }
 
-    useEffect(()=>{
-        if (filter.length > 0) {
+    useEffect(() => {
+    searchUser();
+    }, [debounce]);
+
+    useEffect(() => {
+    if (filter.length > 0) {
         filterUser();
-        searchUser()
-        } else {
-            getUsers();
-            searchUser()
+    }
+    }, [filter]);
+
+    useEffect(()=>{
+        if (debounce && filter.length > 0){
+            const common  = searchdata.filter(course =>
+            filterdata.some(filter => filter.id === course.id));
+            setUser(common)
         }
-    },[filter, debounce])
+        else if (debounce){
+            setUser(searchdata)
+        }
+        else if(filter.length > 0) {
+            setUser(filterdata)
+        }
+         else {
+            getUsers();
+        }
+    },[filterdata , searchdata , debounce , filter])
+
   return(
     <>
       <Box sx={{ display:'flex' , height:'80px' , justifyContent:'right'}}>
