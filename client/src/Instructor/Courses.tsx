@@ -1,23 +1,36 @@
 import { useState, useEffect } from "react";
-import { Box, Chip, Snackbar } from "@mui/material";
+import { useNavigate } from "react-router";
+import { useSelector, useDispatch } from "react-redux";
+
+import { getMessage } from "../redux/MessageSlice";
+import useApi from "../components/Api";
+import useDebounce from "../components/Debounce";
+import usePagination from "../components/Pagination";
+
+import Box from "@mui/material/Box";
+import Chip from "@mui/material/Chip";
+import Snackbar from "@mui/material/Snackbar";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
-import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from "@mui/icons-material/Edit";
 import Divider from "@mui/material/Divider";
-import CoPresentIcon from "@mui/icons-material/CoPresent";
-import AddIcon from "@mui/icons-material/Add";
-import { AccessTime } from "@mui/icons-material";
-import useApi from "../components/Api";
-import { useNavigate } from "react-router";
+import Pagination from "@mui/material/Pagination";
+import Stack from "@mui/material/Stack";
+import Checkbox from "@mui/material/Checkbox";
+import FormGroup from "@mui/material/FormGroup";
+import FormControlLabel from "@mui/material/FormControlLabel";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogActions from "@mui/material/DialogActions";
+import DeleteIcon from "@mui/icons-material/Delete";
+import AddIcon from "@mui/icons-material/Add";
+import CoPresentIcon from "@mui/icons-material/CoPresent";
+import EditIcon from "@mui/icons-material/Edit";
+import AccessTimeIcon from "@mui/icons-material/AccessTime";
 
 interface Courses {
   id: string;
@@ -27,44 +40,49 @@ interface Courses {
   duration: string;
   thumbnail: string;
   level: string;
+  name: string;
 }
-export default function Courses() {
-  const nav = useNavigate();
 
-  const [course, setCourse] = useState([]);
-  const [open, setOpen] = useState("");
-  const [message, setMessage] = useState("");
+export default function Courses() {
+  const [course, setCourse] = useState<Courses[]>([]);
+  const [filter, setFilter] = useState<string[]>([]);
+  const [instructor, setInstructor] = useState<string[]>([]);
+  const [open, setOpen] = useState<string>("");
+  const [searchdata, setSearchdata] = useState<Courses[]>([]);
+  const [filterdata, setFilterdata] = useState<Courses[]>([]);
+
   const { Api } = useApi();
-  // const [progress, setProgress] = useState(false);
+
+  const nav = useNavigate();
+  const dispatch = useDispatch();
+
+  const search = useSelector((state: any) => state.search.search);
+  const message = useSelector((state: any) => state.message.message);
+  const debounce = useDebounce(search);
+
+  // pagination
+  const { page, setPage, total_page, currentData, handleChange } =
+    usePagination(course, 6);
+
+  // Getting all the course
+  const getCourse = async () => {
+    try {
+      const response = await Api({ method: "get", endpoint: "course/getall" });
+      const data = response.data.AllCourses;
+      setCourse(data);
+      dispatch(getMessage(response.data.message));
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   useEffect(() => {
-    const getCourse = async () => {
-      try {
-        const response = await Api({
-          method: "get",
-          endpoint: "course/getall",
-        });
-        const data = response.data.AllCourses;
-        setCourse(data);
-        //  setMessage(response.data.message)
-      } catch (error) {
-        console.log(error);
-      }
-    };
     getCourse();
   }, []);
-  useEffect(() => {
-    const timer = setInterval(() => {
-      //   setProgress(true);
-    }, 800);
-    return () => {
-      clearInterval(timer);
-    };
-  }, [handleDelete]);
 
+  // delete the course
   async function handleDelete(id: string) {
     console.log(id);
-    // setProgress(true)
     try {
       const deleteResponse = await Api({
         method: "delete",
@@ -73,7 +91,7 @@ export default function Courses() {
       console.log("/course/delete/" + `${id}`);
       const response = await Api({ method: "get", endpoint: "course/getall" });
       const data = response.data.AllCourses;
-      setMessage(deleteResponse.data.message);
+      dispatch(getMessage(deleteResponse.data.message));
       setCourse(data);
       setOpen("");
     } catch (error) {
@@ -81,6 +99,86 @@ export default function Courses() {
     }
   }
 
+  // search
+  const searchTitle = async () => {
+    try {
+      if (debounce.trim() !== "") {
+        const response = await Api({
+          method: "get",
+          endpoint: `/course/get/${debounce}`,
+        });
+        console.log("search", response.data.course);
+        const data = response.data.course;
+        setSearchdata(data);
+      } else {
+        getCourse();
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    searchTitle();
+    setPage(1);
+  }, [debounce]);
+
+  // Instructor name fetching for filter
+  const instructorName = async () => {
+    const response = await Api({
+      method: "get",
+      endpoint: "/register/getinstructor",
+    });
+    console.log(response.data.instructor);
+    const name = response.data.instructor.map((data: Courses) => data.name);
+    console.log(name);
+    setInstructor(name);
+  };
+
+  useEffect(() => {
+    instructorName();
+  }, []);
+
+  function handleFilter(data: string) {
+    if (filter.includes(data)) {
+      const filtered = filter.filter((item) => item !== data);
+      setFilter(filtered);
+    } else {
+      setFilter([...filter, data]);
+    }
+  }
+
+  const filterCourse = async () => {
+    const response = await Api({
+      method: "get",
+      endpoint: `/course/filter/${filter.join(",")}`,
+    });
+    console.log(response.data.courses);
+    const data = response.data.courses;
+    setFilterdata(data);
+  };
+
+  useEffect(() => {
+    if (filter.length > 0) {
+      filterCourse();
+      setPage(1);
+    }
+  }, [filter]);
+
+  useEffect(() => {
+    if (debounce && filter.length > 0) {
+      const common = searchdata.filter((course) =>
+        filterdata.some((filter) => filter.id === course.id),
+      );
+      setCourse(common);
+    } else if (debounce) {
+      setCourse(searchdata);
+    } else if (filter.length > 0) {
+      setCourse(filterdata);
+    } else {
+      getCourse();
+    }
+  }, [filterdata, searchdata, debounce, filter]);
   return (
     <>
       <Box
@@ -92,7 +190,41 @@ export default function Courses() {
           overflow: "auto",
         }}
       >
-        <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 3 }}>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            mb: 3,
+            p: 2,
+          }}
+        >
+          <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+            <Typography
+              sx={{
+                fontWeight: 700,
+                color: "#233D4D",
+                minWidth: "90px",
+              }}
+            >
+              Instructor
+            </Typography>
+            {instructor.map((data, index) => (
+              <>
+                <FormGroup key={index}>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={filter.includes(data)}
+                        onChange={() => handleFilter(data)}
+                      />
+                    }
+                    label={data}
+                  />
+                </FormGroup>
+              </>
+            ))}
+          </Box>
           <Button
             variant="contained"
             sx={{ mr: 2, bgcolor: "#233D4D" }}
@@ -103,7 +235,7 @@ export default function Courses() {
           </Button>
         </Box>
         <Box sx={{ display: "flex", gap: 5, flexWrap: "wrap" }}>
-          {course.map((data: Courses) => {
+          {currentData.map((data: Courses) => {
             return (
               <div key={data.id}>
                 <Card
@@ -221,7 +353,8 @@ export default function Courses() {
                           color: "#94a3b8",
                         }}
                       >
-                        <AccessTime sx={{ color: "#0ea5e9" }} /> {data.duration}
+                        <AccessTimeIcon sx={{ color: "#0ea5e9" }} />{" "}
+                        {data.duration}
                       </Typography>
                     </Box>
 
@@ -308,11 +441,28 @@ export default function Courses() {
           </DialogActions>
         </Dialog>
       </Box>
+      <Box sx={{ display: "flex", justifyContent: "center", p: 5 }}>
+        <Stack spacing={2}>
+          <Pagination
+            count={total_page}
+            page={page}
+            onChange={handleChange}
+            sx={{
+              "& .MuiPaginationItem-root": {
+                fontSize: "1rem",
+                height: "4rem",
+                minWidth: "4rem",
+              },
+            }}
+          />
+        </Stack>
+      </Box>
+
       <Snackbar
         open={Boolean(message)}
         autoHideDuration={3000}
         message={message}
-        onClose={() => setMessage("")}
+        onClose={() => dispatch(getMessage(""))}
         anchorOrigin={{
           vertical: "bottom",
           horizontal: "right",
