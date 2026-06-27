@@ -5,7 +5,9 @@ import type { RequestHandler } from 'express'
 import { database } from '../server.js'
 import Register from '../models/RegisterModel.js'
 import { Role } from '../models/RegisterModel.js'
+
 import { ILike } from 'typeorm'
+import { In } from "typeorm";
 
 
 export const Create : RequestHandler = async (req,res) => {
@@ -264,3 +266,22 @@ export const Search : RequestHandler = async (req,res) =>{
         })
     }
 }
+
+export const FilterRole : RequestHandler = async (req, res) => {
+    try {
+        const role = req.params.role.split(",");
+        const userRepo = database.getRepository(Register)
+        const users = await userRepo.find({ where:{role: In(role)}});
+
+        res.status(200).json({
+            success: true ,
+            message :'Filtered by Instructor name',
+            users
+        });
+    } catch (error) {
+        res.status(500).send({
+            success:false,
+            message: 'Error while filtering'
+        });
+    }
+};

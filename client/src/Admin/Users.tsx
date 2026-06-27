@@ -14,6 +14,9 @@ import TableCell, { tableCellClasses } from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
+import Checkbox from '@mui/material/Checkbox';
+import FormGroup from '@mui/material/FormGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save'
@@ -22,6 +25,7 @@ import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import PeopleIcon from "@mui/icons-material/People";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -55,6 +59,8 @@ interface Users{
 export default function User(){
   const [user , setUser] = useState<[]>([])
   const [edit , setEdit] = useState<Users | null>(null)
+  const [filter , setFilter] = useState<string[]>([])
+  const role = ['student' , 'instructor']
 
   const { Api } = useApi();
 
@@ -104,11 +110,43 @@ export default function User(){
         }
     }; 
 
-    useEffect(() => {
+    function handleFilter(data:string){
+        if (filter.includes(data)){
+            const filtered = filter.filter((item)=>item !== data)
+            setFilter(filtered)
+        }
+        else{
+             setFilter([...filter, data]);
+        }
+    }
+
+    const filterUser = async ()=>{
+        const response = await Api({method:'get' , endpoint :`/register/filter/${filter.join(',')}` })
+        console.log(response.data.users)
+        setUser(response.data.users)
+    }
+
+    useEffect(()=>{
+        if (filter.length > 0) {
+        filterUser();
         searchUser()
-    },[debounce])
+        } else {
+            getUsers();
+            searchUser()
+        }
+    },[filter, debounce])
   return(
     <>
+      <Box sx={{ display:'flex' , height:'80px' , justifyContent:'right'}}>
+                {role.map((data , index )=>
+                    <>
+                        <FormGroup  key={index}>
+                            <FormControlLabel control={<Checkbox checked={filter.includes(data)}
+                            onChange={()=>handleFilter(data)}/>} label={data} />
+                        </FormGroup>
+                    </>
+                )}
+            </Box>
       <Paper elevation={6} sx={{ mt: 5, 
         borderRadius: 2,
         boxShadow: "0 20px 40px rgba(0,0,0,0.35)",
