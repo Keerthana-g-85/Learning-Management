@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 
 import useApi from '../components/Api'
 import useDebounce from '../components/Debounce';
+import usePagination from '../components/Pagination';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
@@ -42,7 +43,6 @@ interface Courses {
 export default function Courses(){
 
     const [course , setCourse] = useState<Courses[]>([])
-    const [page, setPage] = useState<number>(1);
     const [filter , setFilter] = useState<string[]>([])
     const [instructor , setInstructor] = useState<string[]>([])
     const [message , setMessage] = useState<string>('')
@@ -58,11 +58,7 @@ export default function Courses(){
     const debounce = useDebounce(search)
 
     // pagination
-    const per_page = 6
-    const intial = (page - 1 )* per_page
-    const final = page * per_page    
-    const total_page = Math.ceil(course.length / per_page)
-    const currentPage = course.slice (intial , final)
+    const {page,setPage,total_page,currentData, handleChange,} = usePagination(course, 6)
 
     // Getting all the course 
     const getCourse = async () =>{
@@ -115,13 +111,8 @@ export default function Courses(){
 
     useEffect(() => {
         searchTitle()
+        setPage(1)
     },[debounce])
-
-    // Pagination 
-    const handleChange = (e: React.ChangeEvent<unknown>, value: number) => {
-        e.preventDefault()
-        setPage(value);
-    };
 
     // Instructor name fetching for filter
     const instructorName = async () => { 
@@ -155,6 +146,7 @@ export default function Courses(){
 
     useEffect(() => {
         filterCourse()
+        setPage(1)
     },[filter])
 
     useEffect(()=>{
@@ -188,7 +180,7 @@ export default function Courses(){
             </Box>
             
             <Box sx={{ display:'flex' , gap:5 ,  flexWrap: 'wrap',}}>
-                {currentPage.map ((data : Courses)=>{ return(
+                {currentData.map ((data : Courses)=>{ return(
                     < div key={data.id}>
                         <Card sx={{ width: 450 , 
                             position: "relative",
@@ -323,14 +315,13 @@ export default function Courses(){
                     </Button>
                 </DialogActions>
             </Dialog>
-
-            <Box sx={{display:'flex' ,justifyContent:'center' , p:9 }}>
+            <Box sx={{display:'flex' ,justifyContent:'center' , p:5 }}>
                 <Stack spacing={2}>
                     <Pagination count={total_page} 
                         page={page} 
                         onChange={handleChange}  
                         sx={{'& .MuiPaginationItem-root': {
-                        fontSize: '1.6rem',    
+                        fontSize: '1rem',    
                         height: '4rem',      
                         minWidth: '4rem',  
                         }}} />

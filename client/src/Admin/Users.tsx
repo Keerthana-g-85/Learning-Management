@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 
 import useApi from '../components/Api'
 import useDebounce from '../components/Debounce';
+import usePagination from '../components/Pagination';
 
 import Paper from '@mui/material/Paper';
 import Box from "@mui/material/Box";
@@ -64,14 +65,9 @@ export default function User(){
   const [filter , setFilter] = useState<string[]>([])
   const [searchdata , setSearchdata] = useState<Users[]>([])
   const [filterdata , setFilterdata] = useState<Users[]>([])
-  const [page, setPage] = useState<number>(1);
 
   const role = ['student' , 'instructor']
-  const perPage = 7;
-  const initial = (page - 1) * perPage;
-  const final = page * perPage;
-  const total_page = Math.ceil(user.length / perPage);
-  const currentPage = user.slice(initial, final);
+  const {page,setPage,total_page,currentData, handleChange,} = usePagination(user, 6)
 
   const { Api } = useApi();
 
@@ -164,12 +160,6 @@ export default function User(){
       }
   },[filterdata , searchdata , debounce , filter])
 
-  const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
-    event.preventDefault();
-    setPage(value);
-  };
-
-
   return(
     <>
       <Box sx={{ display:'flex' , height:'80px' , justifyContent:'right'}}>
@@ -212,7 +202,7 @@ export default function User(){
           </TableRow>
         </TableHead>
         <TableBody>
-        {currentPage.map((row: Users) => (
+        {currentData.map((row: Users) => (
           <StyledTableRow key={row.id}>
             <StyledTableCell component="th" scope="row">
               <Box sx={{ display: "flex",
