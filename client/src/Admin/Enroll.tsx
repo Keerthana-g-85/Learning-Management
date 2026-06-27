@@ -3,6 +3,7 @@ import { useNavigate  } from "react-router"
 import { useLocation } from "react-router-dom";
 
 import useApi from '../components/Api'
+import usePagination from '../components/Pagination';
 
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
@@ -16,6 +17,8 @@ import TableCell, { tableCellClasses } from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
+import Pagination from '@mui/material/Pagination';
+import Stack from '@mui/material/Stack';
 import PeopleIcon from "@mui/icons-material/People";
 import GroupAddIcon from '@mui/icons-material/GroupAdd';
 import GroupRemoveIcon from '@mui/icons-material/GroupRemove';
@@ -64,6 +67,9 @@ export default function Enroll(){
     const [notenroll , setNotenroll] = useState<[]>([])
 
     const { Api } = useApi();
+
+    const {page ,total_page,currentData, handleChange,} = usePagination(enroll, 3)
+    const {page:notenrollpage ,total_page: notenrolltotalpage,currentData:currentUnData, handleChange:handleNotenrollchange} = usePagination(notenroll, 3)
 
     const nav = useNavigate();
     const location = useLocation();
@@ -169,7 +175,7 @@ export default function Enroll(){
                     </TableRow>
                     </TableHead>
                     <TableBody>
-                    {enroll.map((row :  Course) => (
+                    {currentData.map((row :  Course) => (
                     <StyledTableRow key={row.id}>
                         <StyledTableCell component="th" scope="row">
                         <Box sx={{ display: "flex",
@@ -188,7 +194,19 @@ export default function Enroll(){
                     ))}
                     </TableBody>
                 </Table>
-                </TableContainer>
+                <Box sx={{display:'flex' ,justifyContent:'center' , p:1 }}>
+                <Stack spacing={2}>
+                    <Pagination count={total_page} 
+                        page={page} 
+                        onChange={handleChange}  
+                        sx={{'& .MuiPaginationItem-root': {
+                        fontSize: '1rem',    
+                        height: '3rem',      
+                        minWidth: '4rem',  
+                        }}} />
+                </Stack> 
+            </Box>
+            </TableContainer>
             </Paper>
             <Divider/>
             <Paper elevation={6} sx={{ mt: 5, 
@@ -232,7 +250,7 @@ export default function Enroll(){
                     </TableRow>
                     </TableHead>
                     <TableBody>
-                    {notenroll.map((row :  Students) => (
+                    {currentUnData.map((row :  Students) => (
                     <StyledTableRow key={row.id}>
                         <StyledTableCell component="th" scope="row">
                             <Box sx={{ display: "flex",
@@ -251,6 +269,18 @@ export default function Enroll(){
                     ))}
                     </TableBody>
                 </Table>
+                <Box sx={{display:'flex' ,justifyContent:'center' , p:1 }}>
+                    <Stack spacing={2}>
+                    <Pagination count={notenrolltotalpage} 
+                        page={notenrollpage} 
+                        onChange={handleNotenrollchange}  
+                        sx={{'& .MuiPaginationItem-root': {
+                        fontSize: '1rem',    
+                        height: '3rem',      
+                        minWidth: '4rem',  
+                        }}} />
+                    </Stack> 
+                </Box>
                 </TableContainer>
             </Paper>
         </>
