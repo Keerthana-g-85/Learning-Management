@@ -1,6 +1,5 @@
 import {createSlice} from '@reduxjs/toolkit'
 
-
 const initialState ={
     search:''
 } 
@@ -12,9 +11,6 @@ const searchSlice = createSlice({
         addSearch :(state , action ) =>{
             state.search = action.payload
         },
-
-        
-
     }
 })
 

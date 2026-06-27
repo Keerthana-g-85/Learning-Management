@@ -1,6 +1,5 @@
 import {createSlice} from '@reduxjs/toolkit'
 
-
 const initialState ={
     token:'' , user :{ name :'' , email: '',address : '', phoneNumber:'' }
 } 
