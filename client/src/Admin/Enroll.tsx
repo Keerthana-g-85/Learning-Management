@@ -1,7 +1,9 @@
 import { useState , useEffect } from "react"
 import { useNavigate  } from "react-router"
 import { useLocation } from "react-router-dom";
+import { useSelector , useDispatch  } from "react-redux";
 
+import { getMessage } from '../redux/MessageSlice';
 import useApi from '../components/Api'
 import usePagination from '../components/Pagination';
 
@@ -10,6 +12,7 @@ import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
+import Snackbar from '@mui/material/Snackbar';
 import { styled } from '@mui/material/styles';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -68,6 +71,9 @@ export default function Enroll(){
 
     const { Api } = useApi();
 
+    const dispatch = useDispatch()
+    const message = useSelector((state:any)=>state.message.message)
+
     const {page ,total_page,currentData, handleChange,} = usePagination(enroll, 3)
     const {page:notenrollpage ,total_page: notenrolltotalpage,currentData:currentUnData, handleChange:handleNotenrollchange} = usePagination(notenroll, 3)
 
@@ -103,6 +109,7 @@ export default function Enroll(){
         try{
             const response = await Api({method:'delete' , endpoint:`enroll/delete/${id}`})
             console.log(response)
+            dispatch((getMessage(response.data.message)))
             getEnroll()
             getUnenroll()
         }catch(error){
@@ -113,6 +120,7 @@ export default function Enroll(){
         try{
             const response = await Api({method : 'post' , endpoint:`enroll/create/` ,data:{"register":`${id}` , "course":`${course.id}`}})
             console.log(response)
+            dispatch((getMessage(response.data.message)))
             getEnroll()
             getUnenroll()
         }catch(error){
@@ -283,6 +291,13 @@ export default function Enroll(){
                 </Box>
                 </TableContainer>
             </Paper>
+            <Snackbar open={Boolean(message)}
+                            autoHideDuration={3000}
+                            message ={message}
+                            onClose={() => dispatch(getMessage(''))}
+                            anchorOrigin={{
+                                vertical: 'bottom',
+                                horizontal: 'right'}}/>
         </>
     )
 }

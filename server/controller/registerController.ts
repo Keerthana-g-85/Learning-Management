@@ -13,7 +13,7 @@ import { In } from "typeorm";
 export const Create : RequestHandler = async (req,res) => {
     try{
         const registerRepo = database.getRepository(Register)
-        const { name , email , password , phoneNumber , address , role } = req.body
+        const { name , email , password , phoneNumber , address } = req.body
 
         if (!email || !password || !name ){
             return res.status(400).send({
@@ -33,7 +33,7 @@ export const Create : RequestHandler = async (req,res) => {
         const salt = bcrypt.genSaltSync(10)
         const hashedPassword = await bcrypt.hash(password , salt)
 
-        const user = registerRepo.create({ name , email , password :hashedPassword , phoneNumber , address , role})
+        const user = registerRepo.create({ name , email , password :hashedPassword , phoneNumber , address })
 
         const newUser = await registerRepo.save(user)
 
@@ -145,7 +145,7 @@ export const GetInstructor: RequestHandler= async (req,res) =>{
 
         res.status(200).send({
             success: true,
-            message : "all instructors" ,
+            message : "Instructors" ,
             instructor
         })
 
@@ -166,7 +166,7 @@ export const Get: RequestHandler= async (req,res) =>{
 
         res.status(200).send({
             success: true,
-            message : "ALL users" ,
+            message : "All users" ,
             user
         })
 
@@ -197,7 +197,7 @@ export const UpdateUser : RequestHandler = async( req , res) =>{
         const UpdatedUser =await  registerRepo.update({id : id },{name : name , email : email, phoneNumber: phoneNumber , address:address , role:role })
         res.status(200).send({
             success : true ,
-            message : "Users",
+            message : "User Updated",
             UpdatedUser
         })
 

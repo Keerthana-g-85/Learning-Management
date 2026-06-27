@@ -1,5 +1,7 @@
 import { useEffect, useState  } from "react"
-import { useSelector } from "react-redux";
+import { useSelector , useDispatch  } from "react-redux";
+
+import { getMessage } from '../redux/MessageSlice';
 
 import useApi from '../components/Api'
 import useDebounce from '../components/Debounce';
@@ -8,6 +10,7 @@ import usePagination from '../components/Pagination';
 import Paper from '@mui/material/Paper';
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
+import Snackbar from '@mui/material/Snackbar';
 import { styled } from '@mui/material/styles';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -66,6 +69,9 @@ export default function User(){
   const [searchdata , setSearchdata] = useState<Users[]>([])
   const [filterdata , setFilterdata] = useState<Users[]>([])
 
+  const dispatch = useDispatch()
+  const message = useSelector((state:any)=>state.message.message)
+
   const role = ['student' , 'instructor']
   const {page,setPage,total_page,currentData, handleChange,} = usePagination(user, 6)
 
@@ -92,6 +98,7 @@ export default function User(){
     if (edit === null) { return }
     const response = await Api({method : 'put' ,endpoint :`/register/update/${edit?.id}` , data: edit })
     console.log(response)
+    dispatch((getMessage(response.data.message)))
     getUsers()
     setEdit(null)
   }
@@ -99,6 +106,7 @@ export default function User(){
   async function handleDelete(id :String){
     const response = await Api({method: 'delete' , endpoint:`/register/delete/${id}`})
     console.log(response)
+    dispatch((getMessage(response.data.message)))
     getUsers()
   }
 
@@ -265,6 +273,13 @@ export default function User(){
                 </Stack>
             </Box>
       </Paper>
+       <Snackbar open={Boolean(message)}
+                            autoHideDuration={3000}
+                            message ={message}
+                            onClose={() => dispatch(getMessage(''))}
+                            anchorOrigin={{
+                                vertical: 'bottom',
+                                horizontal: 'right'}}/>
     </>
   )
 }

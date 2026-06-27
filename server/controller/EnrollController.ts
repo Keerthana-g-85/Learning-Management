@@ -127,7 +127,7 @@ export const Delete : RequestHandler = async (req,res) =>{
     
     return res.status(200).send({
             success:true,
-            message:"student unenrolled",
+            message:"Student Unenrolled",
         })
     }
     catch(error){

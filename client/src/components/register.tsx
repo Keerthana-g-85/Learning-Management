@@ -182,17 +182,6 @@ export default function Register (){
                                                         justifyContent: 'center' ,
                                                         alignItems: 'center'}}>Already Registerd? Login</Typography></Link>
 
-                    {/* <Snackbar
-                        open={error.error}
-                        autoHideDuration={3000}
-                        message ={errmessage.error}
-                        onClose={() => setError(prev=>({...prev,error:false}))}
-                        anchorOrigin={{
-                            vertical: 'top',
-                            horizontal: 'center',
-                        }}
-                        >
-                    </Snackbar> */}
 
                     </Stack>
                 </Paper>

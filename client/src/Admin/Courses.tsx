@@ -2,6 +2,7 @@ import { useState , useEffect } from 'react';
 import { useNavigate  } from "react-router"
 import { useSelector , useDispatch  } from "react-redux";
 
+import { getMessage } from '../redux/MessageSlice';
 import useApi from '../components/Api'
 import useDebounce from '../components/Debounce';
 import usePagination from '../components/Pagination';
@@ -28,7 +29,6 @@ import DialogActions from "@mui/material/DialogActions";
 import DeleteIcon from '@mui/icons-material/Delete';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import CoPresentIcon from '@mui/icons-material/CoPresent';
-import { getMessage } from '../redux/MessageSlice';
 
 interface Courses {
     id : string ,
@@ -147,9 +147,11 @@ export default function Courses(){
     }
 
     useEffect(() => {
-        filterCourse()
+    if (filter.length > 0) {
+        filterCourse();
         setPage(1)
-    },[filter])
+    }
+    }, [filter]);
 
     useEffect(()=>{
         if (debounce && filter.length > 0){

@@ -1,10 +1,13 @@
 import { useEffect, useState  } from "react"
+import { useSelector , useDispatch  } from "react-redux";
 
+import { getMessage } from '../redux/MessageSlice';
 import useApi from '../components/Api'
 
 import Paper from '@mui/material/Paper';
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
+import Snackbar from '@mui/material/Snackbar';
 import { styled } from '@mui/material/styles';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -46,6 +49,9 @@ export default function Students(){
 
     const [student , setStudent] = useState<[]>([])
 
+    const dispatch = useDispatch()
+    const message = useSelector((state:any)=>state.message.message)
+
     const { Api } = useApi();
 
     useEffect(()=>{
@@ -54,6 +60,7 @@ export default function Students(){
           const response = await Api({method:'get' , endpoint:'/register/getstudent'})
           console.log(response)
           setStudent(response.data.students)
+          dispatch((getMessage(response.data.message)))
         }catch(error){
           console.log(error)
         }
@@ -109,6 +116,13 @@ export default function Students(){
         </Table>
         </TableContainer>
       </Paper>
+       <Snackbar open={Boolean(message)}
+                            autoHideDuration={3000}
+                            message ={message}
+                            onClose={() => dispatch(getMessage(''))}
+                            anchorOrigin={{
+                                vertical: 'bottom',
+                                horizontal: 'right'}}/>
     </>
   )
 }
