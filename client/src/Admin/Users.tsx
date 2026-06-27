@@ -11,6 +11,7 @@ import Paper from '@mui/material/Paper';
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Snackbar from '@mui/material/Snackbar';
+import Button from '@mui/material/Button';
 import { styled } from '@mui/material/styles';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -23,6 +24,11 @@ import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
+import Dialog from "@mui/material/Dialog";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogActions from "@mui/material/DialogActions";
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save'
@@ -65,6 +71,7 @@ interface Users{
 export default function User(){
   const [user , setUser] = useState<Users[]>([])
   const [edit , setEdit] = useState<Users | null>(null)
+  const [open, setOpen] = useState<string>('');
   const [filter , setFilter] = useState<string[]>([])
   const [searchdata , setSearchdata] = useState<Users[]>([])
   const [filterdata , setFilterdata] = useState<Users[]>([])
@@ -253,7 +260,8 @@ export default function User(){
                 <EditIcon onClick={() => setEdit(row)} />
                 )
               }
-            <DeleteIcon onClick={()=> handleDelete(row.id)}/>
+            <DeleteIcon onClick={(e)=>{e.preventDefault();
+                                    setOpen(row.id);}}/>
             </StyledTableCell>
           </StyledTableRow>
           ))}
@@ -273,6 +281,28 @@ export default function User(){
                 </Stack>
             </Box>
       </Paper>
+      <Dialog open={Boolean(open)} onClose={() => setOpen('')}>
+                <DialogTitle>Delete User</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        Are you sure you want to Delete User
+                    </DialogContentText>
+                </DialogContent>
+
+                <DialogActions>
+                    <Button variant="contained"
+                        sx={{bgcolor:"#626769" , 
+                        color:'white'}} 
+                        onClick={() => setOpen('')}> Cancel
+                    </Button>
+                    <Button variant="contained" 
+                        sx={{ bgcolor: "#ef5252" ,
+                            display: "flex",
+                            border:'1px solid #ef5252' }}  startIcon={<DeleteIcon />} 
+                            onClick={()=>handleDelete(open)}> "Delete"
+                    </Button>
+                </DialogActions>
+            </Dialog>
        <Snackbar open={Boolean(message)}
                             autoHideDuration={3000}
                             message ={message}
