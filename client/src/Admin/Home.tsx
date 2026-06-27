@@ -49,7 +49,7 @@ export default function Home() {
   ];
   const profileItems =[
     { text: "Profile", icon: <AccountCircleIcon sx={{color:'white'}} />, path: "/profile" },
-    { text: "Logout", icon: <AccountCircleIcon sx={{color:'white'}}/>, path:'' }
+    { text: "Logout", icon: <LogoutIcon sx={{color:'white'}}/>, path:'' }
   ]
   
   function handleDelete(){

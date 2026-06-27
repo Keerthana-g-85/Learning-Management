@@ -3,6 +3,7 @@ import { useNavigate  } from "react-router"
 import { useSelector } from "react-redux";
 
 import useApi from '../components/Api'
+import useDebounce from '../components/Debounce';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
@@ -41,7 +42,6 @@ interface Courses {
 export default function Courses(){
 
     const [course , setCourse] = useState<[]>([])
-    const [debounce , setDebounce] = useState<string>('')
     const [page, setPage] = useState<number>(1);
     const [filter , setFilter] = useState<string[]>([])
     const [instructor , setInstructor] = useState<string[]>([])
@@ -53,6 +53,7 @@ export default function Courses(){
     const nav = useNavigate()
 
     const search = useSelector((state: any) => state.search.search);
+    const debounce = useDebounce(search)
 
     // pagination
     const per_page = 6
@@ -93,14 +94,7 @@ export default function Courses(){
             }
     };
 
-    // searching using debounce logic 
-    useEffect(()=>{
-        const timer = setTimeout(()=>{
-            setDebounce(search)          
-        },1000)
-        return ()=> clearTimeout(timer)
-    },[search])
-
+    // search 
     const searchTitle = async() =>{
         try{
             if(debounce.trim() !==''){

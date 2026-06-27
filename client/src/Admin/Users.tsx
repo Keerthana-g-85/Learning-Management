@@ -1,6 +1,8 @@
 import { useEffect, useState  } from "react"
+import { useSelector } from "react-redux";
 
 import useApi from '../components/Api'
+import useDebounce from '../components/Debounce';
 
 import Paper from '@mui/material/Paper';
 import Box from "@mui/material/Box";
@@ -55,6 +57,9 @@ export default function User(){
   const [edit , setEdit] = useState<Users | null>(null)
 
   const { Api } = useApi();
+
+  const search = useSelector((state:any)=>state.search.search)
+  const debounce = useDebounce(search)
     
   const getUsers = async()=>{
     try{
@@ -83,7 +88,25 @@ export default function User(){
     console.log(response)
     getUsers()
   }
-    
+
+  const searchUser = async() =>{
+        try{
+            if(debounce.trim() !==''){
+                const response = await Api({method:'get', endpoint:`/register/getsearch/${debounce}` })
+                console.log('search',response.data)
+                const data = response.data.users
+                setUser(data)
+            }else{
+                    getUsers()
+            }   
+        }catch(error){
+            console.log(error)
+        }
+    }; 
+
+    useEffect(() => {
+        searchUser()
+    },[debounce])
   return(
     <>
       <Paper elevation={6} sx={{ mt: 5, 

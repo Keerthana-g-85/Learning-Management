@@ -71,7 +71,10 @@ export const Get : RequestHandler = async(req,res) =>{
         const courseRepo = database.getRepository(Course)
         const search  = req.params.search as string
         console.log(search)
-        const course = await courseRepo.find({ where: { title: ILike(`${search}%`)}});
+        const course = await courseRepo.find(
+            { where:[{ title: ILike(`${search}%`)},
+                  {instructor_name : ILike(`${search}%`)} 
+        ]});
         console.log(course)
         if (!course){
             return res.status(404).send({

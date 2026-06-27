@@ -5,6 +5,7 @@ import type { RequestHandler } from 'express'
 import { database } from '../server.js'
 import Register from '../models/RegisterModel.js'
 import { Role } from '../models/RegisterModel.js'
+import { ILike } from 'typeorm'
 
 
 export const Create : RequestHandler = async (req,res) => {
@@ -232,6 +233,34 @@ export const Delete : RequestHandler = async (req,res) =>{
         res.status(500).send({
             success : false ,
             message : "error while deleting"
+        })
+    }
+}
+
+export const Search : RequestHandler = async (req,res) =>{
+    try{
+        const userRepo = database.getRepository(Register)
+        const search = req.params.search as string 
+
+        const users = await userRepo.find({
+            where :[
+                { name : ILike(`${search}%`)},
+                { email : ILike(`${search}%`) },
+                { address : ILike(`%${search}%`)},
+                
+            ]
+        })
+
+        res.status(200).send({
+            success: true ,
+            message : 'Searched users',
+            users
+        })
+    }catch(error){
+        console.log(error)
+        res.status(500).send({
+            success : false ,
+            message : "Error while getting values"
         })
     }
 }
