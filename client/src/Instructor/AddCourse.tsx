@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { useSelector , useDispatch  } from "react-redux";
+import { getMessage } from '../redux/MessageSlice';
 import axios from "axios";
 import useApi from "../components/Api";
 import Box from "@mui/material/Box";
@@ -16,7 +18,6 @@ import Select from "@mui/material/Select";
 import { useNavigate } from "react-router";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import CssBaseline from "@mui/material/CssBaseline";
-import { useSelector } from "react-redux";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
@@ -52,7 +53,8 @@ export default function AddCourse() {
     thumbnail: "",
   });
   const [open, setOpen] = useState(false);
-  const [notify, setNotification] = useState("");
+  const dispatch = useDispatch()
+  const message = useSelector((state:any)=>state.message.message)
 
   function handleDialog(event: React.MouseEvent) {
     event.preventDefault();
@@ -99,6 +101,7 @@ export default function AddCourse() {
         data: course,
       });
       console.log(response);
+      dispatch((getMessage(response.data.message)))
     } catch (error) {
       if (axios.isAxiosError(error)) {
         console.log(error);
@@ -319,17 +322,15 @@ export default function AddCourse() {
           </DialogActions>
         </Dialog>
       </Box>
-      <Snackbar
-        open={Boolean(notify)}
-        autoHideDuration={3000}
-        message={notify}
-        sx={{ bgcolor: "red" }}
-        onClose={() => setNotification("")}
-        anchorOrigin={{
-          vertical: "bottom",
-          horizontal: "right",
-        }}
-      />
+        <Snackbar
+                open={Boolean(message)}
+                autoHideDuration={3000}
+                message={message}
+                anchorOrigin={{
+                  vertical: "bottom",
+                  horizontal: "right",
+                }}
+              />
     </>
   );
 }

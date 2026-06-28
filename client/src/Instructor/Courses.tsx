@@ -70,7 +70,7 @@ export default function Courses() {
       const response = await Api({ method: "get", endpoint: "course/getall" });
       const data = response.data.AllCourses;
       setCourse(data);
-      dispatch(getMessage(response.data.message));
+      // dispatch(getMessage(response.data.message));
     } catch (error) {
       console.log(error);
     }
