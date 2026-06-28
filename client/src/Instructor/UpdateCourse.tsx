@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { useSelector , useDispatch  } from "react-redux";
-import { getMessage } from '../redux/MessageSlice';
+import { useSelector, useDispatch } from "react-redux";
+import { getMessage } from "../redux/MessageSlice";
 import axios from "axios";
 import useApi from "../components/Api";
 import {
@@ -57,8 +57,8 @@ export default function UpdateCourse() {
     thumbnail: "",
   });
   const [open, setOpen] = useState(false);
-  const dispatch = useDispatch()
-  const message = useSelector((state:any)=>state.message.message)
+  const dispatch = useDispatch();
+  const message = useSelector((state: any) => state.message.message);
 
   function handleSubmit(e: React.MouseEvent) {
     e.preventDefault();
@@ -115,7 +115,7 @@ export default function UpdateCourse() {
         data: course,
       });
       console.log(response);
-      dispatch((getMessage(response.data.message)))
+      dispatch(getMessage(response.data.message));
     } catch (error) {
       if (axios.isAxiosError(error)) {
         console.log(error);
@@ -340,14 +340,16 @@ export default function UpdateCourse() {
           </DialogActions>
         </Dialog>
       </Box>
-      
-      <Snackbar open={Boolean(message)}
-                autoHideDuration={3000}
-                message ={message}
-                
-                anchorOrigin={{
-                    vertical: 'bottom',
-                    horizontal: 'right'}}/>
+
+      <Snackbar
+        open={Boolean(message)}
+        autoHideDuration={3000}
+        message={message}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "right",
+        }}
+      />
     </>
   );
 }

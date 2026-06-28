@@ -1,287 +1,307 @@
-import bcrypt from 'bcrypt'
-import jwt from 'jsonwebtoken'
-import type { RequestHandler } from 'express'
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import type { RequestHandler } from "express";
 
-import { database } from '../server.js'
-import Register from '../models/RegisterModel.js'
-import { Role } from '../models/RegisterModel.js'
+import { database } from "../server.js";
+import Register from "../models/RegisterModel.js";
+import { Role } from "../models/RegisterModel.js";
 
-import { ILike } from 'typeorm'
+import { ILike } from "typeorm";
 import { In } from "typeorm";
 
+export const Create: RequestHandler = async (req, res) => {
+  try {
+    const registerRepo = database.getRepository(Register);
+    const { name, email, password, phoneNumber, address } = req.body;
 
-export const Create : RequestHandler = async (req,res) => {
-    try{
-        const registerRepo = database.getRepository(Register)
-        const { name , email , password , phoneNumber , address } = req.body
-
-        if (!email || !password || !name ){
-            return res.status(400).send({
-                success : false ,
-                message : "Enter required values"           
-            })
-        }
-
-        const existing = await registerRepo.findOne({ where : { email : email }})
-        if (existing){
-            return res.status(400).send({
-                success : false ,
-                message : 'User already exist'
-            })
-        }
-
-        const salt = bcrypt.genSaltSync(10)
-        const hashedPassword = await bcrypt.hash(password , salt)
-
-        const user = registerRepo.create({ name , email , password :hashedPassword , phoneNumber , address })
-
-        const newUser = await registerRepo.save(user)
-
-        res.status(201).send({
-            success : true ,
-            message : "User registered successfully",
-            user : newUser
-        })
-
-    }
-    catch(error){
-        console.log(error)
-        res.status(500).send({
-            success: false ,
-            message : "Error while registration"
-        })
-
+    if (!email || !password || !name) {
+      return res.status(400).send({
+        success: false,
+        message: "Enter required values",
+      });
     }
 
-}
-
-export const Login : RequestHandler = async (req,res) => {
-    try{
-        const registerRepo = database.getRepository(Register)
-
-        const {email , password} = req.body 
-
-        if (!email || !password){
-            return res.status(401).send({
-                success : false ,
-                message : "Enter Email and Password"           
-            })
-        }
-
-        const exist = await registerRepo.findOneBy({email : email})
-        console.log(exist)
-        if (!exist){
-            return res.status(404).send({
-                success : false ,
-                message : "Email not yet registered"           
-            })
-        }
-
-        const isMatch = await bcrypt.compare(password,exist.password)
-        if (!isMatch){
-            return res.status(401).send({
-                success : false ,
-                message : "Invalid password"           
-            })
-        }
-
-        const accesstoken = jwt.sign({id:exist.id , name: exist.name ,email : exist.email , password: exist.password , address: exist.address , phone : exist.phoneNumber ,role:exist.role} ,
-            process.env.JW_SECRET as string , {expiresIn : '1hr'}
-        )
-
-        const refreshtoken = jwt.sign({id:exist.id , Name: exist.name , Address: exist.address , Phone : exist.phoneNumber} ,
-            process.env.JW_REFRESH as string , {expiresIn : '7d'}
-        )
-
-        res.cookie("refreshtoken",refreshtoken,{
-            httpOnly : true ,
-            secure : false ,
-            sameSite : "lax",
-            maxAge: 7 * 24 * 60 * 60 * 1000
-        })
-
-        res.status(201).send({
-            success : true ,
-            message : "User logged successfully",
-            accesstoken
-        })
-
-
-    }catch(error){
-        console.log(error)
-        res.status(500).send({
-            success: false ,
-            message : "Error while logging in"
-        })
+    const existing = await registerRepo.findOne({ where: { email: email } });
+    if (existing) {
+      return res.status(400).send({
+        success: false,
+        message: "User already exist",
+      });
     }
-}
 
-export const GetStudent : RequestHandler= async (req,res) =>{
-    try{
-        const registerRepo = database.getRepository(Register)
+    const salt = bcrypt.genSaltSync(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
 
-        const students = await registerRepo.findBy({role : Role.student})
+    const user = registerRepo.create({
+      name,
+      email,
+      password: hashedPassword,
+      phoneNumber,
+      address,
+    });
 
-        res.status(200).send({
-            success: true,
-            message : "Students" ,
-            students
-        })
+    const newUser = await registerRepo.save(user);
 
-    }catch(error){
-        console.log(error)
-        res.status(500).send({
-            success: false ,
-            message : "Error while getting students",
-        })
+    res.status(201).send({
+      success: true,
+      message: "User registered successfully",
+      user: newUser,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      success: false,
+      message: "Error while registration",
+    });
+  }
+};
+
+export const Login: RequestHandler = async (req, res) => {
+  try {
+    const registerRepo = database.getRepository(Register);
+
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(401).send({
+        success: false,
+        message: "Enter Email and Password",
+      });
     }
-}
 
-export const GetInstructor: RequestHandler= async (req,res) =>{
-    try{
-        const registerRepo = database.getRepository(Register)
-
-        const instructor = await registerRepo.findBy({role : Role.instructor })
-
-        res.status(200).send({
-            success: true,
-            message : "Instructors" ,
-            instructor
-        })
-
-    }catch(error){
-        console.log(error)
-        res.status(500).send({
-            success: false ,
-            message : "Error while getting instructor",
-        })
+    const exist = await registerRepo.findOneBy({ email: email });
+    console.log(exist);
+    if (!exist) {
+      return res.status(404).send({
+        success: false,
+        message: "Email not yet registered",
+      });
     }
-}
 
-export const Get: RequestHandler= async (req,res) =>{
-    try{
-        const registerRepo = database.getRepository(Register)
-
-        const user = await registerRepo.find()
-
-        res.status(200).send({
-            success: true,
-            message : "All users" ,
-            user
-        })
-
-    }catch(error){
-        console.log(error)
-        res.status(500).send({
-            success: false ,
-            message : "Error while getting users",
-        })
+    const isMatch = await bcrypt.compare(password, exist.password);
+    if (!isMatch) {
+      return res.status(401).send({
+        success: false,
+        message: "Invalid password",
+      });
     }
-}
 
-export const UpdateUser : RequestHandler = async( req , res) =>{
-    try{
-        const registerRepo = database.getRepository(Register)
-        const { name , email , phoneNumber , address , role } = req.body
+    const accesstoken = jwt.sign(
+      {
+        id: exist.id,
+        name: exist.name,
+        email: exist.email,
+        password: exist.password,
+        address: exist.address,
+        phone: exist.phoneNumber,
+        role: exist.role,
+      },
+      process.env.JW_SECRET as string,
+      { expiresIn: "1hr" },
+    );
 
-        const id  = req.params.id as string
-        console.log(id)
-        const user = await registerRepo.findOneBy({id })
-        console.log(user)
-        if (!user){
-            return res.status(404).send({
-                success: false ,
-                message : 'User not found'
-            })
-        }
-        const UpdatedUser =await  registerRepo.update({id : id },{name : name , email : email, phoneNumber: phoneNumber , address:address , role:role })
-        res.status(200).send({
-            success : true ,
-            message : "User Updated",
-            UpdatedUser
-        })
+    const refreshtoken = jwt.sign(
+      {
+        id: exist.id,
+        Name: exist.name,
+        Address: exist.address,
+        Phone: exist.phoneNumber,
+      },
+      process.env.JW_REFRESH as string,
+      { expiresIn: "7d" },
+    );
 
-    }catch(error){
-        console.log(error)
-        res.status(500).send({
-            success: false ,
-            message : "Error while updating",
-        })
+    res.cookie("refreshtoken", refreshtoken, {
+      httpOnly: true,
+      secure: false,
+      sameSite: "lax",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
+    res.status(201).send({
+      success: true,
+      message: "User logged successfully",
+      accesstoken,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      success: false,
+      message: "Error while logging in",
+    });
+  }
+};
+
+export const GetStudent: RequestHandler = async (req, res) => {
+  try {
+    const registerRepo = database.getRepository(Register);
+
+    const students = await registerRepo.findBy({ role: Role.student });
+
+    res.status(200).send({
+      success: true,
+      message: "Students",
+      students,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      success: false,
+      message: "Error while getting students",
+    });
+  }
+};
+
+export const GetInstructor: RequestHandler = async (req, res) => {
+  try {
+    const registerRepo = database.getRepository(Register);
+
+    const instructor = await registerRepo.findBy({ role: Role.instructor });
+
+    res.status(200).send({
+      success: true,
+      message: "Instructors",
+      instructor,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      success: false,
+      message: "Error while getting instructor",
+    });
+  }
+};
+
+export const Get: RequestHandler = async (req, res) => {
+  try {
+    const registerRepo = database.getRepository(Register);
+
+    const user = await registerRepo.find();
+
+    res.status(200).send({
+      success: true,
+      message: "All users",
+      user,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      success: false,
+      message: "Error while getting users",
+    });
+  }
+};
+
+export const UpdateUser: RequestHandler = async (req, res) => {
+  try {
+    const registerRepo = database.getRepository(Register);
+    const { name, email, phoneNumber, address, role } = req.body;
+
+    const id = req.params.id as string;
+    console.log(id);
+    const user = await registerRepo.findOneBy({ id });
+    console.log(user);
+    if (!user) {
+      return res.status(404).send({
+        success: false,
+        message: "User not found",
+      });
     }
-}
+    const UpdatedUser = await registerRepo.update(
+      { id: id },
+      {
+        name: name,
+        email: email,
+        phoneNumber: phoneNumber,
+        address: address,
+        role: role,
+      },
+    );
+    res.status(200).send({
+      success: true,
+      message: "User Updated",
+      UpdatedUser,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      success: false,
+      message: "Error while updating",
+    });
+  }
+};
 
-export const Delete : RequestHandler = async (req,res) =>{
-    try{
-        const userRepo = database.getRepository(Register)
-        const id  = req.params.id as string
-        const student = await userRepo.findOneBy({id: id})
+export const Delete: RequestHandler = async (req, res) => {
+  try {
+    const userRepo = database.getRepository(Register);
+    const id = req.params.id as string;
+    const student = await userRepo.findOneBy({ id: id });
 
-        if(!student){
-            return res.status(404).send({
-            success: false,
-            message:"User not present",
-        })
-        }
-
-        await userRepo.delete(id)
-
-        res.status(200).send({
-            success: true ,
-            message : "User Deleted"
-        })
-
-    }catch(error){
-        console.log(error)
-        res.status(500).send({
-            success : false ,
-            message : "error while deleting"
-        })
+    if (!student) {
+      return res.status(404).send({
+        success: false,
+        message: "User not present",
+      });
     }
-}
 
-export const Search : RequestHandler = async (req,res) =>{
-    try{
-        const userRepo = database.getRepository(Register)
-        const search = req.params.search as string 
+    await userRepo.delete(id);
 
-        const users = await userRepo.find({
-            where :[
-                { name : ILike(`${search}%`)},
-                { email : ILike(`${search}%`) },
-                { address : ILike(`%${search}%`)},
-                
-            ]
-        })
+    res.status(200).send({
+      success: true,
+      message: "User Deleted",
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      success: false,
+      message: "error while deleting",
+    });
+  }
+};
 
-        res.status(200).send({
-            success: true ,
-            message : 'Searched users',
-            users
-        })
-    }catch(error){
-        console.log(error)
-        res.status(500).send({
-            success : false ,
-            message : "Error while getting values"
-        })
-    }
-}
+export const Search: RequestHandler = async (req, res) => {
+  try {
+    const userRepo = database.getRepository(Register);
+    const search = req.params.search as string;
 
-export const FilterRole : RequestHandler = async (req, res) => {
-    try {
-        const role = req.params.role.split(",");
-        const userRepo = database.getRepository(Register)
-        const users = await userRepo.find({ where:{role: In(role)}});
+    const users = await userRepo.find({
+      where: [
+        { name: ILike(`${search}%`) },
+        { email: ILike(`${search}%`) },
+        { address: ILike(`%${search}%`) },
+      ],
+    });
 
-        res.status(200).json({
-            success: true ,
-            message :'Filtered by Instructor name',
-            users
-        });
-    } catch (error) {
-        res.status(500).send({
-            success:false,
-            message: 'Error while filtering'
-        });
-    }
+    res.status(200).send({
+      success: true,
+      message: "Searched users",
+      users,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      success: false,
+      message: "Error while getting values",
+    });
+  }
+};
+
+export const FilterRole: RequestHandler = async (req, res) => {
+  try {
+    const roles = req.params.role as string;
+    const role = roles.split(",");
+    const userRepo = database.getRepository(Register);
+    const users = await userRepo.find({ where: { role: In(role) } });
+
+    res.status(200).json({
+      success: true,
+      message: "Filtered by Instructor name",
+      users,
+    });
+  } catch (error) {
+    res.status(500).send({
+      success: false,
+      message: "Error while filtering",
+    });
+  }
 };
