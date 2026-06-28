@@ -45,7 +45,7 @@ export const Create:RequestHandler = async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            message: "New student enrolled",
+            message: "Enrolled ",
             student: newEnroll
         });
 
@@ -127,7 +127,7 @@ export const Delete : RequestHandler = async (req,res) =>{
     
     return res.status(200).send({
             success:true,
-            message:"Student Unenrolled",
+            message:"Unenrolled",
         })
     }
     catch(error){

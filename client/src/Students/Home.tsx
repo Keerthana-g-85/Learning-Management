@@ -231,7 +231,6 @@ export default function Home() {
             onClick={() => setOpen(false)}
             sx={{ bgcolor: "#626769", color: "white" }}
           >
-            {" "}
             Cancel
           </Button>
           <Button
@@ -243,7 +242,6 @@ export default function Home() {
             }}
             onClick={handleDelete}
           >
-            {" "}
             Logout
             <LogoutIcon />
           </Button>
