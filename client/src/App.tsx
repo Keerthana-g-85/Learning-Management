@@ -20,9 +20,7 @@ import Instructor from "./Admin/Instructor";
 import InstructorEnroll from "./Instructor/Enroll";
 import AddCourse from "./Instructor/AddCourse";
 import UpdateCourse from "./Instructor/UpdateCourse";
-import InstructorCourse from "./Instructor/Courses";
 
-import StudentCourse from "./Students/Courses";
 import StudentEnroll from "./Students/Enroll";
 
 export default function App() {
@@ -75,7 +73,7 @@ export default function App() {
             <Route element={<ProtectedRouter />}>
             <Route element={<Home />}>
               <Route path="/profile" element={<Profile />} />
-              <Route path="/courses" element={<InstructorCourse />} />
+              <Route path="/courses" element={<Course />} />
               <Route path="/update/:id" element={<UpdateCourse />} />
               <Route path="/addcourse" element={<AddCourse />} />
               <Route
@@ -98,7 +96,7 @@ export default function App() {
             <Route element={<ProtectedRouter />}>
             <Route element={<Home />}>
               <Route path="/profile" element={<Profile />} />
-              <Route path="/courses" element={<StudentCourse />} />
+              <Route path="/courses" element={<Course />} />
               <Route path="/enroll" element={<StudentEnroll />} />
             </Route>
             </Route>

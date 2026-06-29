@@ -27,6 +27,8 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogActions from "@mui/material/DialogActions";
 import DeleteIcon from "@mui/icons-material/Delete";
+import AddIcon from "@mui/icons-material/Add";
+import EditIcon from "@mui/icons-material/Edit";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import CoPresentIcon from "@mui/icons-material/CoPresent";
 
@@ -46,6 +48,7 @@ export default function Courses() {
   const [filter, setFilter] = useState<string[]>([]);
   const [instructor, setInstructor] = useState<string[]>([]);
   const [open, setOpen] = useState<string>("");
+  const [enroll, setEnroll] = useState<string[]>([]);
   const [searchdata, setSearchdata] = useState<Courses[]>([]);
   const [filterdata, setFilterdata] = useState<Courses[]>([]);
 
@@ -54,8 +57,10 @@ export default function Courses() {
   const nav = useNavigate();
   const dispatch = useDispatch();
 
+  const user = useSelector((state: any) => state.login.user);
   const search = useSelector((state: any) => state.search.search);
   const message = useSelector((state: any) => state.message.message);
+  const id = useSelector((state: any) => state.login.user.id);
   const debounce = useDebounce(search);
 
   // pagination
@@ -91,6 +96,40 @@ export default function Courses() {
       const data = response.data.AllCourses;
       dispatch(getMessage(deleteResponse.data.message));
       setCourse(data);
+      setOpen("");
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  const getEnroll = async () => {
+    try {
+      const response = await Api({
+        method: "get",
+        endpoint: `enroll/getstudent/${id}`,
+      });
+      const data = response.data.student_course.map(
+        (item: any) => item.course.id,
+      );
+      setEnroll(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    getEnroll();
+  }, []);
+
+  async function handleEnroll(id: string) {
+    console.log(id);
+    try {
+      const response = await Api({
+        method: "post",
+        endpoint: `enroll/create/`,
+        data: { register: `${user.id}`, course: `${id}` },
+      });
+      console.log(response);
+      setEnroll((prev) => [...prev, id]);
+      dispatch(getMessage(response.data.message));
       setOpen("");
     } catch (error) {
       console.log(error);
@@ -180,22 +219,51 @@ export default function Courses() {
 
   return (
     <>
-      <Box sx={{ display: "flex", height: "80px", justifyContent: "right" }}>
-        {instructor.map((data, index) => (
-          <>
-            <FormGroup key={index}>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={filter.includes(data)}
-                    onChange={() => handleFilter(data)}
-                  />
-                }
-                label={data}
-              />
-            </FormGroup>
-          </>
-        ))}
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          mb: 3,
+          p: 2,
+        }}
+      >
+        <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+          <Typography
+            sx={{
+              fontWeight: 700,
+              color: "#233D4D",
+              minWidth: "90px",
+            }}
+          >
+            Instructor
+          </Typography>
+          {instructor.map((data, index) => (
+            <>
+              <FormGroup key={index}>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={filter.includes(data)}
+                      onChange={() => handleFilter(data)}
+                    />
+                  }
+                  label={data}
+                />
+              </FormGroup>
+            </>
+          ))}
+        </Box>
+        {user.role === "instructor" ? (
+          <Button
+            variant="contained"
+            sx={{ mr: 2, bgcolor: "#233D4D" }}
+            onClick={() => nav("/addcourse")}
+          >
+            <AddIcon />
+            Add Course
+          </Button>
+        ) : null}
       </Box>
 
       <Box sx={{ display: "flex", gap: 5, flexWrap: "wrap" }}>
@@ -224,25 +292,27 @@ export default function Courses() {
                   sx={{ p: 1, borderRadius: 5 }}
                   image={data.thumbnail}
                 />
-                <Button
-                  variant="contained"
-                  sx={{
-                    position: "absolute",
-                    top: 12,
-                    right: 12,
-                    borderRadius: 3,
-                    textTransform: "none",
-                    fontSize: "1 rem",
-                    fontWeight: 700,
-                    bgcolor: "#fefefe",
-                    color: "#0ea5e9",
-                  }}
-                  onClick={() => {
-                    nav(`/courses/enroll/${data.id}`, { state: { data } });
-                  }}
-                >
-                  Enroll
-                </Button>
+                {user.role === "student" ? null : (
+                  <Button
+                    variant="contained"
+                    sx={{
+                      position: "absolute",
+                      top: 12,
+                      right: 12,
+                      borderRadius: 3,
+                      textTransform: "none",
+                      fontSize: "1 rem",
+                      fontWeight: 700,
+                      bgcolor: "#fefefe",
+                      color: "#0ea5e9",
+                    }}
+                    onClick={() => {
+                      nav(`/courses/enroll/${data.id}`, { state: { data } });
+                    }}
+                  >
+                    Enroll
+                  </Button>
+                )}
 
                 <CardContent sx={{ pl: 2, pt: 1 }}>
                   <Chip
@@ -332,25 +402,87 @@ export default function Courses() {
                       mb: 1,
                     }}
                   >
-                    <Button
-                      variant="outlined"
-                      sx={{
-                        color: "#ef5252",
-                        display: "flex",
-                        flex: 1,
-                        alignItems: "center",
-                        gap: 1,
-                        border: "1px solid #ef5252",
-                      }}
-                      startIcon={<DeleteIcon />}
-                      onClick={(e) => {
-                        e.preventDefault();
-                        setOpen(data.id);
-                      }}
-                    >
-                      {" "}
-                      Delete
-                    </Button>
+                    {user.role === "admin" ? (
+                      <Button
+                        variant="outlined"
+                        sx={{
+                          color: "#ef5252",
+                          display: "flex",
+                          flex: 1,
+                          alignItems: "center",
+                          gap: 1,
+                          border: "1px solid #ef5252",
+                        }}
+                        startIcon={<DeleteIcon />}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setOpen(data.id);
+                        }}
+                      >
+                        Delete
+                      </Button>
+                    ) : user.role === "instructor" ? (
+                      <>
+                        <Button
+                          variant="outlined"
+                          sx={{
+                            display: "flex",
+                            flex: 1,
+                            alignItems: "center",
+                            gap: 1,
+                            bgcolor: "#0ea5e9",
+                            color: "white",
+                          }}
+                          onClick={() => {
+                            nav(`/update/${data.id}`, { state: { data } });
+                          }}
+                          startIcon={<EditIcon />}
+                        >
+                          Edit
+                        </Button>
+                        <Button
+                          variant="outlined"
+                          sx={{
+                            color: "#ef5252",
+                            display: "flex",
+                            flex: 1,
+                            alignItems: "center",
+                            gap: 1,
+                            border: "1px solid #ef5252",
+                          }}
+                          startIcon={<DeleteIcon />}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            setOpen(data.id);
+                          }}
+                        >
+                          Delete
+                        </Button>{" "}
+                      </>
+                    ) : (
+                      <>
+                        <Button
+                          variant="outlined"
+                          sx={{
+                            display: "flex",
+                            flex: 1,
+                            alignItems: "center",
+                            gap: 1,
+                            bgcolor: "#0ea5e9",
+                            color: "white",
+                            "&.Mui-disabled": {
+                              bgcolor: "#49514f",
+                              color: "white",
+                              opacity: 1,
+                            },
+                          }}
+                          disabled={enroll.includes(data.id)}
+                          onClick={() => setOpen(data.id)}
+                        >
+                          {enroll.includes(data.id) ? "Enrolled" : "Enroll"}
+                        </Button>
+                      </>
+                    )}
                   </Box>
                 </CardContent>
               </Card>
@@ -360,35 +492,48 @@ export default function Courses() {
       </Box>
 
       <Dialog open={Boolean(open)} onClose={() => setOpen("")}>
-        <DialogTitle>Delete Course </DialogTitle>
+        <DialogTitle>
+          {" "}
+          {user.role === "student" ? "Enroll Course" : "Delete Course"}{" "}
+        </DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Are you sure you want to Delete course
+            {user.role === "student"
+              ? "Are you sure you want to Enroll course?"
+              : "Are you sure you want to Delete course"}
           </DialogContentText>
         </DialogContent>
-
         <DialogActions>
           <Button
-            variant="contained"
-            sx={{ bgcolor: "#626769", color: "white" }}
             onClick={() => setOpen("")}
+            sx={{ bgcolor: "#626769", color: "white" }}
           >
-            {" "}
             Cancel
           </Button>
-          <Button
-            variant="contained"
-            sx={{
-              bgcolor: "#ef5252",
-              display: "flex",
-              border: "1px solid #ef5252",
-            }}
-            startIcon={<DeleteIcon />}
-            onClick={() => handleDelete(open)}
-          >
-            {" "}
-            "Delete"
-          </Button>
+          {user.role === "student" ? (
+            <Button
+              variant="contained"
+              sx={{ bgcolor: "#0ea5e9" }}
+              onClick={() => {
+                handleEnroll(open);
+              }}
+            >
+              Enroll
+            </Button>
+          ) : (
+            <Button
+              variant="contained"
+              sx={{
+                bgcolor: "#ef5252",
+                display: "flex",
+                border: "1px solid #ef5252",
+              }}
+              startIcon={<DeleteIcon />}
+              onClick={() => handleDelete(open)}
+            >
+              "Delete"
+            </Button>
+          )}
         </DialogActions>
       </Dialog>
       <Box sx={{ display: "flex", justifyContent: "center", p: 5 }}>
