@@ -3,7 +3,9 @@ import { BrowserRouter, Routes, Route } from "react-router";
 import { jwtDecode } from "jwt-decode";
 import { useDispatch, useSelector } from "react-redux";
 import { addToken, addUser } from "./redux/LoginSlice";
+import { Navigate } from 'react-router'
 
+import ProtectedRouter from "./components/ProtectedRouter";
 import Register from "./components/Register";
 import Login from "./components/Login";
 import Profile from "./components/Profile";
@@ -39,7 +41,8 @@ export default function App() {
   }, []);
 
   const user = useSelector((state: any) => state.login.user);
-
+  console.log(user)
+  
   if (user.role === "admin") {
     return (
       <>
@@ -47,13 +50,16 @@ export default function App() {
           <Routes>
             <Route path="/" element={<Login />}></Route>
             <Route path="/register" element={<Register />}></Route>
+            <Route element={<ProtectedRouter />}>
             <Route element={<Home />}>
+              <Route path="*" element={<Navigate to="/courses" replace />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/courses" element={<Course />} />
               <Route path="/students" element={<Students />} />
               <Route path="/instructors" element={<Instructor />} />
               <Route path="/user" element={<User />} />
               <Route path="/courses/enroll/:id" element={<Enroll />} />
+            </Route>
             </Route>
           </Routes>
         </BrowserRouter>
@@ -66,6 +72,7 @@ export default function App() {
           <Routes>
             <Route path="/" element={<Login />}></Route>
             <Route path="/register" element={<Register />}></Route>
+            <Route element={<ProtectedRouter />}>
             <Route element={<InstructorHome />}>
               <Route path="/profile" element={<Profile />} />
               <Route path="/courses" element={<InstructorCourse />} />
@@ -75,6 +82,7 @@ export default function App() {
                 path="/courses/enroll/:id"
                 element={<InstructorEnroll />}
               />
+            </Route>
             </Route>
           </Routes>
         </BrowserRouter>
@@ -87,10 +95,12 @@ export default function App() {
           <Routes>
             <Route path="/" element={<Login />}></Route>
             <Route path="/register" element={<Register />}></Route>
+            <Route element={<ProtectedRouter />}>
             <Route element={<StudentHome />}>
               <Route path="/profile" element={<Profile />} />
               <Route path="/courses" element={<StudentCourse />} />
               <Route path="/enroll" element={<StudentEnroll />} />
+            </Route>
             </Route>
           </Routes>
         </BrowserRouter>
@@ -102,6 +112,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>
     );
