@@ -5,14 +5,16 @@ export const api = axios.create({
   baseURL: import.meta.env.VITE_BASE_URL,
 });
 
-export default function useApi() {
-  const token = useSelector((state: any) => state.login.token);
-
-  const Api = async (values: {
+interface Value {
     method: "get" | "post" | "put" | "delete";
     endpoint: string;
     data?: object;
-  }) => {
+  }
+
+export default function useApi() {
+  const token = useSelector((state: any) => state.login.token);
+
+  const Api = async (values:Value ) => {
     try {
       if (values.method === "get" || values.method === "delete") {
         const response = await api[values.method](values.endpoint, {

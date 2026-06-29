@@ -17,14 +17,12 @@ import User from "./Admin/Users";
 import Enroll from "./Admin/Enroll";
 import Instructor from "./Admin/Instructor";
 
-import InstructorHome from "./Instructor/Home";
 import InstructorEnroll from "./Instructor/Enroll";
 import AddCourse from "./Instructor/AddCourse";
 import UpdateCourse from "./Instructor/UpdateCourse";
 import InstructorCourse from "./Instructor/Courses";
 
 import StudentCourse from "./Students/Courses";
-import StudentHome from "./Students/Home";
 import StudentEnroll from "./Students/Enroll";
 
 export default function App() {
@@ -43,6 +41,7 @@ export default function App() {
   const user = useSelector((state: any) => state.login.user);
   console.log(user)
   
+  if(token){
   if (user.role === "admin") {
     return (
       <>
@@ -59,6 +58,7 @@ export default function App() {
               <Route path="/instructors" element={<Instructor />} />
               <Route path="/user" element={<User />} />
               <Route path="/courses/enroll/:id" element={<Enroll />} />
+              <Route path='*' element={<Navigate to="/courses" replace />} />
             </Route>
             </Route>
           </Routes>
@@ -73,7 +73,7 @@ export default function App() {
             <Route path="/" element={<Login />}></Route>
             <Route path="/register" element={<Register />}></Route>
             <Route element={<ProtectedRouter />}>
-            <Route element={<InstructorHome />}>
+            <Route element={<Home />}>
               <Route path="/profile" element={<Profile />} />
               <Route path="/courses" element={<InstructorCourse />} />
               <Route path="/update/:id" element={<UpdateCourse />} />
@@ -96,7 +96,7 @@ export default function App() {
             <Route path="/" element={<Login />}></Route>
             <Route path="/register" element={<Register />}></Route>
             <Route element={<ProtectedRouter />}>
-            <Route element={<StudentHome />}>
+            <Route element={<Home />}>
               <Route path="/profile" element={<Profile />} />
               <Route path="/courses" element={<StudentCourse />} />
               <Route path="/enroll" element={<StudentEnroll />} />
@@ -106,6 +106,7 @@ export default function App() {
         </BrowserRouter>
       </>
     );
+  }
   } else {
     return (
       <BrowserRouter>

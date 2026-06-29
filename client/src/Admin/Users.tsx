@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { Navigate, useLocation } from "react-router-dom";
 
 import { getMessage } from "../redux/MessageSlice";
 
@@ -68,6 +69,12 @@ interface Users {
 }
 
 export default function User() {
+  const location = useLocation();
+
+  if (!location.state?.fromApp) {
+    return <Navigate to="/courses" replace />;
+  }
+
   const [user, setUser] = useState<Users[]>([]);
   const [edit, setEdit] = useState<Users | null>(null);
   const [open, setOpen] = useState<string>("");

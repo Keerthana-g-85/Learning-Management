@@ -41,16 +41,18 @@ export default function Home() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  const user = useSelector((state: any) => state.login.user);
   const search = useSelector((state: any) => state.search.search);
   const name = useSelector((state: any) => state.login.user.name);
   console.log(search);
 
-  const menuItems = [
-    {
+  let menuItems = [ {
       text: "Courses",
       icon: <SchoolIcon sx={{ color: "white" }} />,
       path: "/courses",
-    },
+    },]
+
+  const adminItems = [
     {
       text: "Users",
       icon: <PeopleIcon sx={{ color: "white" }} />,
@@ -67,6 +69,13 @@ export default function Home() {
       path: "/instructors",
     },
   ];
+  const studentItems = [
+    {
+      text: "Enrolled Courses",
+      icon: <SchoolIcon sx={{ color: "white" }} />,
+      path: "/enroll",
+    },
+  ]
   const profileItems = [
     {
       text: "Profile",
@@ -75,6 +84,13 @@ export default function Home() {
     },
     { text: "Logout", icon: <LogoutIcon sx={{ color: "white" }} />, path: "" },
   ];
+
+  if (user.role === 'admin'){
+    menuItems = [...menuItems , ...adminItems]
+  }
+  else if (user.role === 'student'){
+    menuItems = [...menuItems , ...studentItems]
+  }
 
   function handleDelete() {
     localStorage.clear();
@@ -88,7 +104,7 @@ export default function Home() {
           display: "flex",
           bgcolor: "#FFFAF3",
           width: "100%",
-          height: "100vh",
+          minHeight: "100vh",
         }}
       >
         <CssBaseline />
@@ -195,7 +211,13 @@ export default function Home() {
             <List>
               {menuItems.map((item) => (
                 <ListItem key={item.text}>
-                  <ListItemButton onClick={() => navigate(item.path)}>
+                  <ListItemButton
+                    onClick={() =>
+                      navigate(item.path, {
+                        state: { fromApp: true },
+                      })
+                    }
+                  >
                     <ListItemIcon>{item.icon}</ListItemIcon>
                     <ListItemText primary={item.text} />
                   </ListItemButton>
