@@ -101,23 +101,26 @@ export default function Courses() {
       console.log(error);
     }
   }
+  
+  if (user.role === 'student'){
   const getEnroll = async () => {
-    try {
-      const response = await Api({
-        method: "get",
-        endpoint: `enroll/getstudent/${id}`,
-      });
-      const data = response.data.student_course.map(
-        (item: any) => item.course.id,
-      );
-      setEnroll(data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-  useEffect(() => {
-    getEnroll();
-  }, []);
+      try {
+        const response = await Api({
+          method: "get",
+          endpoint: `enroll/getstudent/${id}`,
+        });
+        const data = response.data.student_course.map(
+          (item: any) => item.course.id,
+        );
+        setEnroll(data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    useEffect(() => {
+      getEnroll();
+    }, []);
+  }
 
   async function handleEnroll(id: string) {
     console.log(id);

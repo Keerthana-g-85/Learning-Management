@@ -6,6 +6,7 @@ import { addToken, addUser } from "./redux/LoginSlice";
 import { Navigate } from 'react-router'
 
 import ProtectedRouter from "./components/ProtectedRouter";
+import PublicRoute from './components/PublicRouter'
 import Register from "./components/Register";
 import Login from "./components/Login";
 import Profile from "./components/Profile";
@@ -38,81 +39,30 @@ export default function App() {
   const user = useSelector((state: any) => state.login.user);
   console.log(user)
   
-  if(token){
-  if (user.role === "admin") {
     return (
       <>
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={<Login />}></Route>
-            <Route path="/register" element={<Register />}></Route>
+            <Route element={<PublicRoute />}>
+            <Route path="/" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+          </Route>
             <Route element={<ProtectedRouter />}>
-            <Route element={<Home />}>
-              <Route path="*" element={<Navigate to="/courses" replace />} />
-              <Route path="/profile" element={<Profile />} />
-              <Route path="/courses" element={<Course />} />
-              <Route path="/students" element={<Students />} />
-              <Route path="/instructors" element={<Instructor />} />
-              <Route path="/user" element={<User />} />
-              <Route path="/courses/enroll/:id" element={<Enroll />} />
-              <Route path='*' element={<Navigate to="/courses" replace />} />
-            </Route>
+              <Route element={<Home />}>
+                <Route path="/profile" element={<Profile />} />
+                <Route path="/courses" element={<Course />} />
+                <Route path="/students" element={<Students />} />
+                <Route path="/instructors" element={<Instructor />} />
+                <Route path="/user" element={<User />} />
+                <Route path="/courses/enroll/:id" element={<Enroll />} />
+                <Route path="/update/:id" element={<UpdateCourse />} />
+                <Route path="/addcourse" element={<AddCourse />} />
+                <Route path="/enroll" element={<StudentEnroll />} />
+                <Route path='*' element={<Navigate to="/courses" replace />} />
+              </Route>
             </Route>
           </Routes>
         </BrowserRouter>
       </>
     );
-  } else if (user.role === "instructor") {
-    return (
-      <>
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Login />}></Route>
-            <Route path="/register" element={<Register />}></Route>
-            <Route element={<ProtectedRouter />}>
-            <Route element={<Home />}>
-              <Route path="/profile" element={<Profile />} />
-              <Route path="/courses" element={<Course />} />
-              <Route path="/update/:id" element={<UpdateCourse />} />
-              <Route path="/addcourse" element={<AddCourse />} />
-              <Route
-                path="/courses/enroll/:id"
-                element={<Enroll />}
-              />
-            </Route>
-            </Route>
-          </Routes>
-        </BrowserRouter>
-      </>
-    );
-  } else if (user.role === "student") {
-    return (
-      <>
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Login />}></Route>
-            <Route path="/register" element={<Register />}></Route>
-            <Route element={<ProtectedRouter />}>
-            <Route element={<Home />}>
-              <Route path="/profile" element={<Profile />} />
-              <Route path="/courses" element={<Course />} />
-              <Route path="/enroll" element={<StudentEnroll />} />
-            </Route>
-            </Route>
-          </Routes>
-        </BrowserRouter>
-      </>
-    );
-  }
-  } else {
-    return (
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </BrowserRouter>
-    );
-  }
-}
+  } 

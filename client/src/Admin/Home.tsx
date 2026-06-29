@@ -32,6 +32,7 @@ import Avatar from "@mui/material/Avatar";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import SearchIcon from "@mui/icons-material/Search";
 import InputAdornment from "@mui/material/InputAdornment";
+import { addToken, addUser } from "../redux/LoginSlice";
 
 const drawerWidth = 240;
 
@@ -92,9 +93,11 @@ export default function Home() {
     menuItems = [...menuItems , ...studentItems]
   }
 
-  function handleDelete() {
+  function handleLogout() {
     localStorage.clear();
-    navigate("/");
+    dispatch(addToken(''))
+    dispatch(addUser(null))
+    navigate("/", { replace: true });
   }
 
   return (
@@ -276,9 +279,8 @@ export default function Home() {
               display: "flex",
               border: "1px solid #ef5252",
             }}
-            onClick={handleDelete}
+            onClick={handleLogout}
           >
-            {" "}
             Logout
             <LogoutIcon />
           </Button>
