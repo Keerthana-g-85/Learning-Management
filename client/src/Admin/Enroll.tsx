@@ -71,6 +71,7 @@ export default function Enroll() {
 
   const dispatch = useDispatch();
   const message = useSelector((state: any) => state.message.message);
+  const user = useSelector((state: any) => state.login.user);
 
   const { page, total_page, currentData, handleChange } = usePagination(
     enroll,
@@ -209,7 +210,9 @@ export default function Enroll() {
                 <StyledTableCell align="right">Phone Number</StyledTableCell>
                 <StyledTableCell align="right">Address</StyledTableCell>
                 <StyledTableCell align="right">Enroll Date</StyledTableCell>
+                { user.role === 'admin' ? 
                 <StyledTableCell align="right">Action</StyledTableCell>
+                : null }
               </TableRow>
             </TableHead>
             <TableBody>
@@ -233,6 +236,7 @@ export default function Enroll() {
                   <StyledTableCell align="right">
                     {row.enroll_date}
                   </StyledTableCell>
+                  { user.role === 'admin' ? 
                   <StyledTableCell align="right">
                     <Button
                       color="error"
@@ -244,6 +248,7 @@ export default function Enroll() {
                       Unenroll
                     </Button>
                   </StyledTableCell>
+                  : null }
                 </StyledTableRow>
               ))}
             </TableBody>
@@ -267,6 +272,8 @@ export default function Enroll() {
         </TableContainer>
       </Paper>
       <Divider />
+
+      { user.role === 'admin'?
       <Paper
         elevation={6}
         sx={{
@@ -353,6 +360,7 @@ export default function Enroll() {
           </Box>
         </TableContainer>
       </Paper>
+      : null}   
       <Snackbar
         open={Boolean(message)}
         autoHideDuration={3000}

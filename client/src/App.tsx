@@ -17,7 +17,6 @@ import User from "./Admin/Users";
 import Enroll from "./Admin/Enroll";
 import Instructor from "./Admin/Instructor";
 
-import InstructorEnroll from "./Instructor/Enroll";
 import AddCourse from "./Instructor/AddCourse";
 import UpdateCourse from "./Instructor/UpdateCourse";
 
@@ -78,7 +77,7 @@ export default function App() {
               <Route path="/addcourse" element={<AddCourse />} />
               <Route
                 path="/courses/enroll/:id"
-                element={<InstructorEnroll />}
+                element={<Enroll />}
               />
             </Route>
             </Route>
