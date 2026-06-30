@@ -7,7 +7,8 @@ import {
   Login,
   UpdateUser,
   Delete,
-  Update
+  Update,
+  UpdatePassword
 } from "../controller/RegisterController.js";
 import { authentication } from "../middleware/userAuthenticaton.js";
 
@@ -22,5 +23,6 @@ registerRouter.get("/get", authentication, Get);
 
 registerRouter.put("/update/:id", authentication, UpdateUser);
 registerRouter.put("/edit/:id",authentication, Update)
+registerRouter.put("/resetpassword",UpdatePassword)
 
 registerRouter.delete("/delete/:id", authentication, Delete);

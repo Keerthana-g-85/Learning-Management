@@ -33,7 +33,9 @@ export default function Edit(){
           elevation={3}
           sx={{ p: 2, bgcolor: "#EAECF0", borderRadius: "30px", width: 500 }}
         >
-          <Typography>Edit Profile</Typography>
+          <Box sx={{ p: 1, display: "flex", justifyContent: "center" }}>
+            <Typography variant="h5" sx={{ fontWeight:'100px'}}> Edit Profile</Typography>
+          </Box>
           <Stack spacing={3}>
             <Box
               sx={{
@@ -67,8 +69,21 @@ export default function Edit(){
                 <TextField fullWidth variant="standard" value={useredit.phoneNumber}
                  onChange={(e)=>{setUserEdit((prev)=>({...prev , phoneNumber:e.target.value}))}}/>
               </Box>
-              <Box>
-                <Button onClick={handleEdit}>Edit</Button>
+               <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  p: 3,
+                }}
+              >
+                <Button
+                  variant="outlined"
+                  sx={{ mr: 2, bgcolor: "#233D4D", color: "white" }}
+                  onClick={handleEdit}
+                >
+                  Edit Profile
+                </Button>
               </Box>
             </Box>
           </Stack>

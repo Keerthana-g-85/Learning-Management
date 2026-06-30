@@ -32,6 +32,8 @@ import Avatar from "@mui/material/Avatar";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import SearchIcon from "@mui/icons-material/Search";
 import InputAdornment from "@mui/material/InputAdornment";
+import EditIcon from '@mui/icons-material/Edit';
+import PasswordIcon from '@mui/icons-material/Password';
 import { addToken, addUser } from "../redux/LoginSlice";
 
 const drawerWidth = 240;
@@ -87,8 +89,13 @@ export default function Home() {
     },
     {
       text: "Edit Profile",
-      icon:  <AccountCircleIcon sx={{ color: "white" }} />,
+      icon:  <EditIcon sx={{ color: "white" }} />,
       path: "/edit"
+    },
+    {
+      text: "Reset Password",
+      icon:  <PasswordIcon sx={{ color: "white" }} />,
+      path: "/resetpassword"
     },
     { text: "Logout", icon: <LogoutIcon sx={{ color: "white" }} />, path: "" },
   ];

@@ -37,7 +37,7 @@ const data : DataSourceOptions = {
     password : process.env.DB_PASSWORD as string ,
     database : process.env.DB_NAME as string ,
     username : process.env.DB_USER as string ,
-    logging: true,
+    // logging: true,
     port : Number(process.env.DB_PORT),
     synchronize : true ,                                //TypeORM automatically creates/updates tables.
     entities : [Register , Course , Enroll ]

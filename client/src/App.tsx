@@ -23,6 +23,7 @@ import UpdateCourse from "./Instructor/UpdateCourse";
 
 import StudentEnroll from "./Students/Enroll";
 import Edit from "./components/UserEdit";
+import Resetpassword from "./components/ResetPassword";
 
 export default function App() {
   const dispatch = useDispatch();
@@ -52,6 +53,7 @@ export default function App() {
               <Route element={<Home />}>
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/edit" element ={<Edit/>} />
+                <Route path="/resetpassword" element={<Resetpassword/>} />
                 <Route path="/courses" element={<Course />} />
                 <Route path="/students" element={<Students />} />
                 <Route path="/instructors" element={<Instructor />} />

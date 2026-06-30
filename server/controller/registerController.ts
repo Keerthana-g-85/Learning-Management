@@ -340,3 +340,53 @@ export const Update : RequestHandler = async (req,res) =>{
         })
     }
 }
+
+export const UpdatePassword = async (req,res) =>{
+    try{
+        const userRepo = database.getRepository(Register)
+
+        const { email , oldPassword , newPassword } = req.body
+
+
+        const user = await userRepo.findOneBy({email:email})
+        if (!user){
+          res.status(404).send({
+            success:false,
+            message:'Email not yet registered',
+          })
+        }
+
+        if (oldPassword === newPassword){
+          res.status(401).send({
+            success:false,
+            message:'New Password should not be Old Password'
+
+          })
+        }
+        const isMatch = await bcrypt.compare(oldPassword,user.password)
+        var salt = bcrypt.genSaltSync(10);
+        const hashedPassword = await bcrypt.hash(newPassword,salt)
+
+        if (!isMatch){
+        return res.status(400).send({
+            success:false,
+            message:'Old password is incorrect'
+        });
+        }
+        await userRepo.update({email:email},{password:hashedPassword})
+
+        res.status(200).send({
+            success:true,
+            message:'Password update successfully',
+        })
+
+        }catch(error){
+        console.log(error)
+        res.status(500).send({
+            success: false,
+            message : 'error in update user api',
+            error
+        })
+
+    }
+}
