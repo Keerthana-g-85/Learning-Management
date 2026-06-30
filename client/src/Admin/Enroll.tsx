@@ -5,7 +5,6 @@ import { useSelector, useDispatch } from "react-redux";
 
 import { getMessage } from "../redux/MessageSlice";
 import useApi from "../components/Api";
-import usePagination from "../components/Pagination";
 
 import Paper from "@mui/material/Paper";
 import Button from "@mui/material/Button";
@@ -20,7 +19,6 @@ import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import Pagination from "@mui/material/Pagination";
 import Stack from "@mui/material/Stack";
 import PeopleIcon from "@mui/icons-material/People";
 import GroupAddIcon from "@mui/icons-material/GroupAdd";
@@ -72,17 +70,6 @@ export default function Enroll() {
   const dispatch = useDispatch();
   const message = useSelector((state: any) => state.message.message);
   const user = useSelector((state: any) => state.login.user);
-
-  const { page, total_page, currentData, handleChange } = usePagination(
-    enroll,
-    3,
-  );
-  const {
-    page: notenrollpage,
-    total_page: notenrolltotalpage,
-    currentData: currentUnData,
-    handleChange: handleNotenrollchange,
-  } = usePagination(notenroll, 3);
 
   const nav = useNavigate();
   const location = useLocation();
@@ -216,7 +203,7 @@ export default function Enroll() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {currentData.map((row: Course) => (
+              {enroll.map((row: Course) => (
                 <StyledTableRow key={row.id}>
                   <StyledTableCell component="th" scope="row">
                     <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
@@ -255,7 +242,7 @@ export default function Enroll() {
           </Table>
           <Box sx={{ display: "flex", justifyContent: "center", p: 1 }}>
             <Stack spacing={2}>
-              <Pagination
+              {/* <Pagination
                 count={total_page}
                 page={page}
                 onChange={handleChange}
@@ -266,7 +253,7 @@ export default function Enroll() {
                     minWidth: "4rem",
                   },
                 }}
-              />
+              /> */}
             </Stack>
           </Box>
         </TableContainer>
@@ -316,7 +303,7 @@ export default function Enroll() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {currentUnData.map((row: Students) => (
+              {notenroll.map((row: Students) => (
                 <StyledTableRow key={row.id}>
                   <StyledTableCell component="th" scope="row">
                     <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
@@ -344,7 +331,7 @@ export default function Enroll() {
           </Table>
           <Box sx={{ display: "flex", justifyContent: "center", p: 1 }}>
             <Stack spacing={2}>
-              <Pagination
+              {/* <Pagination
                 count={notenrolltotalpage}
                 page={notenrollpage}
                 onChange={handleNotenrollchange}
@@ -354,8 +341,8 @@ export default function Enroll() {
                     height: "3rem",
                     minWidth: "4rem",
                   },
-                }}
-              />
+                }} */}
+              {/* /> */}
             </Stack>
           </Box>
         </TableContainer>

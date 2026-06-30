@@ -43,7 +43,7 @@ export default function Profile() {
               </Box>
               <Box sx={{ display: "flex", alignItems: "center", gap: 2, p: 2 }}>
                 <PhoneIcon sx={{ fontSize: 30, color: "#233D4D" }} />
-                <Typography variant="h5">{user.phone}</Typography>
+                <Typography variant="h5">{user.phoneNumber}</Typography>
               </Box>
             </Box>
           </Stack>

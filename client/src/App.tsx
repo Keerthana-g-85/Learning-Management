@@ -22,6 +22,7 @@ import AddCourse from "./Instructor/AddCourse";
 import UpdateCourse from "./Instructor/UpdateCourse";
 
 import StudentEnroll from "./Students/Enroll";
+import Edit from "./components/UserEdit";
 
 export default function App() {
   const dispatch = useDispatch();
@@ -50,6 +51,7 @@ export default function App() {
             <Route element={<ProtectedRouter />}>
               <Route element={<Home />}>
                 <Route path="/profile" element={<Profile />} />
+                <Route path="/edit" element ={<Edit/>} />
                 <Route path="/courses" element={<Course />} />
                 <Route path="/students" element={<Students />} />
                 <Route path="/instructors" element={<Instructor />} />

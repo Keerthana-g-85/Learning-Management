@@ -47,11 +47,13 @@ export default function Home() {
   const name = useSelector((state: any) => state.login.user.name);
   console.log(search);
 
-  let menuItems = [ {
+  let menuItems = [
+    {
       text: "Courses",
       icon: <SchoolIcon sx={{ color: "white" }} />,
       path: "/courses",
-    },]
+    },
+  ];
 
   const adminItems = [
     {
@@ -76,27 +78,31 @@ export default function Home() {
       icon: <SchoolIcon sx={{ color: "white" }} />,
       path: "/enroll",
     },
-  ]
+  ];
   const profileItems = [
     {
       text: "Profile",
       icon: <AccountCircleIcon sx={{ color: "white" }} />,
       path: "/profile",
     },
+    {
+      text: "Edit Profile",
+      icon:  <AccountCircleIcon sx={{ color: "white" }} />,
+      path: "/edit"
+    },
     { text: "Logout", icon: <LogoutIcon sx={{ color: "white" }} />, path: "" },
   ];
 
-  if (user.role === 'admin'){
-    menuItems = [...menuItems , ...adminItems]
-  }
-  else if (user.role === 'student'){
-    menuItems = [...menuItems , ...studentItems]
+  if (user.role === "admin") {
+    menuItems = [...menuItems, ...adminItems];
+  } else if (user.role === "student") {
+    menuItems = [...menuItems, ...studentItems];
   }
 
   function handleLogout() {
     localStorage.clear();
-    dispatch(addToken(''))
-    dispatch(addUser(null))
+    dispatch(addToken(""));
+    dispatch(addUser(null));
     navigate("/", { replace: true });
   }
 
@@ -216,10 +222,7 @@ export default function Home() {
                 <ListItem key={item.text}>
                   <ListItemButton
                     onClick={() =>
-                      navigate(item.path, {
-                        state: { fromApp: true },
-                      })
-                    }
+                      navigate(item.path)}
                   >
                     <ListItemIcon>{item.icon}</ListItemIcon>
                     <ListItemText primary={item.text} />

@@ -93,7 +93,7 @@ export const Login: RequestHandler = async (req, res) => {
         email: exist.email,
         password: exist.password,
         address: exist.address,
-        phone: exist.phoneNumber,
+        phoneNumber: exist.phoneNumber,
         role: exist.role,
       },
       process.env.JW_SECRET as string,
@@ -301,3 +301,42 @@ export const Delete: RequestHandler = async (req, res) => {
   }
 };
 
+export const Update : RequestHandler = async (req,res) =>{
+    try {
+        const userRepo = database.getRepository(Register)
+        const id  = req.params.id as string
+        const {name , email , address , phoneNumber } = req.body
+        
+        await userRepo.update ({id:id},{name:name , email:email , address:address , phoneNumber:phoneNumber })
+
+        const user = await userRepo.findOneBy({id : id})
+
+        const accesstoken = jwt.sign(
+          {
+            id: id,
+            name:name,
+            email: email,
+            password: user.password,
+            address: address,
+            phoneNumber: phoneNumber,
+            role: user.role,
+          },
+          process.env.JW_SECRET as string,
+          { expiresIn: "1hr" },
+        );
+
+        return res.status(200).send({
+            success: true,
+            message:"Profile updated", 
+            user,
+            accesstoken
+        })
+
+    }catch(error){
+        console.log(error)
+        res.status(500).send({
+            success : false ,
+            message : "error while updating"
+        })
+    }
+}

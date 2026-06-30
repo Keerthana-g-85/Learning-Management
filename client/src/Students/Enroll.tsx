@@ -3,7 +3,6 @@ import { useSelector, useDispatch } from "react-redux";
 
 import { getMessage } from "../redux/MessageSlice";
 import useApi from "../components/Api";
-import usePagination from "../components/Pagination";
 
 import Paper from "@mui/material/Paper";
 import Button from "@mui/material/Button";
@@ -18,7 +17,6 @@ import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import Pagination from "@mui/material/Pagination";
 import Stack from "@mui/material/Stack";
 import PeopleIcon from "@mui/icons-material/People";
 import GroupRemoveIcon from "@mui/icons-material/GroupRemove";
@@ -64,10 +62,6 @@ export default function Enroll() {
   const [enroll, setEnroll] = useState([]);
   const dispatch = useDispatch();
   const message = useSelector((state: any) => state.message.message);
-  const { page, total_page, currentData, handleChange } = usePagination(
-    enroll,
-    6,
-  );
 
   const getEnroll = async () => {
     try {
@@ -149,7 +143,7 @@ export default function Enroll() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {currentData.map((row: Student) => (
+              {enroll.map((row: Student) => (
                 <StyledTableRow key={row.id}>
                   <StyledTableCell component="th" scope="row">
                     <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
@@ -189,7 +183,7 @@ export default function Enroll() {
           </Table>
           <Box sx={{ display: "flex", justifyContent: "center", p: 1 }}>
             <Stack spacing={2}>
-              <Pagination
+              {/* <Pagination
                 count={total_page}
                 page={page}
                 onChange={handleChange}
@@ -200,7 +194,7 @@ export default function Enroll() {
                     minWidth: "4rem",
                   },
                 }}
-              />
+              /> */}
             </Stack>
           </Box>
         </TableContainer>

@@ -1,0 +1,89 @@
+import { useState } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
+import  useApi  from './Api'
+import { addUser , addToken } from '../redux/LoginSlice'
+import { getMessage } from '../redux/MessageSlice'
+import {  Box, Paper, Stack , TextField, Button, Typography } from "@mui/material";
+import Snackbar from "@mui/material/Snackbar";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import MailIcon from "@mui/icons-material/Mail";
+import HomeIcon from "@mui/icons-material/Home";
+import PhoneIcon from "@mui/icons-material/Phone";
+import PersonIcon from "@mui/icons-material/Person";
+
+export default function Edit(){
+    const user = useSelector((state:any)=>state.login.user)
+    const dispatch = useDispatch()
+    const { Api } = useApi();
+    const message = useSelector((state:any)=>state.message.message)
+    const [useredit , setUserEdit] = useState({ name:user.name , email : user.email , address : user.address , phoneNumber: user.phoneNumber})
+
+    async function handleEdit(){
+        const response = await Api({method:'put',endpoint:`register/edit/${user.id}` , data: useredit})
+        console.log(response.data.user)
+        dispatch(addToken(response.data.accesstoken))
+        dispatch(addUser(response.data.user))
+        dispatch(getMessage(response.data.message))
+        localStorage.setItem("token", response.data.accesstoken);
+    }
+    return (
+        <>
+        <Box sx={{ p: 10, display: "flex", justifyContent: "center" }}>
+        <Paper
+          elevation={3}
+          sx={{ p: 2, bgcolor: "#EAECF0", borderRadius: "30px", width: 500 }}
+        >
+          <Typography>Edit Profile</Typography>
+          <Stack spacing={3}>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <AccountCircleIcon sx={{ fontSize: 250, color: "#233D4D" }} />
+            </Box>
+
+            <Box sx={{ alignItems: "center" }}>
+              <Box sx={{ display: "flex", alignItems: "center", gap: 2, p: 2 }}>
+                <PersonIcon sx={{ fontSize: 30, color: "#233D4D" }} />
+                <TextField fullWidth variant="standard" value={useredit.name}
+                onChange={(e)=>{setUserEdit((prev)=>({...prev , name:e.target.value}))}}/>
+              </Box>
+
+              <Box sx={{ display: "flex", alignItems: "center", gap: 2, p: 2 }}>
+                <MailIcon sx={{ fontSize: 30, color: "#233D4D" }} />
+                <TextField fullWidth variant="standard" value={useredit.email}
+                 onChange={(e)=>{setUserEdit((prev)=>({...prev , email:e.target.value}))}}/>
+              </Box>
+              <Box sx={{ display: "flex", alignItems: "center", gap: 2, p: 2 }}>
+                <HomeIcon sx={{ fontSize: 30, color: "#233D4D" }} />
+                <TextField fullWidth variant="standard" value={useredit.address}
+                 onChange={(e)=>{setUserEdit((prev)=>({...prev , address:e.target.value}))}}/>
+              </Box>
+              <Box sx={{ display: "flex", alignItems: "center", gap: 2, p: 2 }}>
+                <PhoneIcon sx={{ fontSize: 30, color: "#233D4D" }} />
+                <TextField fullWidth variant="standard" value={useredit.phoneNumber}
+                 onChange={(e)=>{setUserEdit((prev)=>({...prev , phoneNumber:e.target.value}))}}/>
+              </Box>
+              <Box>
+                <Button onClick={handleEdit}>Edit</Button>
+              </Box>
+            </Box>
+          </Stack>
+        </Paper>
+      </Box>
+      <Snackbar
+              open={Boolean(message)}
+              autoHideDuration={3000}
+              message={message}
+              onClose={() => dispatch(getMessage(""))}
+              anchorOrigin={{
+                vertical: "bottom",
+                horizontal: "right",
+              }}
+        />
+        </>
+    )
+}

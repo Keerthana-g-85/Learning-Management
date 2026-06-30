@@ -68,12 +68,7 @@ interface Users {
 }
 
 export default function User() {
-  const location = useLocation();
-
-  if (!location.state?.fromApp) {
-    return <Navigate to="/courses" replace />;
-  }
-
+  
   const [user, setUser] = useState<Users[]>([]);
   const [edit, setEdit] = useState<Users | null>(null);
   const [open, setOpen] = useState<string>("");
@@ -111,7 +106,7 @@ export default function User() {
   useEffect(() => {
     getUsers();
   }, [debounce, filter, page]);
-  
+
   useEffect(() => {
   setPage(1);
 }, [debounce, filter]);
