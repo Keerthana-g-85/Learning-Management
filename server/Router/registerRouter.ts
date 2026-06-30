@@ -7,8 +7,7 @@ import {
   Login,
   UpdateUser,
   Delete,
-  Search,
-  FilterRole,
+
 } from "../controller/RegisterController.js";
 import { authentication } from "../middleware/userAuthenticaton.js";
 
@@ -20,8 +19,6 @@ registerRouter.post("/login", Login);
 registerRouter.get("/getstudent", authentication, GetStudent);
 registerRouter.get("/getinstructor", authentication, GetInstructor);
 registerRouter.get("/get", authentication, Get);
-registerRouter.get("/getsearch/:search", authentication, Search);
-registerRouter.get("/filter/:role", authentication, FilterRole);
 
 registerRouter.put("/update/:id", authentication, UpdateUser);
 

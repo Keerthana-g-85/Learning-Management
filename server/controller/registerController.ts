@@ -174,14 +174,56 @@ export const GetInstructor: RequestHandler = async (req, res) => {
 
 export const Get: RequestHandler = async (req, res) => {
   try {
-    const registerRepo = database.getRepository(Register);
+    const userRepo = database.getRepository(Register);
 
-    const user = await registerRepo.find();
+    const search= req.query.search as string;
+    const filter = req.query.filter as string
+    const role = filter.split(",");
+
+    const page = Number(req.query.page);
+    const per_page = Number(req.query.per_page);
+
+    const initial = (page - 1) * per_page;
+    const final = page * per_page;
+    let users ;
+
+    if (search && filter ){
+      const searchData = await userRepo.find({
+      where: [
+        { name: ILike(`${search}%`) },
+        { email: ILike(`${search}%`) },
+        { address: ILike(`%${search}%`) },
+      ],
+    });
+      const filterData = await userRepo.find({ where: { role: In(role) } });
+      users = searchData.filter((sdata)=> filterData.some((fdata)=>fdata.id === sdata.id))
+    }
+    else if (search){
+      users = await userRepo.find({
+      where: [
+        { name: ILike(`${search}%`) },
+        { email: ILike(`${search}%`) },
+        { address: ILike(`%${search}%`) },
+      ],
+    });
+    }
+    else if (filter){
+      users = await userRepo.find({ where: { role: In(role) } });
+    }
+    else{
+      users = await userRepo.find()
+    }
+
+    const total_page = Math.ceil(users.length / per_page);
+    const Data = users.slice(initial, final);
 
     res.status(200).send({
       success: true,
       message: "All users",
-      user,
+      Data,
+      pagination: {
+        total_page
+      },
     });
   } catch (error) {
     console.log(error);
@@ -259,49 +301,3 @@ export const Delete: RequestHandler = async (req, res) => {
   }
 };
 
-export const Search: RequestHandler = async (req, res) => {
-  try {
-    const userRepo = database.getRepository(Register);
-    const search = req.params.search as string;
-
-    const users = await userRepo.find({
-      where: [
-        { name: ILike(`${search}%`) },
-        { email: ILike(`${search}%`) },
-        { address: ILike(`%${search}%`) },
-      ],
-    });
-
-    res.status(200).send({
-      success: true,
-      message: "Searched users",
-      users,
-    });
-  } catch (error) {
-    console.log(error);
-    res.status(500).send({
-      success: false,
-      message: "Error while getting values",
-    });
-  }
-};
-
-export const FilterRole: RequestHandler = async (req, res) => {
-  try {
-    const roles = req.params.role as string;
-    const role = roles.split(",");
-    const userRepo = database.getRepository(Register);
-    const users = await userRepo.find({ where: { role: In(role) } });
-
-    res.status(200).json({
-      success: true,
-      message: "Filtered by Instructor name",
-      users,
-    });
-  } catch (error) {
-    res.status(500).send({
-      success: false,
-      message: "Error while filtering",
-    });
-  }
-};

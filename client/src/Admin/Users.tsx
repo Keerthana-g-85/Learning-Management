@@ -6,7 +6,6 @@ import { getMessage } from "../redux/MessageSlice";
 
 import useApi from "../components/Api";
 import useDebounce from "../components/Debounce";
-import usePagination from "../components/Pagination";
 
 import Paper from "@mui/material/Paper";
 import Box from "@mui/material/Box";
@@ -79,15 +78,14 @@ export default function User() {
   const [edit, setEdit] = useState<Users | null>(null);
   const [open, setOpen] = useState<string>("");
   const [filter, setFilter] = useState<string[]>([]);
-  const [searchdata, setSearchdata] = useState<Users[]>([]);
-  const [filterdata, setFilterdata] = useState<Users[]>([]);
+  const [page, setPage] = useState(1);
+  const [total_page, setTotalPage] = useState(1);
+  const per_page = 6;
 
   const dispatch = useDispatch();
   const message = useSelector((state: any) => state.message.message);
 
   const role = ["student", "instructor"];
-  const { page, setPage, total_page, currentData, handleChange } =
-    usePagination(user, 6);
 
   const { Api } = useApi();
 
@@ -96,9 +94,15 @@ export default function User() {
 
   const getUsers = async () => {
     try {
-      const response = await Api({ method: "get", endpoint: "/register/get" });
+      const response = await Api({
+        method: "get",
+        endpoint: `/register/get/?search=${debounce}&filter=${filter.join(",")}&page=${page}&per_page=${per_page}`,
+      });
       console.log(response);
-      setUser(response.data.user);
+      const data = response.data.Data;
+      setUser(data);
+      dispatch(getMessage(response.data.message));
+      setTotalPage(response.data.pagination.total_page);
     } catch (error) {
       console.log(error);
     }
@@ -106,7 +110,11 @@ export default function User() {
 
   useEffect(() => {
     getUsers();
-  }, []);
+  }, [debounce, filter, page]);
+  
+  useEffect(() => {
+  setPage(1);
+}, [debounce, filter]);
 
   async function handleSave() {
     if (edit === null) {
@@ -133,22 +141,6 @@ export default function User() {
     getUsers();
   }
 
-  const searchUser = async () => {
-    try {
-      if (debounce.trim() !== "") {
-        const response = await Api({
-          method: "get",
-          endpoint: `/register/getsearch/${debounce}`,
-        });
-        console.log("search", response.data);
-        const data = response.data.users;
-        setSearchdata(data);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   function handleFilter(data: string) {
     if (filter.includes(data)) {
       const filtered = filter.filter((item) => item !== data);
@@ -157,42 +149,6 @@ export default function User() {
       setFilter([...filter, data]);
     }
   }
-
-  const filterUser = async () => {
-    const response = await Api({
-      method: "get",
-      endpoint: `/register/filter/${filter.join(",")}`,
-    });
-    console.log(response.data.users);
-    setFilterdata(response.data.users);
-  };
-
-  useEffect(() => {
-    searchUser();
-    setPage(1);
-  }, [debounce]);
-
-  useEffect(() => {
-    if (filter.length > 0) {
-      filterUser();
-      setPage(1);
-    }
-  }, [filter]);
-
-  useEffect(() => {
-    if (debounce && filter.length > 0) {
-      const common = searchdata.filter((course) =>
-        filterdata.some((filter) => filter.id === course.id),
-      );
-      setUser(common);
-    } else if (debounce) {
-      setUser(searchdata);
-    } else if (filter.length > 0) {
-      setUser(filterdata);
-    } else {
-      getUsers();
-    }
-  }, [filterdata, searchdata, debounce, filter]);
 
   return (
     <>
@@ -242,7 +198,7 @@ export default function User() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {currentData.map((row: Users) => (
+              {user.map((row: Users) => (
                 <StyledTableRow key={row.id}>
                   <StyledTableCell component="th" scope="row">
                     <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
@@ -301,7 +257,10 @@ export default function User() {
               <Pagination
                 count={total_page}
                 page={page}
-                onChange={handleChange}
+                onChange={(event, value) => {
+                  event.preventDefault();
+                  setPage(value);
+                }}
                 sx={{
                   "& .MuiPaginationItem-root": {
                     fontSize: "1rem",

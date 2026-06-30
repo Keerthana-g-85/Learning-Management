@@ -1,4 +1,4 @@
-import { useState, useEffect, type ChangeEvent } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { useSelector, useDispatch } from "react-redux";
 
@@ -82,6 +82,10 @@ export default function Courses() {
   useEffect(() => {
     getCourse();
   }, [debounce, filter, page]);
+
+   useEffect(() => {
+    setPage(1);
+    }, [debounce, filter]);
 
   // delete the course
   async function handleDelete(id: string) {

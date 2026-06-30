@@ -1,10 +1,8 @@
 import {
   Create,
   GetAll,
-  Get,
   Update,
   Delete,
-  FilterCourse,
 } from "../controller/CourseController.js";
 import { authentication } from "../middleware/userAuthenticaton.js";
 import express from "express";
@@ -14,8 +12,7 @@ export const CourseRouter = express.Router();
 CourseRouter.post("/create", authentication, Create);
 
 CourseRouter.get("/get", authentication, GetAll);
-CourseRouter.get("/get/:search", authentication, Get);
-CourseRouter.get("/filter/:instructors", authentication, FilterCourse);
+
 
 CourseRouter.put("/update/:id", authentication, Update);
 

@@ -72,16 +72,13 @@ export const GetAll: RequestHandler = async (req, res) => {
 
     const initial = (page - 1) * per_page;
     const final = page * per_page;
-    // const total_page = Math.ceil(data.length / per_page);
-    // const currentData = data.slice(initial, final);
 
     let courses;
-    let total;
 
     if (search && filter ){
       const searchData = await courseRepo.find({
         where: [
-          { title: ILike(`${search}%`) },
+          { title: ILike(`%${search}%`) },
         ],
       });
      const filterData = await courseRepo.find({
@@ -92,7 +89,7 @@ export const GetAll: RequestHandler = async (req, res) => {
     else if (search){
       courses = await courseRepo.find({
         where: [
-          { title: ILike(`${search}%`) },
+          { title: ILike(`%${search}%`) },
         ],
       });
     }
@@ -122,37 +119,6 @@ export const GetAll: RequestHandler = async (req, res) => {
     res.status(500).send({
       success: false,
       message: "Error while getting courses",
-    });
-  }
-};
-
-export const Get: RequestHandler = async (req, res) => {
-  try {
-    const courseRepo = database.getRepository(Course);
-    const search = req.params.search as string;
-    console.log(search);
-    const course = await courseRepo.find({
-      where: [
-        { title: ILike(`${search}%`) },
-      ],
-    });
-    console.log(course);
-    if (!course) {
-      return res.status(404).send({
-        success: false,
-        message: "Course not found",
-      });
-    }
-    res.status(200).send({
-      success: true,
-      message: "Courses",
-      course,
-    });
-  } catch (error) {
-    console.log(error);
-    res.status(500).send({
-      success: false,
-      message: "Error while getting the course",
     });
   }
 };
@@ -222,28 +188,6 @@ export const Delete: RequestHandler = async (req, res) => {
     res.status(500).send({
       success: false,
       message: "Error while getting the course",
-    });
-  }
-};
-
-export const FilterCourse: RequestHandler = async (req, res) => {
-  try {
-    const instructor = req.params.instructors as string;
-    const instructors = instructor.split(",");
-    const courseRepo = database.getRepository(Course);
-    const courses = await courseRepo.find({
-      where: { instructor_name: In(instructors) },
-    });
-
-    res.status(200).json({
-      success: true,
-      message: "Filtered by Instructor name",
-      courses,
-    });
-  } catch (error) {
-    res.status(500).send({
-      success: false,
-      message: "Error while filtering",
     });
   }
 };
