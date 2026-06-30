@@ -13,7 +13,7 @@ export const CourseRouter = express.Router();
 
 CourseRouter.post("/create", authentication, Create);
 
-CourseRouter.get("/getall", authentication, GetAll);
+CourseRouter.get("/get", authentication, GetAll);
 CourseRouter.get("/get/:search", authentication, Get);
 CourseRouter.get("/filter/:instructors", authentication, FilterCourse);
 

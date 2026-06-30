@@ -1,11 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, type ChangeEvent } from "react";
 import { useNavigate } from "react-router";
 import { useSelector, useDispatch } from "react-redux";
 
 import { getMessage } from "../redux/MessageSlice";
 import useApi from "../components/Api";
 import useDebounce from "../components/Debounce";
-import usePagination from "../components/Pagination";
 
 import Box from "@mui/material/Box";
 import Chip from "@mui/material/Chip";
@@ -49,8 +48,6 @@ export default function Courses() {
   const [instructor, setInstructor] = useState<string[]>([]);
   const [open, setOpen] = useState<string>("");
   const [enroll, setEnroll] = useState<string[]>([]);
-  const [searchdata, setSearchdata] = useState<Courses[]>([]);
-  const [filterdata, setFilterdata] = useState<Courses[]>([]);
 
   const { Api } = useApi();
 
@@ -63,17 +60,20 @@ export default function Courses() {
   const id = useSelector((state: any) => state.login.user.id);
   const debounce = useDebounce(search);
 
-  // pagination
-  const { page, setPage, total_page, currentData, handleChange } =
-    usePagination(course, 6);
-
   // Getting all the course
+  const [page, setPage] = useState(1);
+  const [total_page, setTotalPage] = useState(1);
+  const per_page = 6;
   const getCourse = async () => {
     try {
-      const response = await Api({ method: "get", endpoint: "course/getall" });
-      const data = response.data.AllCourses;
+      const response = await Api({
+        method: "get",
+        endpoint: `course/get?search=${debounce}&filter=${filter.join(",")}&page=${page}&per_page=${per_page}`,
+      });
+      const data = response.data.Data;
       setCourse(data);
       dispatch(getMessage(response.data.message));
+      setTotalPage(response.data.pagination.total_page);
     } catch (error) {
       console.log(error);
     }
@@ -81,7 +81,7 @@ export default function Courses() {
 
   useEffect(() => {
     getCourse();
-  }, []);
+  }, [debounce, filter, page]);
 
   // delete the course
   async function handleDelete(id: string) {
@@ -92,18 +92,16 @@ export default function Courses() {
         endpoint: "/course/delete/" + `${id}`,
       });
       console.log("/course/delete/" + `${id}`);
-      const response = await Api({ method: "get", endpoint: "course/getall" });
-      const data = response.data.AllCourses;
+      getCourse();
       dispatch(getMessage(deleteResponse.data.message));
-      setCourse(data);
       setOpen("");
     } catch (error) {
       console.log(error);
     }
   }
-  
-  if (user.role === 'student'){
-  const getEnroll = async () => {
+
+  if (user.role === "student") {
+    const getEnroll = async () => {
       try {
         const response = await Api({
           method: "get",
@@ -139,30 +137,6 @@ export default function Courses() {
     }
   }
 
-  // search
-  const searchTitle = async () => {
-    try {
-      if (debounce.trim() !== "") {
-        const response = await Api({
-          method: "get",
-          endpoint: `/course/get/${debounce}`,
-        });
-        console.log("search", response.data.course);
-        const data = response.data.course;
-        setSearchdata(data);
-      } else {
-        getCourse();
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  useEffect(() => {
-    searchTitle();
-    setPage(1);
-  }, [debounce]);
-
   // Instructor name fetching for filter
   const instructorName = async () => {
     const response = await Api({
@@ -187,38 +161,6 @@ export default function Courses() {
       setFilter([...filter, data]);
     }
   }
-
-  const filterCourse = async () => {
-    const response = await Api({
-      method: "get",
-      endpoint: `/course/filter/${filter.join(",")}`,
-    });
-    console.log(response.data.courses);
-    const data = response.data.courses;
-    setFilterdata(data);
-  };
-
-  useEffect(() => {
-    if (filter.length > 0) {
-      filterCourse();
-      setPage(1);
-    }
-  }, [filter]);
-
-  useEffect(() => {
-    if (debounce && filter.length > 0) {
-      const common = searchdata.filter((course) =>
-        filterdata.some((filter) => filter.id === course.id),
-      );
-      setCourse(common);
-    } else if (debounce) {
-      setCourse(searchdata);
-    } else if (filter.length > 0) {
-      setCourse(filterdata);
-    } else {
-      getCourse();
-    }
-  }, [filterdata, searchdata, debounce, filter]);
 
   return (
     <>
@@ -270,7 +212,7 @@ export default function Courses() {
       </Box>
 
       <Box sx={{ display: "flex", gap: 5, flexWrap: "wrap" }}>
-        {currentData.map((data: Courses) => {
+       {course.length >0 ?(course.map((data: Courses) => {
           return (
             <div key={data.id}>
               <Card
@@ -491,12 +433,25 @@ export default function Courses() {
               </Card>
             </div>
           );
-        })}
+        })
+      ):(
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              width: "100%",
+              minHeight: "5px",
+              fontWeight:'500px'
+            }}
+          >
+            <Typography variant="h4">Not found</Typography>
+          </Box>
+        )}
       </Box>
 
       <Dialog open={Boolean(open)} onClose={() => setOpen("")}>
         <DialogTitle>
-          {" "}
           {user.role === "student" ? "Enroll Course" : "Delete Course"}{" "}
         </DialogTitle>
         <DialogContent>
@@ -544,7 +499,10 @@ export default function Courses() {
           <Pagination
             count={total_page}
             page={page}
-            onChange={handleChange}
+            onChange ={(event, value) => {
+              event.preventDefault()
+              setPage(value)}
+            }
             sx={{
               "& .MuiPaginationItem-root": {
                 fontSize: "1rem",

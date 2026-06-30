@@ -63,18 +63,65 @@ export const GetAll: RequestHandler = async (req, res) => {
   try {
     const courseRepo = database.getRepository(Course);
 
-    const AllCourses = await courseRepo.find();
-    console.log(AllCourses);
+    const search= req.query.search as string;
+    const filter = req.query.filter as string
+    const instructors = filter.split(",");
+
+    const page = Number(req.query.page);
+    const per_page = Number(req.query.per_page);
+
+    const initial = (page - 1) * per_page;
+    const final = page * per_page;
+    // const total_page = Math.ceil(data.length / per_page);
+    // const currentData = data.slice(initial, final);
+
+    let courses;
+    let total;
+
+    if (search && filter ){
+      const searchData = await courseRepo.find({
+        where: [
+          { title: ILike(`${search}%`) },
+        ],
+      });
+     const filterData = await courseRepo.find({
+        where: { instructor_name: In(instructors) },
+        });
+      courses = searchData.filter((sdata)=> filterData.some((fdata)=>fdata.id === sdata.id))
+    }
+    else if (search){
+      courses = await courseRepo.find({
+        where: [
+          { title: ILike(`${search}%`) },
+        ],
+      });
+    }
+    else if (filter){
+      courses = await courseRepo.find({
+        where: { instructor_name: In(instructors) },
+        });
+    }
+    else {
+      courses = await courseRepo.find()
+      };
+
+    const total_page = Math.ceil(courses.length / per_page);
+    const Data = courses.slice(initial, final);
 
     res.status(200).send({
       success: true,
-      message: "All Courses",
-      AllCourses,
+      message: "Courses fetched successfully",
+      Data ,
+      pagination: {
+        total_page
+      },
     });
   } catch (error) {
+    console.log(error);
+
     res.status(500).send({
       success: false,
-      message: "Error while getting the course",
+      message: "Error while getting courses",
     });
   }
 };
@@ -87,7 +134,6 @@ export const Get: RequestHandler = async (req, res) => {
     const course = await courseRepo.find({
       where: [
         { title: ILike(`${search}%`) },
-        { instructor_name: ILike(`${search}%`) },
       ],
     });
     console.log(course);
