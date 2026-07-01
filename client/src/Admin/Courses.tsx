@@ -74,6 +74,9 @@ export default function Courses() {
       setCourse(data);
       dispatch(getMessage(response.data.message));
       setTotalPage(response.data.pagination.total_page);
+      console.log("Page:", page);
+      console.log(data);
+      setCourse(data);
     } catch (error) {
       console.log(error);
     }
@@ -83,9 +86,9 @@ export default function Courses() {
     getCourse();
   }, [debounce, filter, page]);
 
-   useEffect(() => {
+  useEffect(() => {
     setPage(1);
-    }, [debounce, filter]);
+  }, [debounce, filter]);
 
   // delete the course
   async function handleDelete(id: string) {
@@ -104,32 +107,33 @@ export default function Courses() {
     }
   }
 
-  if (user.role === "student") {
-    const getEnroll = async () => {
-      try {
-        const response = await Api({
-          method: "get",
-          endpoint: `enroll/getstudent/${id}`,
-        });
-        const data = response.data.student_course.map(
-          (item: any) => item.course.id,
-        );
-        setEnroll(data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    useEffect(() => {
+  const getEnroll = async () => {
+    try {
+      const response = await Api({
+        method: "get",
+        endpoint: `enroll/getstudent/${id}`,
+      });
+      const data = response.data.student_course.map(
+        (item: any) => item.course.id,
+      );
+      setEnroll(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    if (user.role === "student") {
       getEnroll();
-    }, []);
-  }
+    }
+  }, []);
 
   async function handleEnroll(id: string) {
     console.log(id);
     try {
       const response = await Api({
         method: "post",
-        endpoint: `enroll/create/`,
+        endpoint: `enroll/create`,
         data: { register: `${user.id}`, course: `${id}` },
       });
       console.log(response);
@@ -216,179 +220,143 @@ export default function Courses() {
       </Box>
 
       <Box sx={{ display: "flex", gap: 5, flexWrap: "wrap" }}>
-       {course.length >0 ?(course.map((data: Courses) => {
-          return (
-            <div key={data.id}>
-              <Card
-                sx={{
-                  width: 450,
-                  position: "relative",
-                  borderRadius: 5,
-                  boxShadow: "0 20px 40px rgba(0,0,0,0.35)",
-                  background: "#010102",
-                  border: "1px solid #1e2224",
-                  transition: "0.3s",
-                  "&:hover": {
-                    transform: "translateY(-8px)",
-                  },
-                  color: "white",
-                }}
-              >
-                <CardMedia
-                  component="img"
-                  alt="green iguana"
-                  height="180"
-                  sx={{ p: 1, borderRadius: 5 }}
-                  image={data.thumbnail}
-                />
-                {user.role === "student" ? null : (
-                  <Button
-                    variant="contained"
-                    sx={{
-                      position: "absolute",
-                      top: 12,
-                      right: 12,
-                      borderRadius: 3,
-                      textTransform: "none",
-                      fontSize: "1 rem",
-                      fontWeight: 700,
-                      bgcolor: "#fefefe",
-                      color: "#0ea5e9",
-                    }}
-                    onClick={() => {
-                      nav(`/courses/enroll/${data.id}`, { state: { data } });
-                    }}
-                  >
-                    Enroll
-                  </Button>
-                )}
-
-                <CardContent sx={{ pl: 2, pt: 1 }}>
-                  <Chip
-                    label={data.level.toUpperCase()}
-                    sx={{
-                      bgcolor: "#0ea5e9",
-                      color: "white",
-                      fontWeight: 700,
-                      mb: 1,
-                    }}
+        {course.length > 0 ? (
+          course.map((data: Courses) => {
+            return (
+              <div key={data.id}>
+                <Card
+                  sx={{
+                    width: 450,
+                    position: "relative",
+                    borderRadius: 5,
+                    boxShadow: "0 20px 40px rgba(0,0,0,0.35)",
+                    background: "#010102",
+                    border: "1px solid #1e2224",
+                    transition: "0.3s",
+                    "&:hover": {
+                      transform: "translateY(-8px)",
+                    },
+                    color: "white",
+                  }}
+                >
+                  <CardMedia
+                    component="img"
+                    alt="green iguana"
+                    height="180"
+                    sx={{ p: 1, borderRadius: 5 }}
+                    image={data.thumbnail}
                   />
-
-                  <Typography
-                    sx={{
-                      fontSize: "2rem",
-                      fontWeight: 700,
-                      fontFamily: "Outfit, sans-serif",
-                      mb: 1,
-                    }}
-                  >
-                    {data.title}
-                  </Typography>
-
-                  <Typography
-                    sx={{
-                      color: "#94a3b8",
-                      fontSize: "1rem",
-                      lineHeight: 1.6,
-                      minHeight: 70,
-                    }}
-                  >
-                    {data.description}
-                  </Typography>
-
-                  <Divider sx={{ color: "grey" }} />
-
-                  <Box
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 1,
-                      mb: 2,
-                    }}
-                  >
-                    <Typography
+                  {user.role === "student" ? null : (
+                    <Button
+                      variant="contained"
                       sx={{
-                        fontWeight: 600,
-                        display: "flex",
-                        flex: 1,
-                        alignItems: "center",
-                        gap: 1,
-                        color: "#94a3b8",
+                        position: "absolute",
+                        top: 12,
+                        right: 12,
+                        borderRadius: 3,
+                        textTransform: "none",
+                        fontSize: "1 rem",
+                        fontWeight: 700,
+                        bgcolor: "#fefefe",
+                        color: "#0ea5e9",
+                      }}
+                      onClick={() => {
+                        nav(`/courses/enroll/${data.id}`, { state: { data } });
                       }}
                     >
-                      <CoPresentIcon />
-                      {data.instructor_name}
-                    </Typography>
+                      Enroll
+                    </Button>
+                  )}
 
-                    <Divider
-                      orientation="vertical"
-                      flexItem
+                  <CardContent sx={{ pl: 2, pt: 1 }}>
+                    <Chip
+                      label={data.level.toUpperCase()}
                       sx={{
-                        bgcolor: "rgba(255, 255, 255, 0.63)",
-                        size: "large",
+                        bgcolor: "#0ea5e9",
+                        color: "white",
+                        fontWeight: 700,
+                        mb: 1,
                       }}
                     />
+
                     <Typography
+                      sx={{
+                        fontSize: "2rem",
+                        fontWeight: 700,
+                        fontFamily: "Outfit, sans-serif",
+                        mb: 1,
+                      }}
+                    >
+                      {data.title}
+                    </Typography>
+
+                    <Typography
+                      sx={{
+                        color: "#94a3b8",
+                        fontSize: "1rem",
+                        lineHeight: 1.6,
+                        minHeight: 70,
+                      }}
+                    >
+                      {data.description}
+                    </Typography>
+
+                    <Divider sx={{ color: "grey" }} />
+
+                    <Box
                       sx={{
                         display: "flex",
                         alignItems: "center",
-                        flex: 1,
                         gap: 1,
-                        fontWeight: 600,
-                        color: "#94a3b8",
+                        mb: 2,
                       }}
                     >
-                      <AccessTimeIcon sx={{ color: "#0ea5e9" }} />
-                      {data.duration}
-                    </Typography>
-                  </Box>
-
-                  <Box
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 1,
-                      mb: 1,
-                    }}
-                  >
-                    {user.role === "admin" ? (
-                      <Button
-                        variant="outlined"
+                      <Typography
                         sx={{
-                          color: "#ef5252",
+                          fontWeight: 600,
                           display: "flex",
                           flex: 1,
                           alignItems: "center",
                           gap: 1,
-                          border: "1px solid #ef5252",
-                        }}
-                        startIcon={<DeleteIcon />}
-                        onClick={(e) => {
-                          e.preventDefault();
-                          setOpen(data.id);
+                          color: "#94a3b8",
                         }}
                       >
-                        Delete
-                      </Button>
-                    ) : user.role === "instructor" ? (
-                      <>
-                        <Button
-                          variant="outlined"
-                          sx={{
-                            display: "flex",
-                            flex: 1,
-                            alignItems: "center",
-                            gap: 1,
-                            bgcolor: "#0ea5e9",
-                            color: "white",
-                          }}
-                          onClick={() => {
-                            nav(`/update/${data.id}`, { state: { data } });
-                          }}
-                          startIcon={<EditIcon />}
-                        >
-                          Edit
-                        </Button>
+                        <CoPresentIcon />
+                        {data.instructor_name}
+                      </Typography>
+
+                      <Divider
+                        orientation="vertical"
+                        flexItem
+                        sx={{
+                          bgcolor: "rgba(255, 255, 255, 0.63)",
+                          size: "large",
+                        }}
+                      />
+                      <Typography
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          flex: 1,
+                          gap: 1,
+                          fontWeight: 600,
+                          color: "#94a3b8",
+                        }}
+                      >
+                        <AccessTimeIcon sx={{ color: "#0ea5e9" }} />
+                        {data.duration}
+                      </Typography>
+                    </Box>
+
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 1,
+                        mb: 1,
+                      }}
+                    >
+                      {user.role === "admin" ? (
                         <Button
                           variant="outlined"
                           sx={{
@@ -406,39 +374,76 @@ export default function Courses() {
                           }}
                         >
                           Delete
-                        </Button>{" "}
-                      </>
-                    ) : (
-                      <>
-                        <Button
-                          variant="outlined"
-                          sx={{
-                            display: "flex",
-                            flex: 1,
-                            alignItems: "center",
-                            gap: 1,
-                            bgcolor: "#0ea5e9",
-                            color: "white",
-                            "&.Mui-disabled": {
-                              bgcolor: "#49514f",
-                              color: "white",
-                              opacity: 1,
-                            },
-                          }}
-                          disabled={enroll.includes(data.id)}
-                          onClick={() => setOpen(data.id)}
-                        >
-                          {enroll.includes(data.id) ? "Enrolled" : "Enroll"}
                         </Button>
-                      </>
-                    )}
-                  </Box>
-                </CardContent>
-              </Card>
-            </div>
-          );
-        })
-      ):(
+                      ) : user.role === "instructor" ? (
+                        <>
+                          <Button
+                            variant="outlined"
+                            sx={{
+                              display: "flex",
+                              flex: 1,
+                              alignItems: "center",
+                              gap: 1,
+                              bgcolor: "#0ea5e9",
+                              color: "white",
+                            }}
+                            onClick={() => {
+                              nav(`/update/${data.id}`, { state: { data } });
+                            }}
+                            startIcon={<EditIcon />}
+                          >
+                            Edit
+                          </Button>
+                          <Button
+                            variant="outlined"
+                            sx={{
+                              color: "#ef5252",
+                              display: "flex",
+                              flex: 1,
+                              alignItems: "center",
+                              gap: 1,
+                              border: "1px solid #ef5252",
+                            }}
+                            startIcon={<DeleteIcon />}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              setOpen(data.id);
+                            }}
+                          >
+                            Delete
+                          </Button>{" "}
+                        </>
+                      ) : (
+                        <>
+                          <Button
+                            variant="outlined"
+                            sx={{
+                              display: "flex",
+                              flex: 1,
+                              alignItems: "center",
+                              gap: 1,
+                              bgcolor: "#0ea5e9",
+                              color: "white",
+                              "&.Mui-disabled": {
+                                bgcolor: "#49514f",
+                                color: "white",
+                                opacity: 1,
+                              },
+                            }}
+                            disabled={enroll.includes(data.id)}
+                            onClick={() => setOpen(data.id)}
+                          >
+                            {enroll.includes(data.id) ? "Enrolled" : "Enroll"}
+                          </Button>
+                        </>
+                      )}
+                    </Box>
+                  </CardContent>
+                </Card>
+              </div>
+            );
+          })
+        ) : (
           <Box
             sx={{
               display: "flex",
@@ -446,7 +451,7 @@ export default function Courses() {
               alignItems: "center",
               width: "100%",
               minHeight: "5px",
-              fontWeight:'500px'
+              fontWeight: "500px",
             }}
           >
             <Typography variant="h4">Not found</Typography>
@@ -503,10 +508,10 @@ export default function Courses() {
           <Pagination
             count={total_page}
             page={page}
-            onChange ={(event, value) => {
-              event.preventDefault()
-              setPage(value)}
-            }
+            onChange={(event, value) => {
+              event.preventDefault();
+              setPage(value);
+            }}
             sx={{
               "& .MuiPaginationItem-root": {
                 fontSize: "1rem",

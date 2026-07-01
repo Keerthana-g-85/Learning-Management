@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 
 import { getMessage } from "../redux/MessageSlice";
 import useApi from "../components/Api";
+import useDebounce from "../components/Debounce";
 
 import Paper from "@mui/material/Paper";
 import Button from "@mui/material/Button";
@@ -21,6 +22,7 @@ import Stack from "@mui/material/Stack";
 import PeopleIcon from "@mui/icons-material/People";
 import GroupRemoveIcon from "@mui/icons-material/GroupRemove";
 import PersonIcon from "@mui/icons-material/Person";
+import Pagination from "@mui/material/Pagination";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -60,16 +62,22 @@ export default function Enroll() {
   const id = useSelector((state: any) => state.login.user.id);
   console.log(id);
   const [enroll, setEnroll] = useState([]);
+  const [page, setPage] = useState(1);
+  const [total_page, setTotalPage] = useState(1);
+  const per_page = 6;
   const dispatch = useDispatch();
   const message = useSelector((state: any) => state.message.message);
+  const search = useSelector((state: any) => state.search.search);
+  const debounce = useDebounce(search);
 
   const getEnroll = async () => {
     try {
       const response = await Api({
         method: "get",
-        endpoint: `enroll/getstudent/${id}`,
+        endpoint: `enroll/getstudent/${id}?search=${debounce}&page=${page}&per_page=${per_page}`,
       });
       const data = response.data.student_course;
+      setTotalPage(response.data.pagination.total_page);
       setEnroll(data);
       console.log(data);
     } catch (error) {
@@ -78,7 +86,10 @@ export default function Enroll() {
   };
   useEffect(() => {
     getEnroll();
-  }, []);
+  }, [debounce, page]);
+  useEffect(() => {
+    setPage(1);
+  }, [debounce]);
 
   async function handleUnenroll(id: string) {
     try {
@@ -183,18 +194,21 @@ export default function Enroll() {
           </Table>
           <Box sx={{ display: "flex", justifyContent: "center", p: 1 }}>
             <Stack spacing={2}>
-              {/* <Pagination
+              <Pagination
                 count={total_page}
                 page={page}
-                onChange={handleChange}
+                onChange={(event, value: number) => {
+                  event.preventDefault();
+                  setPage(value);
+                }}
                 sx={{
                   "& .MuiPaginationItem-root": {
                     fontSize: "1rem",
-                    height: "3rem",
+                    height: "4rem",
                     minWidth: "4rem",
                   },
                 }}
-              /> */}
+              />
             </Stack>
           </Box>
         </TableContainer>

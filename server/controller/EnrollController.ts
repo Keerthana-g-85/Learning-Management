@@ -5,6 +5,7 @@ import Register from "../models/RegisterModel.js";
 import Course from "../models/CourseModel.js";
 import Enroll from "../models/EnrollModel.js";
 import { Role } from "../models/RegisterModel.js";
+import { ILike } from "typeorm";
 
 export const Create: RequestHandler = async (req, res) => {
   try {
@@ -151,22 +152,52 @@ export const GetStudent: RequestHandler = async (req, res) => {
     const enrollRepo = database.getRepository(Enroll);
     const studentId = req.params.id as string;
 
-    const student_course = await enrollRepo.find({
-      where: { register: { id: studentId } },
-      relations: { course: true },
-    });
+    const search = req.query.search as string;
 
-    if (student_course.length === 0) {
-      return res.status(404).send({
-        success: false,
-        message: "Student is not enrolled in any course",
+    let student_course;
+
+    if (search) {
+      student_course = await enrollRepo.find({
+        where: {
+          register: { id: studentId },
+          course: {
+            title: ILike(`%${search}%`),
+          },
+        },
+        relations: { course: true },
+      });
+    } else {
+      student_course = await enrollRepo.find({
+        where: { register: { id: studentId } },
+        relations: { course: true },
       });
     }
+
+    if (student_course.length === 0) {
+      return res.status(200).send({
+        success: true,
+        message: "Student is not enrolled in any course",
+        student_course: [],
+        pagination: {
+          total_page: 1,
+        },
+      });
+    }
+
+    const page = Number(req.query.page) || 1;
+    const per_page = Number(req.query.per_page) || student_course.length;
+    const initial = (page - 1) * per_page;
+    const final = page * per_page;
+    const total_page = Math.ceil(student_course.length / per_page);
+    const Data = student_course.slice(initial, final);
 
     return res.status(200).send({
       success: true,
       message: "All students details",
-      student_course,
+      student_course: Data,
+      pagination: {
+        total_page,
+      },
     });
   } catch (error) {
     console.log(error);
