@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Navigate, useLocation } from "react-router-dom";
 
 import { getMessage } from "../redux/MessageSlice";
 
@@ -126,7 +125,7 @@ export default function User() {
     setEdit(null);
   }
 
-  async function handleDelete(id: String) {
+  async function handleDelete(id: string) {
     const response = await Api({
       method: "delete",
       endpoint: `/register/delete/${id}`,

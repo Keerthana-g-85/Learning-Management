@@ -41,7 +41,7 @@ import { addToken, addUser } from "../redux/LoginSlice";
 const drawerWidth = 240;
 
 export default function Home() {
-  const [open, setOpen] = useState<Boolean>(false);
+  const [open, setOpen] = useState<boolean>(false);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();

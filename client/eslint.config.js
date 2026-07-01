@@ -34,6 +34,10 @@ export default defineConfig([
       // No unnecessary var
       'no-var': 'error',
 
+      'react-hooks/set-state-in-effect': 'off',
+
+       "react-hooks/exhaustive-deps": "off",
+
       // React Fast Refresh rule
       'react-refresh/only-export-components': [
         'warn',

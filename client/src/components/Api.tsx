@@ -6,15 +6,15 @@ export const api = axios.create({
 });
 
 interface Value {
-    method: "get" | "post" | "put" | "delete";
-    endpoint: string;
-    data?: object;
-  }
+  method: "get" | "post" | "put" | "delete";
+  endpoint: string;
+  data?: object;
+}
 
 export default function useApi() {
   const token = useSelector((state: any) => state.login.token);
 
-  const Api = async (values:Value ) => {
+  const Api = async (values: Value) => {
     try {
       if (values.method === "get" || values.method === "delete") {
         const response = await api[values.method](values.endpoint, {
@@ -36,6 +36,10 @@ export default function useApi() {
         return response;
       }
     } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.error(error.response?.data?.message);
+      }
+
       throw error;
     }
   };
