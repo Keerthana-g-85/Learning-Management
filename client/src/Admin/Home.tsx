@@ -2,6 +2,8 @@ import { useState } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { addSearch } from "../redux/SearchSlice";
+import { useEffect } from "react";
+import { jwtDecode } from "jwt-decode";
 
 import logo from "../assets/logo.png";
 
@@ -112,6 +114,15 @@ export default function Home() {
     dispatch(addUser(null));
     navigate("/", { replace: true });
   }
+  const token = localStorage.getItem("token");
+  useEffect (()=>{
+    if(token){
+      const decoded = jwtDecode(token);
+      if (decoded.exp! <= Math.floor(Date.now()/1000)){
+        handleLogout()
+      }
+    }
+  },[])
 
   return (
     <>
