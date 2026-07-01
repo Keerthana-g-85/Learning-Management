@@ -44,10 +44,14 @@ export default function App() {
     return (
       <>
         <BrowserRouter>
+       
           <Routes>
+             
             <Route element={<PublicRoute />}>
             <Route path="/" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/forgotpassword" element={<Resetpassword/>} />
+            
           </Route>
             <Route element={<ProtectedRouter />}>
               <Route element={<Home />}>

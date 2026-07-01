@@ -150,8 +150,21 @@ export default function Login() {
             <Button variant="contained" onClick={handleLogin}>
               Login
             </Button>
+            <Box sx={{display:'flex' , gap:1 , alignItems:'center' , justifyContent:'center'}}>
+            <Link to="/forgotpassword">
+              <Typography
+                variant="body2"
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  mb:0
+                }}
+              >
+                Forgot Password? Reset Password
+              </Typography>
+            </Link>
             <Link to="/register">
-              {" "}
               <Typography
                 variant="body2"
                 sx={{
@@ -163,7 +176,9 @@ export default function Login() {
                 Not an existing user? Register
               </Typography>
             </Link>
+            </Box>
           </Stack>
+          
         </Paper>
       </Box>
       <Snackbar
