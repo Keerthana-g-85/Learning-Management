@@ -12,6 +12,11 @@ import {
   Snackbar,
 } from "@mui/material";
 import image3 from "../assets/image3.png";
+import PersonIcon from "@mui/icons-material/Person";
+import MailIcon from "@mui/icons-material/Mail";
+import LockIcon from "@mui/icons-material/Lock";
+import HomeIcon from "@mui/icons-material/Home";
+import PhoneIcon from "@mui/icons-material/Phone";
 
 export default function Register() {
   const [register, setRegister] = useState({
@@ -163,83 +168,116 @@ export default function Register() {
             Registration Form
           </Typography>
           <Stack spacing={4}>
-            <TextField
-              fullWidth
-              id={error.errName ? "standard-error" : "standard-basic"}
-              variant="standard"
-              label="Name*"
-              type="text"
-              value={register.name}
-              error={error.errName}
-              helperText={errmessage.errName}
-              onChange={(e) => {
-                setRegister({ ...register, name: e.target.value });
-                setError({ ...error, errName: false });
-                setErrmessage({ ...errmessage, errName: "" });
+            <Box sx={{ display: "flex", alignItems: "flex-end", gap: 2, p: 0 }}>
+              <PersonIcon />
+              <TextField
+                fullWidth
+                id={error.errName ? "standard-error" : "standard-basic"}
+                variant="standard"
+                label="Name*"
+                type="text"
+                value={register.name}
+                error={error.errName}
+                helperText={errmessage.errName}
+                onChange={(e) => {
+                  setRegister({ ...register, name: e.target.value });
+                  setError({ ...error, errName: false });
+                  setErrmessage({ ...errmessage, errName: "" });
+                }}
+              />
+            </Box>
+            <Box sx={{ display: "flex", alignItems: "flex-end", gap: 2, p: 0 }}>
+              <MailIcon />
+
+              <TextField
+                fullWidth
+                id={error.errEmail ? "standard-error" : "standard-basic"}
+                variant="standard"
+                label="Email*"
+                type="text"
+                error={error.errEmail}
+                value={register.email}
+                helperText={errmessage.errEmail}
+                onChange={(e) => {
+                  setRegister({ ...register, email: e.target.value });
+                  setError({ ...error, errEmail: false });
+                  setErrmessage({ ...errmessage, errEmail: "" });
+                }}
+              />
+            </Box>
+
+            <Box sx={{ display: "flex", alignItems: "flex-end", gap: 2, p: 0 }}>
+              <LockIcon />
+
+              <TextField
+                fullWidth
+                id={error.errPassword ? "standard-error" : "standard-basic"}
+                variant="standard"
+                label="Password*"
+                type="password"
+                value={register.password}
+                error={error.errPassword}
+                helperText={errmessage.errPassword}
+                onChange={(e) => {
+                  setRegister({ ...register, password: e.target.value });
+                  setError({ ...error, errPassword: false });
+                  setErrmessage({ ...errmessage, errPassword: "" });
+                }}
+              />
+            </Box>
+
+            <Box sx={{ display: "flex", alignItems: "flex-end", gap: 2, p: 0 }}>
+              <PhoneIcon />
+              <TextField
+                fullWidth
+                id="standard-basic"
+                variant="standard"
+                type="text"
+                label="Phone"
+                value={register.phoneNumber}
+                onChange={(e) =>
+                  setRegister({ ...register, phoneNumber: e.target.value })
+                }
+              />
+            </Box>
+
+            <Box sx={{ display: "flex", alignItems: "flex-end", gap: 2, p: 0 }}>
+              <HomeIcon />
+
+              <TextField
+                fullWidth
+                id="standard-basic"
+                variant="standard"
+                label="Address"
+                type="text"
+                value={register.address}
+                onChange={(e) =>
+                  setRegister({ ...register, address: e.target.value })
+                }
+              />
+            </Box>
+
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
               }}
-            />
-
-            <TextField
-              fullWidth
-              id={error.errEmail ? "standard-error" : "standard-basic"}
-              variant="standard"
-              label="Email*"
-              type="text"
-              error={error.errEmail}
-              value={register.email}
-              helperText={errmessage.errEmail}
-              onChange={(e) => {
-                setRegister({ ...register, email: e.target.value });
-                setError({ ...error, errEmail: false });
-                setErrmessage({ ...errmessage, errEmail: "" });
-              }}
-            />
-
-            <TextField
-              fullWidth
-              id={error.errPassword ? "standard-error" : "standard-basic"}
-              variant="standard"
-              label="Password*"
-              type="password"
-              value={register.password}
-              error={error.errPassword}
-              helperText={errmessage.errPassword}
-              onChange={(e) => {
-                setRegister({ ...register, password: e.target.value });
-                setError({ ...error, errPassword: false });
-                setErrmessage({ ...errmessage, errPassword: "" });
-              }}
-            />
-
-            <TextField
-              fullWidth
-              id="standard-basic"
-              variant="standard"
-              type="text"
-              label="Phone"
-              value={register.phoneNumber}
-              onChange={(e) =>
-                setRegister({ ...register, phoneNumber: e.target.value })
-              }
-            />
-
-            <TextField
-              fullWidth
-              id="standard-basic"
-              variant="standard"
-              label="Address"
-              type="text"
-              value={register.address}
-              onChange={(e) =>
-                setRegister({ ...register, address: e.target.value })
-              }
-            />
-
-            <Button variant="contained" onClick={handleRegister}>
-              Register
-            </Button>
+            >
+              <Button
+                variant="outlined"
+                sx={{
+                  mr: 2,
+                  bgcolor: "#233D4D",
+                  color: "white",
+                  width: "200px",
+                }}
+                onClick={handleRegister}
+              >
+                REGISTER
+              </Button>
+            </Box>
             <Link to="/">
-              {" "}
               <Typography
                 variant="body2"
                 sx={{

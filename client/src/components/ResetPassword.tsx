@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import useApi from "./Api";
 import { getMessage } from "../redux/MessageSlice";
+import image3 from "../assets/image3.png";
 import {
   Box,
   Paper,
@@ -35,6 +36,7 @@ export default function Resetpassword() {
   });
   const dispatch = useDispatch();
   const message = useSelector((state: any) => state.message.message);
+  const user = useSelector((state: any) => state.login.user);
 
   async function handleReset() {
     try {
@@ -113,24 +115,55 @@ export default function Resetpassword() {
   return (
     <>
       <Box
-        sx={{
-          minHeight: "90vh",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          p: 2,
-        }}
+        sx={
+          !user
+            ? {
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                backgroundImage: `url(${image3})`,
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+                width: "100%",
+                height: "100vh",
+              }
+            : {
+                minHeight: "90vh",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                p: 2,
+              }
+        }
       >
         <Paper
-          elevation={3}
-          sx={{ p: 4, bgcolor: "#EAECF0", borderRadius: "30px", width: 500 }}
+          elevation={4}
+          sx={
+            !user
+              ? {
+                  p: 3,
+                  mt: 5,
+                  borderRadius: 3,
+                  width: 500,
+                  backgroundColor: "rgba(252, 249, 249, 0.51)",
+                  backdropFilter: "blur(12px)",
+                  border: "1px solid rgba(217, 209, 209, 0.3)",
+                }
+              : { p: 4, bgcolor: "#EAECF0", borderRadius: "30px", width: 500 }
+          }
         >
-          <Box sx={{ p: 1, display: "flex", justifyContent: "center" }}>
-            <Typography variant="h5" sx={{ fontWeight: "100px" }}>
-              {" "}
-              Reset Password
+          {!user ? (
+            <Typography variant="h5" sx={{ fontWeight: 600, mb: 3 }}>
+              Login
             </Typography>
-          </Box>
+          ) : (
+            <Box sx={{ p: 1, display: "flex", justifyContent: "center" }}>
+              <Typography variant="h5" sx={{ fontWeight: "100px" }}>
+                Reset Password
+              </Typography>
+            </Box>
+          )}
+
           <Stack spacing={3}>
             <Box
               sx={{

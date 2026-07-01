@@ -15,6 +15,8 @@ import image3 from "../assets/image3.png";
 import { useDispatch } from "react-redux";
 import { addToken, addUser } from "../redux/LoginSlice";
 import { jwtDecode } from "jwt-decode";
+import LockIcon from "@mui/icons-material/Lock";
+import MailIcon from "@mui/icons-material/Mail";
 
 export default function Login() {
   const [login, setLogin] = useState({ email: "", password: "" });
@@ -115,70 +117,101 @@ export default function Login() {
             Login
           </Typography>
           <Stack spacing={4}>
-            <TextField
-              fullWidth
-              id={error.errEmail ? "standard-error" : "standard-basic"}
-              variant="standard"
-              label="Email*"
-              type="text"
-              error={error.errEmail}
-              value={login.email}
-              helperText={errmessage.errEmail}
-              onChange={(e) => {
-                setLogin({ ...login, email: e.target.value });
-                setError((prev) => ({ ...prev, errEmail: false }));
-                setErrmessage((prev) => ({ ...prev, errEmail: "" }));
-              }}
-            />
+            <Box sx={{ display: "flex", alignItems: "flex-end", gap: 2, p: 0 }}>
+              <MailIcon />
+              <TextField
+                fullWidth
+                id={error.errEmail ? "standard-error" : "standard-basic"}
+                variant="standard"
+                label="Email*"
+                type="text"
+                error={error.errEmail}
+                value={login.email}
+                helperText={errmessage.errEmail}
+                onChange={(e) => {
+                  setLogin({ ...login, email: e.target.value });
+                  setError((prev) => ({ ...prev, errEmail: false }));
+                  setErrmessage((prev) => ({ ...prev, errEmail: "" }));
+                }}
+              />
+            </Box>
+            <Box sx={{ display: "flex", alignItems: "flex-end", gap: 2, p: 0 }}>
+              <LockIcon sx={{ width: 30, mb: 0.5 }} />
+              <TextField
+                fullWidth
+                id={error.errPassword ? "standard-error" : "standard-basic"}
+                variant="standard"
+                label="Password*"
+                type="text"
+                value={login.password}
+                error={error.errPassword}
+                helperText={errmessage.errPassword}
+                onChange={(e) => {
+                  setLogin({ ...login, password: e.target.value });
+                  setError((prev) => ({ ...prev, errPassword: false }));
+                  setErrmessage((prev) => ({ ...prev, errPassword: "" }));
+                }}
+              />
+            </Box>
 
-            <TextField
-              fullWidth
-              id={error.errPassword ? "standard-error" : "standard-basic"}
-              variant="standard"
-              label="Password*"
-              type="text"
-              value={login.password}
-              error={error.errPassword}
-              helperText={errmessage.errPassword}
-              onChange={(e) => {
-                setLogin({ ...login, password: e.target.value });
-                setError((prev) => ({ ...prev, errPassword: false }));
-                setErrmessage((prev) => ({ ...prev, errPassword: "" }));
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
               }}
-            />
-
-            <Button variant="contained" onClick={handleLogin}>
-              Login
-            </Button>
-            <Box sx={{display:'flex' , gap:1 , alignItems:'center' , justifyContent:'center'}}>
-            <Link to="/forgotpassword">
-              <Typography
-                variant="body2"
+            >
+              <Box
                 sx={{
                   display: "flex",
-                  justifyContent: "center",
                   alignItems: "center",
-                  mb:0
+                  justifyContent: "center",
                 }}
               >
-                Forgot Password? Reset Password
-              </Typography>
-            </Link>
-            <Link to="/register">
-              <Typography
-                variant="body2"
-                sx={{
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                Not an existing user? Register
-              </Typography>
-            </Link>
+                <Button
+                  variant="outlined"
+                  sx={{
+                    mr: 2,
+                    bgcolor: "#233D4D",
+                    color: "white",
+                    width: "200px",
+                  }}
+                  onClick={handleLogin}
+                >
+                  Login
+                </Button>
+              </Box>
+            </Box>
+            <Box
+              sx={{ gap: 3, alignItems: "center", justifyContent: "center" }}
+            >
+              <Link to="/forgotpassword">
+                <Typography
+                  variant="body2"
+                  sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    mb: 0,
+                  }}
+                >
+                  Forgot Password? Reset Password
+                </Typography>
+              </Link>
+              <Link to="/register">
+                <Typography
+                  variant="body2"
+                  sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  Not an existing user? Register
+                </Typography>
+              </Link>
             </Box>
           </Stack>
-          
         </Paper>
       </Box>
       <Snackbar
