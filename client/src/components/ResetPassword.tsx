@@ -116,7 +116,7 @@ export default function Resetpassword() {
     <>
       <Box
         sx={
-          !user
+          !user.name
             ? {
                 display: "flex",
                 justifyContent: "center",
@@ -139,7 +139,7 @@ export default function Resetpassword() {
         <Paper
           elevation={4}
           sx={
-            !user
+            !user.name
               ? {
                   p: 3,
                   mt: 5,
@@ -152,9 +152,9 @@ export default function Resetpassword() {
               : { p: 4, bgcolor: "#EAECF0", borderRadius: "30px", width: 500 }
           }
         >
-          {!user ? (
-            <Typography variant="h5" sx={{ fontWeight: 600, mb: 3 }}>
-              Login
+          {!user.name ? (
+            <Typography variant="h5" sx={{ fontWeight: 600,}}>
+              Reset Password
             </Typography>
           ) : (
             <Box sx={{ p: 1, display: "flex", justifyContent: "center" }}>
@@ -164,7 +164,7 @@ export default function Resetpassword() {
             </Box>
           )}
 
-          <Stack spacing={3}>
+          <Stack spacing={2}>
             <Box
               sx={{
                 display: "flex",
