@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Navigate, useLocation } from "react-router-dom";
 
 import { getMessage } from "../redux/MessageSlice";
 
@@ -37,6 +36,7 @@ import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import PeopleIcon from "@mui/icons-material/People";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -68,13 +68,11 @@ interface Users {
 }
 
 export default function User() {
-  
-  const [user, setUser] = useState<Users[]>([]);
+  const queryClient = useQueryClient();
   const [edit, setEdit] = useState<Users | null>(null);
   const [open, setOpen] = useState<string>("");
   const [filter, setFilter] = useState<string[]>([]);
   const [page, setPage] = useState(1);
-  const [total_page, setTotalPage] = useState(1);
   const per_page = 6;
 
   const dispatch = useDispatch();
@@ -88,28 +86,25 @@ export default function User() {
   const debounce = useDebounce(search);
 
   const getUsers = async () => {
-    try {
-      const response = await Api({
-        method: "get",
-        endpoint: `/register/get/?search=${debounce}&filter=${filter.join(",")}&page=${page}&per_page=${per_page}`,
-      });
-      console.log(response);
-      const data = response.data.Data;
-      setUser(data);
-      dispatch(getMessage(response.data.message));
-      setTotalPage(response.data.pagination.total_page);
-    } catch (error) {
-      console.log(error);
-    }
+    const response = await Api({
+      method: "get",
+      endpoint: `/register/get/?search=${debounce}&filter=${filter.join(",")}&page=${page}&per_page=${per_page}`,
+    });
+    console.log(response);
+    return response.data;
   };
+  const { data: userData } = useQuery({
+    queryKey: ["users", debounce, filter, page],
+    queryFn: getUsers,
+  });
+
+  const user = userData?.Data;
+  const total_page = userData?.pagination?.total_page;
+  dispatch(getMessage(userData?.message));
 
   useEffect(() => {
-    getUsers();
-  }, [debounce, filter, page]);
-
-  useEffect(() => {
-  setPage(1);
-}, [debounce, filter]);
+    setPage(1);
+  }, [debounce, filter]);
 
   async function handleSave() {
     if (edit === null) {
@@ -120,21 +115,36 @@ export default function User() {
       endpoint: `/register/update/${edit?.id}`,
       data: edit,
     });
-    console.log(response);
-    dispatch(getMessage(response.data.message));
-    getUsers();
-    setEdit(null);
+    return response.data;
   }
+  const editMutation = useMutation({
+    mutationFn: handleSave,
+    onSuccess: (data) => {
+      dispatch(getMessage(data.message));
+      setEdit(null);
+      queryClient.invalidateQueries({
+        queryKey: ["users", debounce, filter, page],
+      });
+    },
+  });
 
   async function handleDelete(id: String) {
     const response = await Api({
       method: "delete",
       endpoint: `/register/delete/${id}`,
     });
-    console.log(response);
-    dispatch(getMessage(response.data.message));
-    getUsers();
+    return response.data;
   }
+
+  const deleteMutation = useMutation({
+    mutationFn: handleDelete,
+    onSuccess: (data) => {
+      dispatch(getMessage(data.message));
+      queryClient.invalidateQueries({
+        queryKey: ["users", debounce, filter, page],
+      });
+    },
+  });
 
   function handleFilter(data: string) {
     if (filter.includes(data)) {
@@ -193,7 +203,7 @@ export default function User() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {user.map((row: Users) => (
+              {user?.map((row: Users) => (
                 <StyledTableRow key={row.id}>
                   <StyledTableCell component="th" scope="row">
                     <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
@@ -232,7 +242,7 @@ export default function User() {
 
                   <StyledTableCell align="right">
                     {edit?.id === row.id ? (
-                      <SaveIcon onClick={() => handleSave()} />
+                      <SaveIcon onClick={() => editMutation.mutate()} />
                     ) : (
                       <EditIcon onClick={() => setEdit(row)} />
                     )}
@@ -293,7 +303,7 @@ export default function User() {
               border: "1px solid #ef5252",
             }}
             startIcon={<DeleteIcon />}
-            onClick={() => handleDelete(open)}
+            onClick={() => deleteMutation.mutate(open)}
           >
             {" "}
             "Delete"

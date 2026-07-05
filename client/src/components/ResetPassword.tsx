@@ -15,10 +15,17 @@ import Snackbar from "@mui/material/Snackbar";
 import LockIcon from "@mui/icons-material/Lock";
 import MailIcon from "@mui/icons-material/Mail";
 import axios from "axios";
+import { useMutation } from "@tanstack/react-query";
+
+interface ResetPassword {
+  email: string;
+  oldPassword: string;
+  newPassword: string;
+}
 
 export default function Resetpassword() {
   const { Api } = useApi();
-  const [data, setData] = useState({
+  const [data, setData] = useState<ResetPassword>({
     email: "",
     oldPassword: "",
     newPassword: "",
@@ -38,79 +45,86 @@ export default function Resetpassword() {
   const message = useSelector((state: any) => state.message.message);
   const user = useSelector((state: any) => state.login.user);
 
-  async function handleReset() {
-    try {
-      if (!data.email) {
-        setError((prev) => ({ ...prev, errEmail: true }));
-        setErrmessage((prev) => ({
-          ...prev,
-          errEmail: "Email is required",
-        }));
-      } else {
-        setError((prev) => ({ ...prev, errEmail: false }));
-        setErrmessage((prev) => ({ ...prev, errEmail: "" }));
-      }
+  function handleReset() {
+    if (!data.email) {
+      setError((prev) => ({ ...prev, errEmail: true }));
+      setErrmessage((prev) => ({
+        ...prev,
+        errEmail: "Email is required",
+      }));
+    } else {
+      setError((prev) => ({ ...prev, errEmail: false }));
+      setErrmessage((prev) => ({ ...prev, errEmail: "" }));
+    }
 
-      if (!data.oldPassword) {
-        setError((prev) => ({ ...prev, errOldPassword: true }));
-        setErrmessage((prev) => ({
-          ...prev,
-          errOldPassword: "Old Password is required",
-        }));
-      } else {
-        setError((prev) => ({ ...prev, errOldPassword: false }));
-        setErrmessage((prev) => ({ ...prev, errOldPassword: "" }));
-      }
+    if (!data.oldPassword) {
+      setError((prev) => ({ ...prev, errOldPassword: true }));
+      setErrmessage((prev) => ({
+        ...prev,
+        errOldPassword: "Old Password is required",
+      }));
+    } else {
+      setError((prev) => ({ ...prev, errOldPassword: false }));
+      setErrmessage((prev) => ({ ...prev, errOldPassword: "" }));
+    }
 
-      if (!data.newPassword) {
-        setError((prev) => ({ ...prev, errNewPassword: true }));
-        setErrmessage((prev) => ({
-          ...prev,
-          errNewPassword: "New Password is required",
-        }));
-      } else if (data.newPassword.length < 8) {
-        setError((prev) => ({ ...prev, errNewPassword: true }));
-        setErrmessage((prev) => ({
-          ...prev,
-          errNewPassword: "Password must be at least 8 characters",
-        }));
-      } else {
-        setError((prev) => ({ ...prev, errNewPassword: false }));
-        setErrmessage((prev) => ({ ...prev, errNewPassword: "" }));
-      }
+    if (!data.newPassword) {
+      setError((prev) => ({ ...prev, errNewPassword: true }));
+      setErrmessage((prev) => ({
+        ...prev,
+        errNewPassword: "New Password is required",
+      }));
+    } else if (data.newPassword.length < 8) {
+      setError((prev) => ({ ...prev, errNewPassword: true }));
+      setErrmessage((prev) => ({
+        ...prev,
+        errNewPassword: "Password must be at least 8 characters",
+      }));
+    } else {
+      setError((prev) => ({ ...prev, errNewPassword: false }));
+      setErrmessage((prev) => ({ ...prev, errNewPassword: "" }));
+    }
 
-      if (
-        !data.email ||
-        !data.oldPassword ||
-        !data.newPassword ||
-        data.newPassword.length < 8
-      ) {
-        console.log("Enter the values");
-        return;
-      } else {
-        const response = await Api({
-          method: "put",
-          endpoint: "/register/resetpassword",
-          data: data,
-        });
+    if (
+      !data.email ||
+      !data.oldPassword ||
+      !data.newPassword ||
+      data.newPassword.length < 8
+    ) {
+      console.log("Enter the values");
+      return;
+    } else {
+      resetMutate.mutate(data);
+    }
+  }
 
-        console.log(response);
-        dispatch(getMessage(response.data.message));
+  console.log(message);
 
-        setData({
-          email: "",
-          oldPassword: "",
-          newPassword: "",
-        });
-      }
-    } catch (error) {
-      console.log(error);
+  const resetPassword = async (data: ResetPassword) => {
+    const response = await Api({
+      method: "put",
+      endpoint: "/register/resetpassword",
+      data: data,
+    });
+    return response.data;
+  };
+
+  const resetMutate = useMutation({
+    mutationFn: resetPassword,
+    onSuccess: (data) => {
+      dispatch(getMessage(data.message));
+      setData({
+        email: "",
+        oldPassword: "",
+        newPassword: "",
+      });
+    },
+    onError: (error) => {
       if (axios.isAxiosError(error)) {
         dispatch(getMessage(error.response?.data.message));
       }
-    }
-  }
-  console.log(message);
+    },
+  });
 
   return (
     <>

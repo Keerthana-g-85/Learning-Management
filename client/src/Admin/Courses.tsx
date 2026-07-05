@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { useSelector, useDispatch } from "react-redux";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { getMessage } from "../redux/MessageSlice";
 import useApi from "../components/Api";
@@ -41,18 +42,30 @@ interface Courses {
   level: string;
   name: string;
 }
+interface User {
+  name: string;
+  email: string;
+  address: string;
+  phoneNumber: string;
+  role: string | null;
+}
+
+interface Enroll {
+  id: string;
+  enroll_date: Date;
+  course: Courses;
+}
 
 export default function Courses() {
-  const [course, setCourse] = useState<Courses[]>([]);
   const [filter, setFilter] = useState<string[]>([]);
-  const [instructor, setInstructor] = useState<string[]>([]);
   const [open, setOpen] = useState<string>("");
-  const [enroll, setEnroll] = useState<string[]>([]);
 
   const { Api } = useApi();
 
   const nav = useNavigate();
   const dispatch = useDispatch();
+
+  const queryClient = useQueryClient();
 
   const user = useSelector((state: any) => state.login.user);
   const search = useSelector((state: any) => state.search.search);
@@ -62,29 +75,26 @@ export default function Courses() {
 
   // Getting all the course
   const [page, setPage] = useState(1);
-  const [total_page, setTotalPage] = useState(1);
   const per_page = 6;
   const getCourse = async () => {
-    try {
-      const response = await Api({
-        method: "get",
-        endpoint: `course/get?search=${debounce}&filter=${filter.join(",")}&page=${page}&per_page=${per_page}`,
-      });
-      const data = response.data.Data;
-      setCourse(data);
-      dispatch(getMessage(response.data.message));
-      setTotalPage(response.data.pagination.total_page);
-      console.log("Page:", page);
-      console.log(data);
-      setCourse(data);
-    } catch (error) {
-      console.log(error);
-    }
+    const response = await Api({
+      method: "get",
+      endpoint: `course/get?search=${debounce}&filter=${filter.join(",")}&page=${page}&per_page=${per_page}`,
+    });
+    return response.data;
   };
 
-  useEffect(() => {
-    getCourse();
-  }, [debounce, filter, page]);
+  const {
+    data: courseData,
+    isLoading: courseLoading,
+    error: courseError,
+  } = useQuery({
+    queryKey: ["courses", debounce, filter, page],
+    queryFn: getCourse,
+  });
+
+  const course = courseData?.Data;
+  const total_page = courseData?.pagination?.total_page;
 
   useEffect(() => {
     setPage(1);
@@ -92,58 +102,71 @@ export default function Courses() {
 
   // delete the course
   async function handleDelete(id: string) {
-    console.log(id);
-    try {
-      const deleteResponse = await Api({
-        method: "delete",
-        endpoint: "/course/delete/" + `${id}`,
-      });
-      console.log("/course/delete/" + `${id}`);
-      getCourse();
-      dispatch(getMessage(deleteResponse.data.message));
-      setOpen("");
-    } catch (error) {
-      console.log(error);
-    }
+    const deleteResponse = await Api({
+      method: "delete",
+      endpoint: "/course/delete/" + `${id}`,
+    });
+    return deleteResponse.data;
   }
 
-  const getEnroll = async () => {
-    try {
-      const response = await Api({
-        method: "get",
-        endpoint: `enroll/getstudent/${id}`,
+  const deleteMutation = useMutation({
+    mutationFn: handleDelete,
+    onSuccess: (data) => {
+      dispatch(getMessage(data.message));
+      console.log(data);
+      setOpen("");
+      queryClient.invalidateQueries({
+        queryKey: ["courses"],
       });
-      const data = response.data.student_course.map(
-        (item: any) => item.course.id,
-      );
-      setEnroll(data);
-    } catch (error) {
+    },
+    onError: (error) => {
       console.log(error);
-    }
+    },
+  });
+
+  const getEnroll = async () => {
+    const response = await Api({
+      method: "get",
+      endpoint: `enroll/getstudent/${id}`,
+    });
+    return response.data;
   };
 
-  useEffect(() => {
-    if (user.role === "student") {
-      getEnroll();
-    }
-  }, []);
+  const { data: enrollData } = useQuery({
+    queryKey: ["enrollStudent", id],
+    queryFn: getEnroll,
+    enabled: user.role === "student",
+  });
+
+  const enroll = enrollData?.student_course.map(
+    (data: Enroll) => data.course.id,
+  );
+  console.log(enrollData);
 
   async function handleEnroll(id: string) {
     console.log(id);
-    try {
-      const response = await Api({
-        method: "post",
-        endpoint: `enroll/create`,
-        data: { register: `${user.id}`, course: `${id}` },
-      });
-      console.log(response);
-      setEnroll((prev) => [...prev, id]);
-      dispatch(getMessage(response.data.message));
-      setOpen("");
-    } catch (error) {
-      console.log(error);
-    }
+    const response = await Api({
+      method: "post",
+      endpoint: `enroll/create`,
+      data: { register: `${user.id}`, course: `${id}` },
+    });
+    return response.data;
   }
+
+  const enrollMutation = useMutation({
+    mutationFn: handleEnroll,
+    onSuccess: (data) => {
+      dispatch(getMessage(data.message));
+      setOpen("");
+      queryClient.invalidateQueries({
+        queryKey: ["enrollStudent"],
+      });
+    },
+    onError: (error) => {
+      console.log(error);
+      dispatch(getMessage(error.message));
+    },
+  });
 
   // Instructor name fetching for filter
   const instructorName = async () => {
@@ -151,15 +174,16 @@ export default function Courses() {
       method: "get",
       endpoint: "/register/getinstructor",
     });
-    console.log(response.data.instructor);
-    const name = response.data.instructor.map((data: Courses) => data.name);
-    console.log(name);
-    setInstructor(name);
+    return response.data;
   };
 
-  useEffect(() => {
-    instructorName();
-  }, []);
+  const { data: instructorData } = useQuery({
+    queryKey: ["Instructors"],
+    queryFn: instructorName,
+  });
+  console.log(instructorData);
+
+  const instructor = instructorData?.instructor;
 
   function handleFilter(data: string) {
     if (filter.includes(data)) {
@@ -181,6 +205,11 @@ export default function Courses() {
           p: 2,
         }}
       >
+        {courseLoading ? <Typography>Loading...</Typography> : null}
+
+        {courseError ? (
+          <Typography color="error">Failed to fetch courses</Typography>
+        ) : null}
         <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
           <Typography
             sx={{
@@ -191,20 +220,18 @@ export default function Courses() {
           >
             Instructor
           </Typography>
-          {instructor.map((data, index) => (
-            <>
-              <FormGroup key={index}>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={filter.includes(data)}
-                      onChange={() => handleFilter(data)}
-                    />
-                  }
-                  label={data}
-                />
-              </FormGroup>
-            </>
+          {instructor?.map((data: User, index: number) => (
+            <FormGroup key={index}>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={filter.includes(data.name)}
+                    onChange={() => handleFilter(data.name)}
+                  />
+                }
+                label={data.name}
+              />
+            </FormGroup>
           ))}
         </Box>
         {user.role === "instructor" ? (
@@ -220,7 +247,7 @@ export default function Courses() {
       </Box>
 
       <Box sx={{ display: "flex", gap: 5, flexWrap: "wrap" }}>
-        {course.length > 0 ? (
+        {course?.length > 0 ? (
           course.map((data: Courses) => {
             return (
               <div key={data.id}>
@@ -430,7 +457,7 @@ export default function Courses() {
                                 opacity: 1,
                               },
                             }}
-                            disabled={enroll.includes(data.id)}
+                            disabled={enroll?.includes(data.id)}
                             onClick={() => setOpen(data.id)}
                           >
                             {enroll.includes(data.id) ? "Enrolled" : "Enroll"}
@@ -482,7 +509,7 @@ export default function Courses() {
               variant="contained"
               sx={{ bgcolor: "#0ea5e9" }}
               onClick={() => {
-                handleEnroll(open);
+                enrollMutation.mutate(open);
               }}
             >
               Enroll
@@ -496,7 +523,7 @@ export default function Courses() {
                 border: "1px solid #ef5252",
               }}
               startIcon={<DeleteIcon />}
-              onClick={() => handleDelete(open)}
+              onClick={() => deleteMutation.mutate(open)}
             >
               "Delete"
             </Button>

@@ -17,9 +17,15 @@ import { addToken, addUser } from "../redux/LoginSlice";
 import { jwtDecode } from "jwt-decode";
 import LockIcon from "@mui/icons-material/Lock";
 import MailIcon from "@mui/icons-material/Mail";
+import { useMutation } from "@tanstack/react-query";
+
+interface Login {
+  email: string;
+  password: string;
+}
 
 export default function Login() {
-  const [login, setLogin] = useState({ email: "", password: "" });
+  const [login, setLogin] = useState<Login>({ email: "", password: "" });
 
   const [error, setError] = useState({
     errEmail: false,
@@ -37,46 +43,54 @@ export default function Login() {
   const dispatch = useDispatch();
   const nav = useNavigate();
 
-  async function handleLogin() {
-    try {
-      if (!login.email) {
-        setError((prev) => ({ ...prev, errEmail: true }));
-        setErrmessage((prev) => ({ ...prev, errEmail: "Email is required" }));
-      } else {
-        setError((prev) => ({ ...prev, errEmail: false }));
-        setErrmessage((prev) => ({ ...prev, errEmail: "" }));
-      }
+  function handleLogin() {
+    if (!login.email) {
+      setError((prev) => ({ ...prev, errEmail: true }));
+      setErrmessage((prev) => ({ ...prev, errEmail: "Email is required" }));
+    } else {
+      setError((prev) => ({ ...prev, errEmail: false }));
+      setErrmessage((prev) => ({ ...prev, errEmail: "" }));
+    }
 
-      if (!login.password) {
-        setError((prev) => ({ ...prev, errPassword: true }));
-        setErrmessage((prev) => ({
-          ...prev,
-          errPassword: "Password is required",
-        }));
-      } else {
-        setError((prev) => ({ ...prev, errPassword: false }));
-        setErrmessage((prev) => ({ ...prev, errPassword: "" }));
-      }
+    if (!login.password) {
+      setError((prev) => ({ ...prev, errPassword: true }));
+      setErrmessage((prev) => ({
+        ...prev,
+        errPassword: "Password is required",
+      }));
+    } else {
+      setError((prev) => ({ ...prev, errPassword: false }));
+      setErrmessage((prev) => ({ ...prev, errPassword: "" }));
+    }
 
-      if (!login.email || !login.password) {
-        console.log("Enter the values");
-        return;
-      } else {
-        const response = await Api({
-          method: "post",
-          endpoint: "/register/login",
-          data: login,
-        });
+    if (!login.email || !login.password) {
+      console.log("Enter the values");
+      return;
+    } else {
+      loginMutation.mutate(login);
+    }
+  }
 
-        localStorage.setItem("token", response.data.accesstoken);
-        dispatch(addToken(response.data.accesstoken));
-        console.log("decoded");
-        const decoded = jwtDecode(response.data.accesstoken);
-        dispatch(addUser(decoded));
+  const loginUser = async (login: Login) => {
+    const response = await Api({
+      method: "post",
+      endpoint: "/register/login",
+      data: login,
+    });
+    return response.data;
+  };
 
-        nav("/courses");
-      }
-    } catch (error) {
+  const loginMutation = useMutation({
+    mutationFn: loginUser,
+    onSuccess: (data) => {
+      localStorage.setItem("token", data.accesstoken);
+      dispatch(addToken(data.accesstoken));
+      console.log("decoded");
+      const decoded = jwtDecode(data.accesstoken);
+      dispatch(addUser(decoded));
+      nav("/courses");
+    },
+    onError: (error) => {
       if (axios.isAxiosError(error)) {
         console.log("login", error);
         setError((prev) => ({ ...prev, error: true }));
@@ -85,8 +99,9 @@ export default function Login() {
           error: error.response?.data.message,
         }));
       }
-    }
-  }
+    },
+  });
+
   return (
     <>
       <Box

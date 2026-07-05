@@ -23,12 +23,21 @@ import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogActions from "@mui/material/DialogActions";
+import { useMutation } from "@tanstack/react-query";
 
+interface Course {
+  title: string;
+  description: string;
+  instructor_name: string;
+  duration: string;
+  level: string;
+  thumbnail: string;
+}
 export default function AddCourse() {
   const nav = useNavigate();
   const user = useSelector((state: any) => state.login.user);
   const { Api } = useApi();
-  const [course, setCourse] = useState({
+  const [course, setCourse] = useState<Course>({
     title: "",
     description: "",
     instructor_name: user.name,
@@ -93,32 +102,36 @@ export default function AddCourse() {
       setOpen(true);
     }
   }
-  async function handleClick() {
-    try {
-      const response = await Api({
-        method: "post",
-        endpoint: "/course/create",
-        data: course,
+  async function handleClick(course: Course) {
+    const response = await Api({
+      method: "post",
+      endpoint: "/course/create",
+      data: course,
+    });
+    return response.data;
+  }
+
+  const addcoureseMutation = useMutation({
+    mutationFn: handleClick,
+    onSuccess: (data) => {
+      dispatch(getMessage(data.message));
+      setCourse({
+        title: "",
+        description: "",
+        instructor_name: "",
+        duration: "",
+        level: "",
+        thumbnail: "",
       });
-      console.log(response);
-      dispatch(getMessage(response.data.message));
-    } catch (error) {
+      nav("/courses");
+    },
+    onError: (error) => {
       if (axios.isAxiosError(error)) {
         console.log(error);
         console.log(error.response?.data.message);
       }
-    }
-    console.log(course);
-    setCourse({
-      title: "",
-      description: "",
-      instructor_name: "",
-      duration: "",
-      level: "",
-      thumbnail: "",
-    });
-    nav("/courses");
-  }
+    },
+  });
 
   return (
     <>
@@ -314,7 +327,7 @@ export default function AddCourse() {
             <Button
               variant="contained"
               sx={{ bgcolor: "#0ea5e9" }}
-              onClick={handleClick}
+              onClick={() => addcoureseMutation.mutate}
             >
               {" "}
               Add

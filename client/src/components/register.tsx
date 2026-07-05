@@ -1,6 +1,5 @@
 import { useState } from "react";
 import useApi from "./Api";
-import axios from "axios";
 import { useNavigate, Link } from "react-router";
 import {
   TextField,
@@ -17,9 +16,18 @@ import MailIcon from "@mui/icons-material/Mail";
 import LockIcon from "@mui/icons-material/Lock";
 import HomeIcon from "@mui/icons-material/Home";
 import PhoneIcon from "@mui/icons-material/Phone";
+import { useMutation } from "@tanstack/react-query";
+
+interface Register {
+  name: string;
+  email: string;
+  password: string;
+  phoneNumber: string;
+  address: string;
+}
 
 export default function Register() {
-  const [register, setRegister] = useState({
+  const [register, setRegister] = useState<Register>({
     name: "",
     email: "",
     password: "",
@@ -42,101 +50,101 @@ export default function Register() {
   });
   const { Api } = useApi();
   const nav = useNavigate();
-  async function handleRegister() {
-    try {
-      if (!register.name) {
-        setError((prev) => ({ ...prev, errName: true }));
-        setErrmessage((prev) => ({ ...prev, errName: "Name is required" }));
-      }
-
-      if (!register.email) {
-        setError((prev) => ({ ...prev, errEmail: true }));
-        setErrmessage((prev) => ({ ...prev, errEmail: "Email is required" }));
-      } else {
-        setError((prev) => ({ ...prev, errEmail: false }));
-        setErrmessage((prev) => ({ ...prev, errEmail: "" }));
-      }
-
-      if (!register.password) {
-        setError((prev) => ({ ...prev, errPassword: true }));
-        setErrmessage((prev) => ({
-          ...prev,
-          errPassword: "Password is required",
-        }));
-      } else if (register.password.length < 8) {
-        setError((prev) => ({ ...prev, errPassword: true }));
-        setErrmessage((prev) => ({
-          ...prev,
-          errPassword: "atleast 8 characters required",
-        }));
-      } else if (!/[A-Z]/.test(register.password)) {
-        setError((prev) => ({ ...prev, errPassword: true }));
-        setErrmessage((prev) => ({
-          ...prev,
-          errPassword: "atleast 1 uppercase required",
-        }));
-      } else if (!/[a-z]/.test(register.password)) {
-        setError((prev) => ({ ...prev, errPassword: true }));
-        setErrmessage((prev) => ({
-          ...prev,
-          errPassword: "atleast 1 lowercase required",
-        }));
-      } else if (!/[0-9]/.test(register.password)) {
-        setError((prev) => ({ ...prev, errPassword: true }));
-        setErrmessage((prev) => ({
-          ...prev,
-          errPassword: "atleast 1 number required",
-        }));
-      } else if (!/[!@#$%^&*]/.test(register.password)) {
-        setError((prev) => ({ ...prev, errPassword: true }));
-        setErrmessage((prev) => ({
-          ...prev,
-          errPassword: "At least one special character required",
-        }));
-      } else {
-        setError((prev) => ({ ...prev, errPassword: false }));
-        setErrmessage((prev) => ({ ...prev, errPassword: "" }));
-      }
-
-      if (
-        !register.name ||
-        !register.email ||
-        !register.password ||
-        !register.email.endsWith(".com") ||
-        register.password.length < 8 ||
-        !/[A-Z]/.test(register.password) ||
-        !/[a-z]/.test(register.password) ||
-        !/[0-9]/.test(register.password) ||
-        !/[!@#$%^&*]/.test(register.password)
-      ) {
-        return;
-      } else {
-        // const response=await api.post('/register/create',register);
-        const response = await Api({
-          method: "post",
-          endpoint: "/register/create",
-          data: register,
-        });
-
-        console.log("register", response);
-        nav("/");
-        console.log(register);
-      }
-    } catch (error) {
-      console.log(error);
-      if (axios.isAxiosError(error)) {
-        {
-          console.log(error.response);
-          setError((prev) => ({ ...prev, error: true }));
-          setErrmessage((prev) => ({
-            ...prev,
-            error: error.response?.data.message,
-          }));
-        }
-      }
-      console.log("Error while sending data to backend");
+  function handleRegister() {
+    if (!register.name) {
+      setError((prev) => ({ ...prev, errName: true }));
+      setErrmessage((prev) => ({ ...prev, errName: "Name is required" }));
     }
+
+    if (!register.email) {
+      setError((prev) => ({ ...prev, errEmail: true }));
+      setErrmessage((prev) => ({ ...prev, errEmail: "Email is required" }));
+    } else {
+      setError((prev) => ({ ...prev, errEmail: false }));
+      setErrmessage((prev) => ({ ...prev, errEmail: "" }));
+    }
+
+    if (!register.password) {
+      setError((prev) => ({ ...prev, errPassword: true }));
+      setErrmessage((prev) => ({
+        ...prev,
+        errPassword: "Password is required",
+      }));
+    } else if (register.password.length < 8) {
+      setError((prev) => ({ ...prev, errPassword: true }));
+      setErrmessage((prev) => ({
+        ...prev,
+        errPassword: "atleast 8 characters required",
+      }));
+    } else if (!/[A-Z]/.test(register.password)) {
+      setError((prev) => ({ ...prev, errPassword: true }));
+      setErrmessage((prev) => ({
+        ...prev,
+        errPassword: "atleast 1 uppercase required",
+      }));
+    } else if (!/[a-z]/.test(register.password)) {
+      setError((prev) => ({ ...prev, errPassword: true }));
+      setErrmessage((prev) => ({
+        ...prev,
+        errPassword: "atleast 1 lowercase required",
+      }));
+    } else if (!/[0-9]/.test(register.password)) {
+      setError((prev) => ({ ...prev, errPassword: true }));
+      setErrmessage((prev) => ({
+        ...prev,
+        errPassword: "atleast 1 number required",
+      }));
+    } else if (!/[!@#$%^&*]/.test(register.password)) {
+      setError((prev) => ({ ...prev, errPassword: true }));
+      setErrmessage((prev) => ({
+        ...prev,
+        errPassword: "At least one special character required",
+      }));
+    } else {
+      setError((prev) => ({ ...prev, errPassword: false }));
+      setErrmessage((prev) => ({ ...prev, errPassword: "" }));
+    }
+
+    if (
+      !register.name ||
+      !register.email ||
+      !register.password ||
+      !register.email.endsWith(".com") ||
+      register.password.length < 8 ||
+      !/[A-Z]/.test(register.password) ||
+      !/[a-z]/.test(register.password) ||
+      !/[0-9]/.test(register.password) ||
+      !/[!@#$%^&*]/.test(register.password)
+    ) {
+      return;
+    } else {
+      RegisterMutation.mutate(register);
+    }
+
+    console.log("Error while sending data to backend");
   }
+  const registerUser = async (register: Register) => {
+    const response = await Api({
+      method: "post",
+      endpoint: "/register/create",
+      data: register,
+    });
+    return response.data;
+  };
+
+  const RegisterMutation = useMutation({
+    mutationFn: registerUser,
+    onSuccess: () => {
+      nav("/");
+    },
+    onError: (error) => {
+      setError((prev) => ({ ...prev, error: true }));
+      setErrmessage((prev) => ({
+        ...prev,
+        error: error.message,
+      }));
+    },
+  });
 
   return (
     <>

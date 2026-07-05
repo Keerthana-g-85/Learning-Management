@@ -17,13 +17,21 @@ import MailIcon from "@mui/icons-material/Mail";
 import HomeIcon from "@mui/icons-material/Home";
 import PhoneIcon from "@mui/icons-material/Phone";
 import PersonIcon from "@mui/icons-material/Person";
+import { useMutation } from "@tanstack/react-query";
+
+interface Edit {
+  name: string;
+  email: string;
+  phoneNumber: string;
+  address: string;
+}
 
 export default function Edit() {
   const user = useSelector((state: any) => state.login.user);
   const dispatch = useDispatch();
   const { Api } = useApi();
   const message = useSelector((state: any) => state.message.message);
-  const [useredit, setUserEdit] = useState({
+  const [useredit, setUserEdit] = useState<Edit>({
     name: user.name,
     email: user.email,
     address: user.address,
@@ -43,7 +51,7 @@ export default function Edit() {
     errPhone: "",
   });
 
-  async function handleEdit() {
+  function handleEdit() {
     if (!useredit.name) {
       setError((prev) => ({ ...prev, errName: true }));
       setErrmessage((prev) => ({
@@ -116,20 +124,31 @@ export default function Edit() {
       console.log("Enter the values");
       return;
     } else {
-      const response = await Api({
-        method: "put",
-        endpoint: `register/edit/${user.id}`,
-        data: useredit,
-      });
-
-      console.log(response.data.user);
-      dispatch(addToken(response.data.accesstoken));
-      dispatch(addUser(response.data.user));
-      dispatch(getMessage(response.data.message));
-
-      localStorage.setItem("token", response.data.accesstoken);
+      editMutation.mutate(useredit);
     }
   }
+
+  const editUser = async (useredit: Edit) => {
+    const response = await Api({
+      method: "put",
+      endpoint: `register/edit/${user.id}`,
+      data: useredit,
+    });
+    return response.data;
+  };
+
+  const editMutation = useMutation({
+    mutationFn: editUser,
+    onSuccess: (data) => {
+      dispatch(addToken(data.accesstoken));
+      dispatch(addUser(data.user));
+      dispatch(getMessage(data.message));
+      localStorage.setItem("token", data.accesstoken);
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+  });
   return (
     <>
       <Box sx={{ p: 10, display: "flex", justifyContent: "center" }}>

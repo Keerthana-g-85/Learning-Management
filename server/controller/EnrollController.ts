@@ -74,12 +74,12 @@ export const GetCourse: RequestHandler = async (req, res) => {
       relations: { register: true },
     });
 
-    if (course_student.length === 0) {
-      return res.status(404).send({
-        success: false,
-        message: "Student is not enrolled in any course",
-      });
-    }
+    // if (course_student.length === 0) {
+    //   return res.status(404).send({
+    //     success: false,
+    //     message: "Student is not enrolled in any course",
+    //   });
+    // }
 
     return res.status(200).send({
       success: true,

@@ -23,6 +23,7 @@ import PeopleIcon from "@mui/icons-material/People";
 import GroupRemoveIcon from "@mui/icons-material/GroupRemove";
 import PersonIcon from "@mui/icons-material/Person";
 import Pagination from "@mui/material/Pagination";
+import { useQueryClient, useQuery, useMutation } from "@tanstack/react-query";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -58,12 +59,11 @@ interface Student {
   enroll_date: string;
 }
 export default function Enroll() {
+  const queryClient = useQueryClient();
   const { Api } = useApi();
   const id = useSelector((state: any) => state.login.user.id);
   console.log(id);
-  const [enroll, setEnroll] = useState([]);
   const [page, setPage] = useState(1);
-  const [total_page, setTotalPage] = useState(1);
   const per_page = 6;
   const dispatch = useDispatch();
   const message = useSelector((state: any) => state.message.message);
@@ -71,39 +71,50 @@ export default function Enroll() {
   const debounce = useDebounce(search);
 
   const getEnroll = async () => {
-    try {
-      const response = await Api({
-        method: "get",
-        endpoint: `enroll/getstudent/${id}?search=${debounce}&page=${page}&per_page=${per_page}`,
-      });
-      const data = response.data.student_course;
-      setTotalPage(response.data.pagination.total_page);
-      setEnroll(data);
-      console.log(data);
-    } catch (error) {
-      console.log(error);
-    }
+    const response = await Api({
+      method: "get",
+      endpoint: `enroll/getstudent/${id}?search=${debounce}&page=${page}&per_page=${per_page}`,
+    });
+
+    return response.data;
   };
-  useEffect(() => {
-    getEnroll();
-  }, [debounce, page]);
+
+  const { data } = useQuery({
+    queryKey: ["enroll", id, debounce, page, per_page],
+    queryFn: getEnroll,
+  });
+
+  const enroll = data?.student_course;
+  const total_page = data?.pagination?.total_page;
+
   useEffect(() => {
     setPage(1);
   }, [debounce]);
 
-  async function handleUnenroll(id: string) {
-    try {
-      const response = await Api({
-        method: "delete",
-        endpoint: `enroll/delete/${id}`,
+  const handleUnenroll = async (id: string) => {
+    const response = await Api({
+      method: "delete",
+      endpoint: `enroll/delete/${id}`,
+    });
+
+    return response.data;
+  };
+
+  const unenrollMutation = useMutation({
+    mutationFn: handleUnenroll,
+
+    onSuccess: (data) => {
+      dispatch(getMessage(data.message));
+
+      queryClient.invalidateQueries({
+        queryKey: ["enroll"],
       });
-      console.log(response);
-      getEnroll();
-      dispatch(getMessage(response.data.message));
-    } catch (error) {
+    },
+
+    onError: (error) => {
       console.log(error);
-    }
-  }
+    },
+  });
 
   return (
     <>
@@ -182,7 +193,7 @@ export default function Enroll() {
                       color="error"
                       variant="contained"
                       sx={{ gap: 1 }}
-                      onClick={() => handleUnenroll(row.id)}
+                      onClick={() => unenrollMutation.mutate(row.id)}
                     >
                       <GroupRemoveIcon />
                       Unenroll

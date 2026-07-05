@@ -25,6 +25,7 @@ import GroupAddIcon from "@mui/icons-material/GroupAdd";
 import GroupRemoveIcon from "@mui/icons-material/GroupRemove";
 import PersonIcon from "@mui/icons-material/Person";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -62,10 +63,9 @@ interface Course {
 }
 
 export default function Enroll() {
-  const [enroll, setEnroll] = useState<[]>([]);
-  const [notenroll, setNotenroll] = useState<[]>([]);
-
   const { Api } = useApi();
+
+  const queryClient = useQueryClient();
 
   const dispatch = useDispatch();
   const message = useSelector((state: any) => state.message.message);
@@ -77,66 +77,88 @@ export default function Enroll() {
   console.log(location.state.data);
 
   const getEnroll = async () => {
-    try {
-      const response = await Api({
-        method: "get",
-        endpoint: `enroll/getcourse/${course.id}`,
-      });
-      const data = response.data.course_student;
-      setEnroll(data);
-    } catch (error) {
-      console.log(error);
-    }
+    const response = await Api({
+      method: "get",
+      endpoint: `enroll/getcourse/${course.id}`,
+    });
+    console.log(response);
+    return response.data;
   };
+
+  const { data: enrollData } = useQuery({
+    queryKey: ["enroll", course.id],
+    queryFn: getEnroll,
+  });
+  console.log(enrollData);
+  const enroll = enrollData?.course_student;
 
   const getUnenroll = async () => {
-    try {
-      const response = await Api({
-        method: "get",
-        endpoint: `enroll/notenroll/${course.id}`,
-      });
-      const data = response.data.notenroll;
-      setNotenroll(data);
-    } catch (error) {
-      console.log(error);
-    }
+    const response = await Api({
+      method: "get",
+      endpoint: `enroll/notenroll/${course.id}`,
+    });
+    return response.data;
   };
 
-  useEffect(() => {
-    getEnroll();
-    getUnenroll();
-  }, []);
+  const { data: notenrollData } = useQuery({
+    queryKey: ["notenroll", course.id],
+    queryFn: getUnenroll,
+  });
+  console.log(notenrollData);
+  const notenroll = notenrollData?.notenroll;
 
   async function handleUnenroll(id: string) {
-    try {
-      const response = await Api({
-        method: "delete",
-        endpoint: `enroll/delete/${id}`,
-      });
-      console.log(response);
-      dispatch(getMessage(response.data.message));
-      getEnroll();
-      getUnenroll();
-    } catch (error) {
-      console.log(error);
-    }
+    const response = await Api({
+      method: "delete",
+      endpoint: `enroll/delete/${id}`,
+    });
+    return response.data;
   }
 
-  async function handleEnroll(id: string) {
-    try {
-      const response = await Api({
-        method: "post",
-        endpoint: `enroll/create/`,
-        data: { register: `${id}`, course: `${course.id}` },
+  const deleteMutation = useMutation({
+    mutationFn: handleUnenroll,
+    onSuccess: (data) => {
+      console.log(data);
+      dispatch(getMessage(data.message));
+      queryClient.invalidateQueries({
+        queryKey: ["notenroll"],
       });
-      console.log(response);
-      dispatch(getMessage(response.data.message));
-      getEnroll();
-      getUnenroll();
-    } catch (error) {
+      queryClient.invalidateQueries({
+        queryKey: ["enroll"],
+      });
+    },
+    onError: (error) => {
       console.log(error);
-    }
+      dispatch(getMessage(error.message));
+    },
+  });
+
+  async function handleEnroll(id: string) {
+    const response = await Api({
+      method: "post",
+      endpoint: `enroll/create/`,
+      data: { register: `${id}`, course: `${course.id}` },
+    });
+    return response.data;
   }
+
+  const enrollingMutation = useMutation({
+    mutationFn: handleEnroll,
+    onSuccess: (data) => {
+      console.log(data);
+      dispatch(getMessage(data.message));
+      queryClient.invalidateQueries({
+        queryKey: ["notenroll", course.id],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["enroll", course.id],
+      });
+    },
+    onError: (error) => {
+      console.log(error);
+      dispatch(getMessage(error.message));
+    },
+  });
 
   return (
     <>
@@ -185,7 +207,7 @@ export default function Enroll() {
               fontWeight: 600,
             }}
           >
-            {enroll.length}
+            {enroll?.length}
           </Box>
         </Box>
         <TableContainer component={Paper} sx={{ p: 2, borderRadius: 1 }}>
@@ -197,13 +219,13 @@ export default function Enroll() {
                 <StyledTableCell align="right">Phone Number</StyledTableCell>
                 <StyledTableCell align="right">Address</StyledTableCell>
                 <StyledTableCell align="right">Enroll Date</StyledTableCell>
-                { user.role === 'admin' ? 
-                <StyledTableCell align="right">Action</StyledTableCell>
-                : null }
+                {user.role === "admin" ? (
+                  <StyledTableCell align="right">Action</StyledTableCell>
+                ) : null}
               </TableRow>
             </TableHead>
             <TableBody>
-              {enroll.map((row: Course) => (
+              {enroll?.map((row: Course) => (
                 <StyledTableRow key={row.id}>
                   <StyledTableCell component="th" scope="row">
                     <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
@@ -223,19 +245,19 @@ export default function Enroll() {
                   <StyledTableCell align="right">
                     {row.enroll_date}
                   </StyledTableCell>
-                  { user.role === 'admin' ? 
-                  <StyledTableCell align="right">
-                    <Button
-                      color="error"
-                      variant="contained"
-                      sx={{ gap: 1 }}
-                      onClick={() => handleUnenroll(row.id)}
-                    >
-                      <GroupRemoveIcon />
-                      Unenroll
-                    </Button>
-                  </StyledTableCell>
-                  : null }
+                  {user.role === "admin" ? (
+                    <StyledTableCell align="right">
+                      <Button
+                        color="error"
+                        variant="contained"
+                        sx={{ gap: 1 }}
+                        onClick={() => deleteMutation.mutate(row.id)}
+                      >
+                        <GroupRemoveIcon />
+                        Unenroll
+                      </Button>
+                    </StyledTableCell>
+                  ) : null}
                 </StyledTableRow>
               ))}
             </TableBody>
@@ -260,78 +282,82 @@ export default function Enroll() {
       </Paper>
       <Divider />
 
-      { user.role === 'admin'?
-      <Paper
-        elevation={6}
-        sx={{
-          mt: 5,
-          borderRadius: 2,
-          boxShadow: "0 20px 40px rgba(0,0,0,0.35)",
-        }}
-      >
-        <Box sx={{ p: 2, display: "flex", alignItems: "center", gap: 1 }}>
-          <PeopleIcon sx={{ color: "#0ea5e9" }} />
+      {user.role === "admin" ? (
+        <Paper
+          elevation={6}
+          sx={{
+            mt: 5,
+            borderRadius: 2,
+            boxShadow: "0 20px 40px rgba(0,0,0,0.35)",
+          }}
+        >
+          <Box sx={{ p: 2, display: "flex", alignItems: "center", gap: 1 }}>
+            <PeopleIcon sx={{ color: "#0ea5e9" }} />
 
-          <Typography variant="h6" sx={{ fontWeight: 700 }}>
-            Not Enrolled Students
-          </Typography>
+            <Typography variant="h6" sx={{ fontWeight: 700 }}>
+              Not Enrolled Students
+            </Typography>
 
-          <Box
-            sx={{
-              px: 2,
-              py: 0.5,
-              bgcolor: "#0ea5e9",
-              color: "white",
-              borderRadius: 5,
-              fontSize: "0.8rem",
-              fontWeight: 600,
-            }}
-          >
-            {notenroll.length}
+            <Box
+              sx={{
+                px: 2,
+                py: 0.5,
+                bgcolor: "#0ea5e9",
+                color: "white",
+                borderRadius: 5,
+                fontSize: "0.8rem",
+                fontWeight: 600,
+              }}
+            >
+              {notenroll?.length}
+            </Box>
           </Box>
-        </Box>
 
-        <TableContainer component={Paper} sx={{ p: 2, borderRadius: 1 }}>
-          <Table sx={{ minWidth: 700 }} aria-label="customized table">
-            <TableHead>
-              <TableRow>
-                <StyledTableCell>Name</StyledTableCell>
-                <StyledTableCell align="right">Email</StyledTableCell>
-                <StyledTableCell align="right">Phone Number</StyledTableCell>
-                <StyledTableCell align="right">Address</StyledTableCell>
-                <StyledTableCell align="right">Action</StyledTableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {notenroll.map((row: Students) => (
-                <StyledTableRow key={row.id}>
-                  <StyledTableCell component="th" scope="row">
-                    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                      <PersonIcon sx={{ fontSize: 20, color: "#0ea5e9" }} />
-                      {row.name}
-                    </Box>
-                  </StyledTableCell>
-                  <StyledTableCell align="right">{row.email}</StyledTableCell>
-                  <StyledTableCell align="right">
-                    {row.phoneNumber}
-                  </StyledTableCell>
-                  <StyledTableCell align="right">{row.address}</StyledTableCell>
-                  <StyledTableCell align="right">
-                    <Button
-                      sx={{ bgcolor: "#0ea5e9", gap: 1 }}
-                      variant="contained"
-                      onClick={() => handleEnroll(row.id)}
-                    >
-                      <GroupAddIcon /> Enroll{" "}
-                    </Button>
-                  </StyledTableCell>
-                </StyledTableRow>
-              ))}
-            </TableBody>
-          </Table>
-          <Box sx={{ display: "flex", justifyContent: "center", p: 1 }}>
-            <Stack spacing={2}>
-              {/* <Pagination
+          <TableContainer component={Paper} sx={{ p: 2, borderRadius: 1 }}>
+            <Table sx={{ minWidth: 700 }} aria-label="customized table">
+              <TableHead>
+                <TableRow>
+                  <StyledTableCell>Name</StyledTableCell>
+                  <StyledTableCell align="right">Email</StyledTableCell>
+                  <StyledTableCell align="right">Phone Number</StyledTableCell>
+                  <StyledTableCell align="right">Address</StyledTableCell>
+                  <StyledTableCell align="right">Action</StyledTableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {notenroll?.map((row: Students) => (
+                  <StyledTableRow key={row.id}>
+                    <StyledTableCell component="th" scope="row">
+                      <Box
+                        sx={{ display: "flex", alignItems: "center", gap: 1 }}
+                      >
+                        <PersonIcon sx={{ fontSize: 20, color: "#0ea5e9" }} />
+                        {row.name}
+                      </Box>
+                    </StyledTableCell>
+                    <StyledTableCell align="right">{row.email}</StyledTableCell>
+                    <StyledTableCell align="right">
+                      {row.phoneNumber}
+                    </StyledTableCell>
+                    <StyledTableCell align="right">
+                      {row.address}
+                    </StyledTableCell>
+                    <StyledTableCell align="right">
+                      <Button
+                        sx={{ bgcolor: "#0ea5e9", gap: 1 }}
+                        variant="contained"
+                        onClick={() => enrollingMutation.mutate(row.id)}
+                      >
+                        <GroupAddIcon /> Enroll{" "}
+                      </Button>
+                    </StyledTableCell>
+                  </StyledTableRow>
+                ))}
+              </TableBody>
+            </Table>
+            <Box sx={{ display: "flex", justifyContent: "center", p: 1 }}>
+              <Stack spacing={2}>
+                {/* <Pagination
                 count={notenrolltotalpage}
                 page={notenrollpage}
                 onChange={handleNotenrollchange}
@@ -342,12 +368,12 @@ export default function Enroll() {
                     minWidth: "4rem",
                   },
                 }} */}
-              {/* /> */}
-            </Stack>
-          </Box>
-        </TableContainer>
-      </Paper>
-      : null}   
+                {/* /> */}
+              </Stack>
+            </Box>
+          </TableContainer>
+        </Paper>
+      ) : null}
       <Snackbar
         open={Boolean(message)}
         autoHideDuration={3000}

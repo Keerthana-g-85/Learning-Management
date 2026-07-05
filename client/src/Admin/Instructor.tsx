@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { useSelector, useDispatch } from "react-redux";
 
 import { getMessage } from "../redux/MessageSlice";
@@ -45,28 +45,26 @@ interface Instructor {
   role: string | null;
 }
 export default function Instructor() {
-  const [instructor, setInstructor] = useState<[]>([]);
-
   const dispatch = useDispatch();
   const message = useSelector((state: any) => state.message.message);
   const { Api } = useApi();
 
-  useEffect(() => {
-    const getInstructor = async () => {
-      try {
-        const response = await Api({
-          method: "get",
-          endpoint: "/register/getinstructor",
-        });
-        console.log(response);
-        setInstructor(response.data.instructor);
-        dispatch(getMessage(response.data.message));
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    getInstructor();
-  }, []);
+  const getInstructor = async () => {
+    const response = await Api({
+      method: "get",
+      endpoint: "/register/getinstructor",
+    });
+    return response.data;
+  };
+
+  const { data: InstructorData } = useQuery({
+    queryKey: ["instructor"],
+    queryFn: getInstructor,
+  });
+
+  const instructor = InstructorData?.instructor;
+  dispatch(getMessage(InstructorData?.message));
+
   return (
     <>
       <Paper
@@ -101,7 +99,7 @@ export default function Instructor() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {instructor.map((row: Instructor) => (
+              {instructor?.map((row: Instructor) => (
                 <StyledTableRow key={row.name}>
                   <StyledTableCell component="th" scope="row">
                     <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>

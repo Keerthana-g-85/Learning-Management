@@ -24,6 +24,16 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogActions from "@mui/material/DialogActions";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { useMutation } from "@tanstack/react-query";
+
+interface Course {
+  title: string;
+  description: string;
+  instructor_name: string;
+  duration: string;
+  level: string;
+  thumbnail: string;
+}
 
 export default function UpdateCourse() {
   const location = useLocation();
@@ -32,7 +42,7 @@ export default function UpdateCourse() {
   console.log(data);
   const { Api } = useApi();
 
-  const [course, setCourse] = useState({
+  const [course, setCourse] = useState<Course>({
     title: data.title,
     description: data.description,
     instructor_name: data.instructor_name,
@@ -108,31 +118,35 @@ export default function UpdateCourse() {
 
   async function handleClick(e: React.MouseEvent) {
     e.preventDefault();
-    try {
-      const response = await Api({
-        method: "put",
-        endpoint: `/course/update/${data.id}`,
-        data: course,
+    const response = await Api({
+      method: "put",
+      endpoint: `/course/update/${data.id}`,
+      data: course,
+    });
+    return response.data;
+  }
+
+  const updateMutation = useMutation({
+    mutationFn: handleClick,
+    onSuccess: (data) => {
+      dispatch(getMessage(data.message));
+      setCourse({
+        title: "",
+        description: "",
+        instructor_name: "",
+        duration: "",
+        level: "",
+        thumbnail: "",
       });
-      console.log(response);
-      dispatch(getMessage(response.data.message));
-    } catch (error) {
+      nav("/courses");
+    },
+    onError: (error) => {
       if (axios.isAxiosError(error)) {
         console.log(error);
         console.log(error.response?.data.message);
       }
-    }
-    console.log(course);
-    setCourse({
-      title: "",
-      description: "",
-      instructor_name: "",
-      duration: "",
-      level: "",
-      thumbnail: "",
-    });
-    nav("/courses");
-  }
+    },
+  });
 
   return (
     <>
@@ -332,7 +346,7 @@ export default function UpdateCourse() {
             <Button
               variant="contained"
               sx={{ bgcolor: "#233D4D" }}
-              onClick={handleClick}
+              onClick={() => updateMutation.mutate}
             >
               {" "}
               Update
