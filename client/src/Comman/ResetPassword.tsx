@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import useApi from "./Api";
+import useApi from "../components/Api";
 import { getMessage } from "../redux/MessageSlice";
 import image3 from "../assets/image3.png";
 import {

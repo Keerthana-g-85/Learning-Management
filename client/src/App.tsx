@@ -5,14 +5,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { addToken, addUser } from "./redux/LoginSlice";
 import { Navigate } from 'react-router'
 
-import ProtectedRouter from "./components/ProtectedRouter";
-import PublicRoute from './components/PublicRouter'
+import ProtectedRouter from "./Routes/ProtectedRouter";
+import PublicRoute from './Routes/PublicRouter'
 import Register from "./components/Register";
 import Login from "./components/Login";
-import Profile from "./components/Profile";
+import Profile from "./Comman/Profile";
 
-import Home from "./Admin/Home";
-import Course from "./Admin/Courses";
+import Home from "./Comman/Home";
+import Course from "./Comman/Courses";
 import Students from "./Admin/Students";
 import User from "./Admin/Users";
 import Enroll from "./Admin/Enroll";
@@ -22,8 +22,8 @@ import AddCourse from "./Instructor/AddCourse";
 import UpdateCourse from "./Instructor/UpdateCourse";
 
 import StudentEnroll from "./Students/Enroll";
-import Edit from "./components/UserEdit";
-import Resetpassword from "./components/ResetPassword";
+import Edit from "./Comman/UserEdit";
+import Resetpassword from "./Comman/ResetPassword";
 
 export default function App() {
   const dispatch = useDispatch();
