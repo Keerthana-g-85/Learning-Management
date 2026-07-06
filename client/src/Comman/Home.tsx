@@ -4,6 +4,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { addSearch } from "../redux/SearchSlice";
 import { useEffect } from "react";
 import { jwtDecode } from "jwt-decode";
+import { useContext } from "react";
+import { ThemeContext } from "../components/Theme";
 
 import logo from "../assets/logo.png";
 
@@ -34,17 +36,78 @@ import Avatar from "@mui/material/Avatar";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import SearchIcon from "@mui/icons-material/Search";
 import InputAdornment from "@mui/material/InputAdornment";
-import EditIcon from '@mui/icons-material/Edit';
+import EditIcon from "@mui/icons-material/Edit";
 import LockIcon from "@mui/icons-material/Lock";
+import { styled } from "@mui/material/styles";
+import FormGroup from "@mui/material/FormGroup";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Switch from "@mui/material/Switch";
 import { addToken, addUser } from "../redux/LoginSlice";
 
 const drawerWidth = 240;
+
+const MaterialUISwitch = styled(Switch)(({ theme }) => ({
+  width: 62,
+  height: 34,
+  padding: 7,
+  "& .MuiSwitch-switchBase": {
+    margin: 1,
+    padding: 0,
+    transform: "translateX(6px)",
+    "&.Mui-checked": {
+      color: "#fff",
+      transform: "translateX(22px)",
+      "& .MuiSwitch-thumb:before": {
+        backgroundImage: `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="20" width="20" viewBox="0 0 20 20"><path fill="${encodeURIComponent(
+          "#fff",
+        )}" d="M4.2 2.5l-.7 1.8-1.8.7 1.8.7.7 1.8.6-1.8L6.7 5l-1.9-.7-.6-1.8zm15 8.3a6.7 6.7 0 11-6.6-6.6 5.8 5.8 0 006.6 6.6z"/></svg>')`,
+      },
+      "& + .MuiSwitch-track": {
+        opacity: 1,
+        backgroundColor: "#aab4be",
+        ...theme.applyStyles("dark", {
+          backgroundColor: "#8796A5",
+        }),
+      },
+    },
+  },
+  "& .MuiSwitch-thumb": {
+    backgroundColor: "#001e3c",
+    width: 32,
+    height: 32,
+    "&::before": {
+      content: "''",
+      position: "absolute",
+      width: "100%",
+      height: "100%",
+      left: 0,
+      top: 0,
+      backgroundRepeat: "no-repeat",
+      backgroundPosition: "center",
+      backgroundImage: `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="20" width="20" viewBox="0 0 20 20"><path fill="${encodeURIComponent(
+        "#fff",
+      )}" d="M9.305 1.667V3.75h1.389V1.667h-1.39zm-4.707 1.95l-.982.982L5.09 6.072l.982-.982-1.473-1.473zm10.802 0L13.927 5.09l.982.982 1.473-1.473-.982-.982zM10 5.139a4.872 4.872 0 00-4.862 4.86A4.872 4.872 0 0010 14.862 4.872 4.872 0 0014.86 10 4.872 4.872 0 0010 5.139zm0 1.389A3.462 3.462 0 0113.471 10a3.462 3.462 0 01-3.473 3.472A3.462 3.462 0 016.527 10 3.462 3.462 0 0110 6.528zM1.665 9.305v1.39h2.083v-1.39H1.666zm14.583 0v1.39h2.084v-1.39h-2.084zM5.09 13.928L3.616 15.4l.982.982 1.473-1.473-.982-.982zm9.82 0l-.982.982 1.473 1.473.982-.982-1.473-1.473zM9.305 16.25v2.083h1.389V16.25h-1.39z"/></svg>')`,
+    },
+    ...theme.applyStyles("dark", {
+      backgroundColor: "#003892",
+    }),
+  },
+  "& .MuiSwitch-track": {
+    opacity: 1,
+    backgroundColor: "#aab4be",
+    borderRadius: 20 / 2,
+    ...theme.applyStyles("dark", {
+      backgroundColor: "#8796A5",
+    }),
+  },
+}));
 
 export default function Home() {
   const [open, setOpen] = useState<boolean>(false);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const { theme , setTheme } = useContext(ThemeContext)
 
   const user = useSelector((state: any) => state.login.user);
   const search = useSelector((state: any) => state.search.search);
@@ -91,13 +154,13 @@ export default function Home() {
     },
     {
       text: "Edit Profile",
-      icon:  <EditIcon sx={{ color: "white" }} />,
-      path: "/edit"
+      icon: <EditIcon sx={{ color: "white" }} />,
+      path: "/edit",
     },
     {
       text: "Reset Password",
-      icon:  <LockIcon sx={{ color: "white" }} />,
-      path: "/resetpassword"
+      icon: <LockIcon sx={{ color: "white" }} />,
+      path: "/resetpassword",
     },
     { text: "Logout", icon: <LogoutIcon sx={{ color: "white" }} />, path: "" },
   ];
@@ -115,21 +178,21 @@ export default function Home() {
     navigate("/", { replace: true });
   }
   const token = localStorage.getItem("token");
-  useEffect (()=>{
-    if(token){
+  useEffect(() => {
+    if (token) {
       const decoded = jwtDecode(token);
-      if (decoded.exp! <= Math.floor(Date.now()/1000)){
-        handleLogout()
+      if (decoded.exp! <= Math.floor(Date.now() / 1000)) {
+        handleLogout();
       }
     }
-  },[])
+  }, []);
 
   return (
     <>
       <Box
         sx={{
           display: "flex",
-          bgcolor: "#FFFAF3",
+          bgcolor: theme==='light'? "#F1F0E8" : '#C5B3D3',
           width: "100%",
           minHeight: "100vh",
         }}
@@ -139,7 +202,7 @@ export default function Home() {
           position="fixed"
           sx={{
             zIndex: (theme) => theme.zIndex.drawer + 1,
-            bgcolor: "#233D4D",
+            bgcolor:theme==='light'? "#819A91" : "#233D4D",
           }}
         >
           <Toolbar>
@@ -185,7 +248,7 @@ export default function Home() {
                 },
               }}
               sx={{
-                bgcolor: "rgba(255,255,255,0.15)",
+                bgcolor: theme==='light'? '#a5b7b0':"rgba(255,255,255,0.15)",
                 borderRadius: "30px",
                 width: 600,
                 border: "none",
@@ -199,6 +262,19 @@ export default function Home() {
                 dispatch(addSearch(e.target.value));
               }}
             ></TextField>
+            <Box>
+              <FormGroup>
+                <FormControlLabel
+                  control={<MaterialUISwitch sx={{ m: 1 }} 
+                  checked = {theme === 'dark'}
+                  onChange = {()=>{
+                    setTheme(theme === 'dark' ?'light' :'dark')
+                  }}
+                   />}
+                  label="Theme"
+                />
+              </FormGroup>
+            </Box>
 
             <Box sx={{ flexGrow: 1 }} />
             <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
@@ -227,7 +303,7 @@ export default function Home() {
             "& .MuiDrawer-paper": {
               width: drawerWidth,
               boxSizing: "border-box",
-              bgcolor: "black",
+              bgcolor:theme==='light'?'#485e56':"black",
               color: "white",
             },
           }}
@@ -238,10 +314,7 @@ export default function Home() {
             <List>
               {menuItems.map((item) => (
                 <ListItem key={item.text}>
-                  <ListItemButton
-                    onClick={() =>
-                      navigate(item.path)}
-                  >
+                  <ListItemButton onClick={() => navigate(item.path)}>
                     <ListItemIcon>{item.icon}</ListItemIcon>
                     <ListItemText primary={item.text} />
                   </ListItemButton>

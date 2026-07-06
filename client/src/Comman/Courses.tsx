@@ -1,10 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router";
 import { useSelector, useDispatch } from "react-redux";
 
 import { getMessage } from "../redux/MessageSlice";
 import useApi from "../components/Api";
 import useDebounce from "../components/Debounce";
+import { ThemeContext } from "../components/Theme";
 
 import Box from "@mui/material/Box";
 import Chip from "@mui/material/Chip";
@@ -53,6 +54,7 @@ export default function Courses() {
 
   const nav = useNavigate();
   const dispatch = useDispatch();
+  const { theme } = useContext(ThemeContext);
 
   const user = useSelector((state: any) => state.login.user);
   const search = useSelector((state: any) => state.search.search);
@@ -230,8 +232,8 @@ export default function Courses() {
                     position: "relative",
                     borderRadius: 5,
                     boxShadow: "0 20px 40px rgba(0,0,0,0.35)",
-                    background: "#010102",
-                    border: "1px solid #1e2224",
+                    background: theme === "light" ? "#D1D8BE" : "#010102",
+                    
                     transition: "0.3s",
                     "&:hover": {
                       transform: "translateY(-8px)",
@@ -241,7 +243,7 @@ export default function Courses() {
                 >
                   <CardMedia
                     component="img"
-                    alt="green iguana"
+                    alt=""
                     height="180"
                     sx={{ p: 1, borderRadius: 5 }}
                     image={data.thumbnail}
@@ -272,8 +274,8 @@ export default function Courses() {
                     <Chip
                       label={data.level.toUpperCase()}
                       sx={{
-                        bgcolor: "#0ea5e9",
-                        color: "white",
+                        bgcolor: theme === "light" ? "#819A91" : "#0ea5e9",
+
                         fontWeight: 700,
                         mb: 1,
                       }}
@@ -282,6 +284,7 @@ export default function Courses() {
                     <Typography
                       sx={{
                         fontSize: "2rem",
+                        color: theme === "light" ? "black" : "#94a3b8",
                         fontWeight: 700,
                         fontFamily: "Outfit, sans-serif",
                         mb: 1,
@@ -292,7 +295,7 @@ export default function Courses() {
 
                     <Typography
                       sx={{
-                        color: "#94a3b8",
+                        color: theme === "light" ? "black" : "#94a3b8",
                         fontSize: "1rem",
                         lineHeight: 1.6,
                         minHeight: 70,
@@ -300,8 +303,6 @@ export default function Courses() {
                     >
                       {data.description}
                     </Typography>
-
-                    <Divider sx={{ color: "grey" }} />
 
                     <Box
                       sx={{
@@ -318,7 +319,7 @@ export default function Courses() {
                           flex: 1,
                           alignItems: "center",
                           gap: 1,
-                          color: "#94a3b8",
+                          color: theme === "light" ? "black" : "#94a3b8",
                         }}
                       >
                         <CoPresentIcon />
@@ -329,7 +330,7 @@ export default function Courses() {
                         orientation="vertical"
                         flexItem
                         sx={{
-                          bgcolor: "rgba(255, 255, 255, 0.63)",
+                          bgcolor:theme === "light" ? "black" : "rgba(255, 255, 255, 0.63)",
                           size: "large",
                         }}
                       />
@@ -340,7 +341,7 @@ export default function Courses() {
                           flex: 1,
                           gap: 1,
                           fontWeight: 600,
-                          color: "#94a3b8",
+                          color: theme === "light" ? "black" : "#94a3b8",
                         }}
                       >
                         <AccessTimeIcon sx={{ color: "#0ea5e9" }} />
@@ -358,14 +359,17 @@ export default function Courses() {
                     >
                       {user.role === "admin" ? (
                         <Button
-                          variant="outlined"
+                          variant="contained"
                           sx={{
-                            color: "#ef5252",
+                            bgcolor: theme === "light" ? "#485e56" : "#ef5252",
                             display: "flex",
                             flex: 1,
                             alignItems: "center",
                             gap: 1,
-                            border: "1px solid #ef5252",
+                            border:
+                              theme === "light"
+                                ? " 1px solid #64726d"
+                                : "1px solid #ef5252",
                           }}
                           startIcon={<DeleteIcon />}
                           onClick={(e) => {
