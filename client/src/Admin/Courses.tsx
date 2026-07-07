@@ -81,6 +81,7 @@ export default function Courses() {
       method: "get",
       endpoint: `course/get?search=${debounce}&filter=${filter.join(",")}&page=${page}&per_page=${per_page}`,
     });
+    dispatch(getMessage(courseData?.message));
     return response.data;
   };
 

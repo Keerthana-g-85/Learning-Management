@@ -57,6 +57,7 @@ export default function Students() {
       endpoint: "/register/getstudent",
     });
     console.log(response.data);
+    dispatch(getMessage(studentData?.message));
     return response.data;
   };
 
@@ -66,7 +67,7 @@ export default function Students() {
   });
 
   const student = studentData?.students;
-  dispatch(getMessage(studentData?.message));
+  
 
   return (
     <>

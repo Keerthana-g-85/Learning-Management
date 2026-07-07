@@ -91,6 +91,7 @@ export default function User() {
       endpoint: `/register/get/?search=${debounce}&filter=${filter.join(",")}&page=${page}&per_page=${per_page}`,
     });
     console.log(response);
+    dispatch(getMessage(userData?.message));
     return response.data;
   };
   const { data: userData } = useQuery({
@@ -100,7 +101,6 @@ export default function User() {
 
   const user = userData?.Data;
   const total_page = userData?.pagination?.total_page;
-  dispatch(getMessage(userData?.message));
 
   useEffect(() => {
     setPage(1);

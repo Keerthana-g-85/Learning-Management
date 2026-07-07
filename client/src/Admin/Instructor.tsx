@@ -55,6 +55,7 @@ export default function Instructor() {
       endpoint: "/register/getinstructor",
     });
     return response.data;
+    dispatch(getMessage(InstructorData?.message));
   };
 
   const { data: InstructorData } = useQuery({
