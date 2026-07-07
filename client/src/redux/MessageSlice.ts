@@ -9,7 +9,10 @@ const messageSlice = createSlice({
   initialState,
   reducers: {
     getMessage: (state, action) => {
-      state.message = action.payload;
+      // state.message = action.payload;
+      return{
+        ...state , message : action.payload
+      }
     },
   },
 });

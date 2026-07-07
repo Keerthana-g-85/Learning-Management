@@ -10,11 +10,17 @@ const loginSlice = createSlice({
   initialState,
   reducers: {
     addToken: (state, action) => {
-      state.token = action.payload;
+      // state.token = action.payload;
+      return{
+        ...state , token: action.payload
+      }
     },
 
     addUser: (state, action) => {
-      state.user = action.payload;
+      // state.user = action.payload;
+      return{
+        ...state , user : action.payload
+      }
     },
   },
 });
