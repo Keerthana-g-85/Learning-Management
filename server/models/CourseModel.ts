@@ -35,6 +35,9 @@ export default class Course {
   @Column({ type: "varchar" })
   thumbnail: string;
 
+  @Column({ type : 'int' })
+  price : number
+
   @CreateDateColumn()
   created_at: Date;
 

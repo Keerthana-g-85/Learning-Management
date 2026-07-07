@@ -43,6 +43,7 @@ import FormGroup from "@mui/material/FormGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Switch from "@mui/material/Switch";
 import { addToken, addUser } from "../redux/LoginSlice";
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 
 const drawerWidth = 240;
 
@@ -292,6 +293,9 @@ export default function Home() {
                 }}
               />
             </Box>
+            <ShoppingCartIcon  onClick={() => {
+                  navigate("/cart");
+                }}/>
           </Toolbar>
         </AppBar>
 

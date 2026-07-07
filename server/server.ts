@@ -8,6 +8,7 @@ import { DataSource , type DataSourceOptions} from 'typeorm';
 import Register from './models/RegisterModel.js';
 import Course from './models/CourseModel.js'
 import Enroll from './models/EnrollModel.js'
+import Cart from './models/CartModel.js'
 
 import { registerRouter } from './Router/RegisterRouter.js'
 import { CourseRouter } from './Router/CourseRouter.js'
@@ -40,7 +41,7 @@ const data : DataSourceOptions = {
     // logging: true,
     port : Number(process.env.DB_PORT),
     synchronize : true ,                                //TypeORM automatically creates/updates tables.
-    entities : [Register , Course , Enroll ]
+    entities : [Register , Course , Enroll , Cart]
 }
 
 export const database = new DataSource(data)

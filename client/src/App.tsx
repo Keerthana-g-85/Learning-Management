@@ -22,6 +22,7 @@ import AddCourse from "./Instructor/AddCourse";
 import UpdateCourse from "./Instructor/UpdateCourse";
 
 import StudentEnroll from "./Students/Enroll";
+import Cart from './Students/Cart'
 import Edit from "./Comman/UserEdit";
 import Resetpassword from "./Comman/ResetPassword";
 
@@ -63,6 +64,7 @@ export default function App() {
               <Route path="/update/:id" element={<UpdateCourse />} />
               <Route path="/addcourse" element={<AddCourse />} />
               <Route path="/enroll" element={<StudentEnroll />} />
+              <Route path='/cart' element={<Cart/>} />
               <Route path="*" element={<Navigate to="/courses" replace />} />
             </Route>
           </Route>

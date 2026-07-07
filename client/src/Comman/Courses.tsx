@@ -3,6 +3,7 @@ import { useNavigate } from "react-router";
 import { useSelector, useDispatch } from "react-redux";
 
 import { getMessage } from "../redux/MessageSlice";
+import { cartCourse } from "../redux/CartSlice"
 import useApi from "../components/Api";
 import useDebounce from "../components/Debounce";
 import { ThemeContext } from "../components/Theme";
@@ -31,6 +32,7 @@ import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import CoPresentIcon from "@mui/icons-material/CoPresent";
+import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 
 interface Courses {
   id: string;
@@ -40,6 +42,7 @@ interface Courses {
   duration: string;
   thumbnail: string;
   level: string;
+  price:string;
   name: string;
 }
 
@@ -60,6 +63,7 @@ export default function Courses() {
   const search = useSelector((state: any) => state.search.search);
   const message = useSelector((state: any) => state.message.message);
   const id = useSelector((state: any) => state.login.user.id);
+  const cart = useSelector((state:any) => state.cart.course)
   const debounce = useDebounce(search);
 
   // Getting all the course
@@ -171,6 +175,7 @@ export default function Courses() {
       setFilter([...filter, data]);
     }
   }
+  console.log(cart)
 
   return (
     <>
@@ -194,7 +199,7 @@ export default function Courses() {
             Instructor
           </Typography>
           {instructor.map((data, index) => (
-            <>
+            
               <FormGroup key={index}>
                 <FormControlLabel
                   control={
@@ -206,7 +211,7 @@ export default function Courses() {
                   label={data}
                 />
               </FormGroup>
-            </>
+            
           ))}
         </Box>
         {user.role === "instructor" ? (
@@ -304,6 +309,29 @@ export default function Courses() {
                       {data.description}
                     </Typography>
 
+                     <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 0.2,
+                        mb: 2,
+                      }}
+                    >
+                       < AttachMoneyIcon sx={{color:'black'}}/>
+                    <Typography
+                      sx={{
+                        color: theme === "light" ? "black" : "#94a3b8",
+                        fontWeight: 600,
+                          display: "flex",
+                          flex: 1,
+                          alignItems: "center",
+                       
+                      }}
+                    >
+                     {data.price}
+                    </Typography>
+                    </Box>
+
                     <Box
                       sx={{
                         display: "flex",
@@ -344,7 +372,7 @@ export default function Courses() {
                           color: theme === "light" ? "black" : "#94a3b8",
                         }}
                       >
-                        <AccessTimeIcon sx={{ color: "#0ea5e9" }} />
+                        <AccessTimeIcon sx={{ color: theme === "light" ? "#2b3430": "#0ea5e9" }} />
                         {data.duration}
                       </Typography>
                     </Box>
@@ -388,7 +416,7 @@ export default function Courses() {
                               flex: 1,
                               alignItems: "center",
                               gap: 1,
-                              bgcolor: "#0ea5e9",
+                              bgcolor:theme === "light" ? "#485e56": "#0ea5e9",
                               color: "white",
                             }}
                             onClick={() => {
@@ -426,10 +454,10 @@ export default function Courses() {
                               flex: 1,
                               alignItems: "center",
                               gap: 1,
-                              bgcolor: "#0ea5e9",
+                              bgcolor:theme === "light" ? "#485e56":"#0ea5e9",
                               color: "white",
                               "&.Mui-disabled": {
-                                bgcolor: "#49514f",
+                                bgcolor: "#363535",
                                 color: "white",
                                 opacity: 1,
                               },
@@ -438,6 +466,24 @@ export default function Courses() {
                             onClick={() => setOpen(data.id)}
                           >
                             {enroll.includes(data.id) ? "Enrolled" : "Enroll"}
+                          </Button>
+                          <Button variant="outlined"
+                          sx={{ bgcolor: theme === "light" ? "#485e56": "#0ea5e9",
+                            display: "flex",
+                              flex: 1,
+                              alignItems: "center",
+                              gap: 1,
+                              color : 'white',
+                              "&.Mui-disabled": {
+                                bgcolor: "#363535",
+                                color: "white",
+                                opacity: 1,
+                              },
+                          }}
+                          disabled = {cart.includes(data)}
+                          onClick = {()=>{dispatch(cartCourse(data))}}>
+                          
+                            {cart.includes(data.id)? "Added" : "Add to cart"}
                           </Button>
                         </>
                       )}
