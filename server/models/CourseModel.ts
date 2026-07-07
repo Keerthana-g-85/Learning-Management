@@ -35,7 +35,7 @@ export default class Course {
   @Column({ type: "varchar" })
   thumbnail: string;
 
-  @Column({ type : 'int' })
+  @Column({ type : 'int' , default:null })
   price : number
 
   @CreateDateColumn()

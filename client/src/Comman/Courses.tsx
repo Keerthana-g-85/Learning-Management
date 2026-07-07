@@ -480,10 +480,11 @@ export default function Courses() {
                                 opacity: 1,
                               },
                           }}
-                          disabled = {cart.includes(data)}
+                          
+                          disabled = {cart.some( (i:Courses) => i.id === data.id)}
                           onClick = {()=>{dispatch(cartCourse(data))}}>
                           
-                            {cart.includes(data.id)? "Added" : "Add to cart"}
+                            {cart.some( (course :Courses) => course.id === data.id)? "Added" : "Add to cart"}
                           </Button>
                         </>
                       )}
