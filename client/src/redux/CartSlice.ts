@@ -28,8 +28,14 @@ const cartSlice = createSlice({
         course: [...state.course, action.payload],
       };
     },
+
+    removeCourse : (state , action) =>{
+        const removeId = action.payload
+        const index = state.course.findIndex((course)=> course.id === removeId)
+        state.course.splice(index , 1)
+    }
   },
 });
 
-export const { cartCourse } = cartSlice.actions;
+export const { cartCourse , removeCourse } = cartSlice.actions;
 export default cartSlice.reducer;

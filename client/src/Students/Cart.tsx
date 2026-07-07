@@ -1,6 +1,7 @@
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { removeCourse } from '../redux/CartSlice'
 import { ThemeContext } from "../components/Theme";
-import { useContext } from "react";
+import { useContext , useState} from "react";
 import Box from "@mui/material/Box";
 import CardMedia from "@mui/material/CardMedia";
 import { Typography } from "@mui/material";
@@ -12,6 +13,11 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import CoPresentIcon from "@mui/icons-material/CoPresent";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
+import Dialog from "@mui/material/Dialog";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogActions from "@mui/material/DialogActions";
 
 interface Courses {
   id: string;
@@ -24,6 +30,8 @@ interface Courses {
   price: string;
 }
 export default function Cart() {
+  const [open, setOpen] = useState<string>("");
+  const dispatch = useDispatch()
   const course = useSelector((state: any) => state.cart.course);
   const { theme } = useContext(ThemeContext);
   console.log(course);
@@ -150,7 +158,8 @@ export default function Cart() {
                     </Box>
 
                     <Button variant="outlined" startIcon={<DeleteIcon />} 
-                    sx={{ color:'white', bgcolor: theme === "light" ? "#485e56" : "#0ea5e9", borderRadius:'10px'}}>
+                    sx={{ color:'white', bgcolor: theme === "light" ? "#485e56" : "#0ea5e9", borderRadius:'10px'}}
+                    onClick={()=> setOpen(data.id)}>
                       Remove from cart
                     </Button>
                   </Box>
@@ -160,6 +169,38 @@ export default function Cart() {
           })}
         </Stack>
       </Box>
+      <Dialog open={Boolean(open)} onClose={() => setOpen("")}>
+        <DialogTitle>
+          Remove Course from Cart
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            
+               "Are you sure you want to Remove course"
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => setOpen("")}
+            sx={{ bgcolor: "#626769", color: "white" }}
+          >
+            Cancel
+          </Button>
+          
+            <Button
+              variant="contained"
+              sx={{
+                bgcolor: "#81b6a2",
+                display: "flex",
+                border: "1px solid #75988c",
+              }}
+              startIcon={<DeleteIcon />}
+              onClick={() => {dispatch(removeCourse(open)); setOpen('') }}
+            >
+              "Remove"
+            </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 }
