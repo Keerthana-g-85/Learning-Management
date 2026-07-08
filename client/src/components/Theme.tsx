@@ -21,14 +21,16 @@ export function Theme({ children }: { children: ReactNode }) {
   }, [theme]);
 
   useEffect(() => {
-    if (user.id) {
+    if (user?.id) {
       const themeLocal = localStorage.getItem(`${user.id}`);
       console.log(themeLocal);
       if (themeLocal === "light" || themeLocal === "dark") {
         setTheme(themeLocal);
+      }else{
+        setTheme("light")
       }
     }
-  }, [user.id]);
+  }, [user?.id]);
 
   return (
     <>

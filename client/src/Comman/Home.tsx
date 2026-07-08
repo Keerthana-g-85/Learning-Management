@@ -271,7 +271,6 @@ export default function Home() {
                   checked = {theme === 'dark'}
                   onChange = {()=>{
                     setTheme(theme === 'dark' ?'light' :'dark')
-                    localStorage.setItem(`${user.id}`,theme)
                   }}
                    />}
                   label="Theme"
