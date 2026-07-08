@@ -48,37 +48,50 @@ export const CreateCart: RequestHandler = async (req, res) => {
 
 export const Get: RequestHandler = async (req, res) => {
   try {
-    const student_id = req.params.id as string ;
+    const student_id = req.params.id as string;
     const cartRepo = database.getRepository(Cart);
 
     const course_cart = await cartRepo.find({
-        where: { register: { id: student_id } },
-        relations: { course: true },
-      });
+      where: { register: { id: student_id } },
+      relations: { course: true },
+    });
 
     const courses = course_cart.map((item) => item.course);
 
     res.status(200).send({
       success: true,
       message: "cart course",
-      courses
+      courses,
     });
-
   } catch (error) {
     console.log(error);
     res.status(500).send({
       success: false,
       message: "error while deleting",
-      
     });
   }
 };
 
 export const Delete: RequestHandler = async (req, res) => {
   try {
-    const id = req.params.id;
+    const id = req.params.id as string;
+    const userId = req.params.userId as string;
+    console.log("Course ID:", id);
+    console.log("User ID:", userId);
     const cartRepo = database.getRepository(Cart);
-    await cartRepo.delete(id);
+    const cart = await cartRepo.findOne({
+      where: {
+        course: {
+          id,
+        },
+        register: {
+          id: userId,
+        },
+      },
+    });
+
+    console.log(cart.id);
+    await cartRepo.delete(cart.id);
 
     return res.status(200).send({
       success: true,

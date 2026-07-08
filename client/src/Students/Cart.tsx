@@ -1,7 +1,8 @@
 import { useDispatch, useSelector } from "react-redux";
-import { removeCourse } from '../redux/CartSlice'
+import { removeCourse } from "../redux/CartSlice";
 import { ThemeContext } from "../components/Theme";
-import { useContext , useState} from "react";
+import { useContext, useState } from "react";
+import useApi from "../components/Api";
 import Box from "@mui/material/Box";
 import CardMedia from "@mui/material/CardMedia";
 import { Typography } from "@mui/material";
@@ -9,7 +10,7 @@ import Stack from "@mui/material/Stack";
 import Card from "@mui/material/Card";
 import Chip from "@mui/material/Chip";
 import Button from "@mui/material/Button";
-import DeleteIcon from '@mui/icons-material/Delete';
+import DeleteIcon from "@mui/icons-material/Delete";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import CoPresentIcon from "@mui/icons-material/CoPresent";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
@@ -31,18 +32,25 @@ interface Courses {
 }
 export default function Cart() {
   const [open, setOpen] = useState<string>("");
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
+  const user = useSelector((state:any)=> state.login.user)
   const course = useSelector((state: any) => state.cart.course);
   const { theme } = useContext(ThemeContext);
+  const { Api } = useApi();
   console.log(course);
+
+  async function handleDelete(id : string){
+  const response = await Api({ method: "delete" , endpoint:`cart/delete/${id}/${user.id}` });
+  console.log(response)
+  dispatch(removeCourse(open));
+              setOpen("");
+  }
   return (
     <>
       <Box>
         <Stack spacing={3}>
           {course.map((data: Courses) => {
-            
             return (
-               
               <div key={data.id}>
                 <Box
                   sx={{
@@ -157,9 +165,16 @@ export default function Cart() {
                       </Typography>
                     </Box>
 
-                    <Button variant="outlined" startIcon={<DeleteIcon />} 
-                    sx={{ color:'white', bgcolor: theme === "light" ? "#485e56" : "#0ea5e9", borderRadius:'10px'}}
-                    onClick={()=> setOpen(data.id)}>
+                    <Button
+                      variant="outlined"
+                      startIcon={<DeleteIcon />}
+                      sx={{
+                        color: "white",
+                        bgcolor: theme === "light" ? "#485e56" : "#0ea5e9",
+                        borderRadius: "10px",
+                      }}
+                      onClick={() => setOpen(data.id)}
+                    >
                       Remove from cart
                     </Button>
                   </Box>
@@ -170,13 +185,10 @@ export default function Cart() {
         </Stack>
       </Box>
       <Dialog open={Boolean(open)} onClose={() => setOpen("")}>
-        <DialogTitle>
-          Remove Course from Cart
-        </DialogTitle>
+        <DialogTitle>Remove Course from Cart</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            
-               "Are you sure you want to Remove course"
+            "Are you sure you want to Remove course"
           </DialogContentText>
         </DialogContent>
         <DialogActions>
@@ -186,19 +198,19 @@ export default function Cart() {
           >
             Cancel
           </Button>
-          
-            <Button
-              variant="contained"
-              sx={{
-                bgcolor: "#81b6a2",
-                display: "flex",
-                border: "1px solid #75988c",
-              }}
-              startIcon={<DeleteIcon />}
-              onClick={() => {dispatch(removeCourse(open)); setOpen('') }}
-            >
-              "Remove"
-            </Button>
+
+          <Button
+            variant="contained"
+            sx={{
+              bgcolor: "#81b6a2",
+              display: "flex",
+              border: "1px solid #75988c",
+            }}
+            startIcon={<DeleteIcon />}
+            onClick={() => handleDelete(open)}
+          >
+            "Remove"
+          </Button>
         </DialogActions>
       </Dialog>
     </>

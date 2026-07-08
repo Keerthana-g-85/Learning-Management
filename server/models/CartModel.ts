@@ -1,7 +1,7 @@
 import { Entity, JoinColumn, PrimaryGeneratedColumn , CreateDateColumn , UpdateDateColumn} from "typeorm";
 import Register from "./RegisterModel.js";
 import Course from "./CourseModel.js";
-import { ManyToOne } from "typeorm/browser";
+import { ManyToOne } from "typeorm";
 
 @Entity()
 export default class Cart {

@@ -10,4 +10,4 @@ export const CartRouter = express.Router();
 
 CartRouter.post("/create", authentication, CreateCart);
 CartRouter.get('/get/:id' , authentication , Get)
-CartRouter.delete("/delete/:id", authentication, Delete);
+CartRouter.delete("/delete/:id/:userId", authentication, Delete);
