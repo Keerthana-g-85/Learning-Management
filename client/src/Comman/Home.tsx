@@ -103,6 +103,7 @@ const MaterialUISwitch = styled(Switch)(({ theme }) => ({
   },
 }));
 
+
 export default function Home() {
   const [open, setOpen] = useState<boolean>(false);
 
@@ -173,7 +174,7 @@ export default function Home() {
   }
 
   function handleLogout() {
-    localStorage.clear();
+    localStorage.removeItem('token');
     dispatch(addToken(""));
     dispatch(addUser(null));
     navigate("/", { replace: true });
@@ -270,6 +271,7 @@ export default function Home() {
                   checked = {theme === 'dark'}
                   onChange = {()=>{
                     setTheme(theme === 'dark' ?'light' :'dark')
+                    localStorage.setItem(`${user.id}`,theme)
                   }}
                    />}
                   label="Theme"

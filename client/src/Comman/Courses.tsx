@@ -3,7 +3,7 @@ import { useNavigate } from "react-router";
 import { useSelector, useDispatch } from "react-redux";
 
 import { getMessage } from "../redux/MessageSlice";
-import { cartCourse } from "../redux/CartSlice"
+import { cartCourse } from "../redux/CartSlice";
 import useApi from "../components/Api";
 import useDebounce from "../components/Debounce";
 import { ThemeContext } from "../components/Theme";
@@ -32,7 +32,7 @@ import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import CoPresentIcon from "@mui/icons-material/CoPresent";
-import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
+import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 
 interface Courses {
   id: string;
@@ -42,7 +42,7 @@ interface Courses {
   duration: string;
   thumbnail: string;
   level: string;
-  price:string;
+  price: string;
   name: string;
 }
 
@@ -63,7 +63,7 @@ export default function Courses() {
   const search = useSelector((state: any) => state.search.search);
   const message = useSelector((state: any) => state.message.message);
   const id = useSelector((state: any) => state.login.user.id);
-  const cart = useSelector((state:any) => state.cart.course)
+  const cart = useSelector((state: any) => state.cart.course);
   const debounce = useDebounce(search);
 
   // Getting all the course
@@ -175,8 +175,46 @@ export default function Courses() {
       setFilter([...filter, data]);
     }
   }
-  console.log(cart)
+  console.log(cart);
 
+  async function handleCart(data : Courses) {
+    try {
+      const response = await Api({
+        method: "post",
+        endpoint: `cart/create`,
+        data: { register: `${user.id}`, course: `${data.id}` },
+      });
+      console.log(response);
+      // dispatch(cartCourse(response.data.cart.course));
+      dispatch(getMessage(response.data.message));
+      getCart()
+    } catch (error) {
+      console.log(error);
+    }
+    
+  }
+  async function getCart(){
+    try{
+      const response = await Api({
+        method : 'get',
+        endpoint: `cart/get/${id}`
+      });
+      console.log('hello cart data',response)
+     console.log('data',response.data)
+      dispatch(cartCourse(response.data.courses));
+      dispatch(getMessage(response.data.message));
+
+    }catch(error){
+      console.log(error)
+    }
+  }
+  useEffect (()=>{
+    getCart()
+  },[])
+
+  // console.log(cart)
+  // cart.map((data)=> console.log('full cart',data))
+  // cart.map((data)=> console.log('cart courses',data.course))
   return (
     <>
       <Box
@@ -199,19 +237,17 @@ export default function Courses() {
             Instructor
           </Typography>
           {instructor.map((data, index) => (
-            
-              <FormGroup key={index}>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={filter.includes(data)}
-                      onChange={() => handleFilter(data)}
-                    />
-                  }
-                  label={data}
-                />
-              </FormGroup>
-            
+            <FormGroup key={index}>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={filter.includes(data)}
+                    onChange={() => handleFilter(data)}
+                  />
+                }
+                label={data}
+              />
+            </FormGroup>
           ))}
         </Box>
         {user.role === "instructor" ? (
@@ -238,7 +274,7 @@ export default function Courses() {
                     borderRadius: 5,
                     boxShadow: "0 20px 40px rgba(0,0,0,0.35)",
                     background: theme === "light" ? "#D1D8BE" : "#010102",
-                    
+
                     transition: "0.3s",
                     "&:hover": {
                       transform: "translateY(-8px)",
@@ -309,7 +345,7 @@ export default function Courses() {
                       {data.description}
                     </Typography>
 
-                     <Box
+                    <Box
                       sx={{
                         display: "flex",
                         alignItems: "center",
@@ -317,19 +353,18 @@ export default function Courses() {
                         mb: 2,
                       }}
                     >
-                       < AttachMoneyIcon sx={{color:'black'}}/>
-                    <Typography
-                      sx={{
-                        color: theme === "light" ? "black" : "#94a3b8",
-                        fontWeight: 600,
+                      <AttachMoneyIcon sx={{ color: "black" }} />
+                      <Typography
+                        sx={{
+                          color: theme === "light" ? "black" : "#94a3b8",
+                          fontWeight: 600,
                           display: "flex",
                           flex: 1,
                           alignItems: "center",
-                       
-                      }}
-                    >
-                     {data.price}
-                    </Typography>
+                        }}
+                      >
+                        {data.price}
+                      </Typography>
                     </Box>
 
                     <Box
@@ -358,7 +393,10 @@ export default function Courses() {
                         orientation="vertical"
                         flexItem
                         sx={{
-                          bgcolor:theme === "light" ? "black" : "rgba(255, 255, 255, 0.63)",
+                          bgcolor:
+                            theme === "light"
+                              ? "black"
+                              : "rgba(255, 255, 255, 0.63)",
                           size: "large",
                         }}
                       />
@@ -372,7 +410,11 @@ export default function Courses() {
                           color: theme === "light" ? "black" : "#94a3b8",
                         }}
                       >
-                        <AccessTimeIcon sx={{ color: theme === "light" ? "#2b3430": "#0ea5e9" }} />
+                        <AccessTimeIcon
+                          sx={{
+                            color: theme === "light" ? "#2b3430" : "#0ea5e9",
+                          }}
+                        />
                         {data.duration}
                       </Typography>
                     </Box>
@@ -416,7 +458,8 @@ export default function Courses() {
                               flex: 1,
                               alignItems: "center",
                               gap: 1,
-                              bgcolor:theme === "light" ? "#485e56": "#0ea5e9",
+                              bgcolor:
+                                theme === "light" ? "#485e56" : "#0ea5e9",
                               color: "white",
                             }}
                             onClick={() => {
@@ -454,7 +497,8 @@ export default function Courses() {
                               flex: 1,
                               alignItems: "center",
                               gap: 1,
-                              bgcolor:theme === "light" ? "#485e56":"#0ea5e9",
+                              bgcolor:
+                                theme === "light" ? "#485e56" : "#0ea5e9",
                               color: "white",
                               "&.Mui-disabled": {
                                 bgcolor: "#363535",
@@ -467,24 +511,36 @@ export default function Courses() {
                           >
                             {enroll.includes(data.id) ? "Enrolled" : "Enroll"}
                           </Button>
-                          <Button variant="outlined"
-                          sx={{ bgcolor: theme === "light" ? "#485e56": "#0ea5e9",
-                            display: "flex",
+                          <Button
+                            variant="outlined"
+                            sx={{
+                              bgcolor:
+                                theme === "light" ? "#485e56" : "#0ea5e9",
+                              display: "flex",
                               flex: 1,
                               alignItems: "center",
                               gap: 1,
-                              color : 'white',
+                              color: "white",
                               "&.Mui-disabled": {
                                 bgcolor: "#363535",
                                 color: "white",
                                 opacity: 1,
                               },
-                          }}
-                          
-                          disabled = {cart.some( (i:Courses) => i.id === data.id)}
-                          onClick = {()=>{dispatch(cartCourse(data))}}>
-                          
-                            {cart.some( (course :Courses) => course.id === data.id)? "Added" : "Add to cart"}
+                            }}
+                          // disabled = {cart.filter((item)=> item.course.id === data.id)}
+                            disabled={cart.some(
+                              (i: Courses) => i.id === data.id,
+                            )}
+                            // onClick={() => {
+                            //   dispatch(cartCourse(data));
+                            // }}
+                            onClick={() => handleCart(data)}
+                          >
+                            {cart.some(
+                              (course: Courses) => course?.id === data.id,
+                            )
+                              ? "Added"
+                              : "Add to cart"}
                           </Button>
                         </>
                       )}

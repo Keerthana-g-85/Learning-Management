@@ -23,10 +23,16 @@ const cartSlice = createSlice({
   initialState,
   reducers: {
     cartCourse: (state, action) => {
+      // return {
+      //   ...state,
+      //   course: [...state.course, action.payload],
+      // };
+
       return {
         ...state,
-        course: [...state.course, action.payload],
+        course: action.payload,
       };
+      
     },
 
     removeCourse : (state , action) =>{
