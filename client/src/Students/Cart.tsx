@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import { removeCourse } from "../redux/CartSlice";
 import { ThemeContext } from "../components/Theme";
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import useApi from "../components/Api";
 import Box from "@mui/material/Box";
 import CardMedia from "@mui/material/CardMedia";
@@ -33,17 +33,23 @@ interface Courses {
 export default function Cart() {
   const [open, setOpen] = useState<string>("");
   const dispatch = useDispatch();
-  const user = useSelector((state:any)=> state.login.user)
+  const user = useSelector((state: any) => state.login.user);
   const course = useSelector((state: any) => state.cart.course);
   const { theme } = useContext(ThemeContext);
   const { Api } = useApi();
   console.log(course);
 
-  async function handleDelete(id : string){
-  const response = await Api({ method: "delete" , endpoint:`cart/delete/${id}/${user.id}` });
-  console.log(response)
-  dispatch(removeCourse(open));
-              setOpen("");
+  const totalPrice = course?.reduce((sum : number, item:Courses) => sum + item.price, 0);
+  console.log(totalPrice)
+
+  async function handleDelete(id: string) {
+    const response = await Api({
+      method: "delete",
+      endpoint: `cart/delete/${id}/${user.id}`,
+    });
+    console.log(response);
+    dispatch(removeCourse(open));
+    setOpen("");
   }
   return (
     <>
@@ -183,6 +189,9 @@ export default function Cart() {
             );
           })}
         </Stack>
+        <Box sx={{ display :'flex' , justifyContent: "flex-end" }}>
+            <Typography>Total Price : {totalPrice}</Typography>
+        </Box>
       </Box>
       <Dialog open={Boolean(open)} onClose={() => setOpen("")}>
         <DialogTitle>Remove Course from Cart</DialogTitle>

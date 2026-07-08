@@ -34,14 +34,16 @@ const cartSlice = createSlice({
       };
     },
 
+    // removeCourse: (state, action) => {
+    //   return {
+    //     ...state,
+    //     course: state.course.splice(state.course.findIndex((course) => course.id === action.payload), 1),
+    //   };
+    // },
     removeCourse: (state, action) => {
-      const courses = [...state.course];
-      const removeId = action.payload;
-      const index = courses.findIndex((course) => course.id === removeId);
-      state.course.splice(index, 1);
       return {
         ...state,
-        course: courses,
+        course: state.course.filter((course) => course.id !== action.payload),
       };
     },
   },
