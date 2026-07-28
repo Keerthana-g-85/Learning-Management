@@ -72,7 +72,31 @@ export default function Resetpassword() {
         setError((prev) => ({ ...prev, errNewPassword: true }));
         setErrmessage((prev) => ({
           ...prev,
-          errNewPassword: "Password must be at least 8 characters",
+          errNewPassword: "atleast 8 characters required",
+        }));
+      } else if (!/[A-Z]/.test(data.newPassword)) {
+        setError((prev) => ({ ...prev, errNewPassword: true }));
+        setErrmessage((prev) => ({
+          ...prev,
+          errNewPassword: "atleast 1 uppercase required",
+        }));
+      } else if (!/[a-z]/.test(data.newPassword)) {
+        setError((prev) => ({ ...prev, errNewPassword: true }));
+        setErrmessage((prev) => ({
+          ...prev,
+          errNewPassword: "atleast 1 lowercase required",
+        }));
+      } else if (!/[0-9]/.test(data.newPassword)) {
+        setError((prev) => ({ ...prev, errNewPassword: true }));
+        setErrmessage((prev) => ({
+          ...prev,
+          errNewPassword: "atleast 1 number required",
+        }));
+      } else if (!/[!@#$%^&*]/.test(data.newPassword)) {
+        setError((prev) => ({ ...prev, errNewPassword: true }));
+        setErrmessage((prev) => ({
+          ...prev,
+          errNewPassword: "At least one special character required",
         }));
       } else {
         setError((prev) => ({ ...prev, errNewPassword: false }));
@@ -83,7 +107,11 @@ export default function Resetpassword() {
         !data.email ||
         !data.oldPassword ||
         !data.newPassword ||
-        data.newPassword.length < 8
+        data.newPassword.length < 8 ||
+        !/[A-Z]/.test(data.newPassword) ||
+        !/[a-z]/.test(data.newPassword) ||
+        !/[0-9]/.test(data.newPassword) ||
+        !/[!@#$%^&*]/.test(data.newPassword)
       ) {
         console.log("Enter the values");
         return;
@@ -153,7 +181,7 @@ export default function Resetpassword() {
           }
         >
           {!user.name ? (
-            <Typography variant="h5" sx={{ fontWeight: 600,}}>
+            <Typography variant="h5" sx={{ fontWeight: 600 }}>
               Reset Password
             </Typography>
           ) : (

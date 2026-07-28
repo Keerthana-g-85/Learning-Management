@@ -6,6 +6,7 @@ import { useEffect } from "react";
 import { jwtDecode } from "jwt-decode";
 import { useContext } from "react";
 import { ThemeContext } from "../components/Theme";
+// import { cartCourse } from "../redux/CartSlice";
 
 import logo from "../assets/logo.png";
 
@@ -43,7 +44,9 @@ import FormGroup from "@mui/material/FormGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Switch from "@mui/material/Switch";
 import { addToken, addUser } from "../redux/LoginSlice";
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import Badge from "@mui/material/Badge";
+import IconButton from "@mui/material/IconButton";
 
 const drawerWidth = 240;
 
@@ -103,17 +106,18 @@ const MaterialUISwitch = styled(Switch)(({ theme }) => ({
   },
 }));
 
-
 export default function Home() {
   const [open, setOpen] = useState<boolean>(false);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { theme , setTheme } = useContext(ThemeContext)
+  const { theme, setTheme } = useContext(ThemeContext);
 
   const user = useSelector((state: any) => state.login.user);
   const search = useSelector((state: any) => state.search.search);
   const name = useSelector((state: any) => state.login.user.name);
+  const cart = useSelector((state: any) => state.cart.course);
+  console.log("Length", cart?.length);
   console.log(search);
 
   let menuItems = [
@@ -174,7 +178,7 @@ export default function Home() {
   }
 
   function handleLogout() {
-    localStorage.removeItem('token');
+    localStorage.removeItem("token");
     dispatch(addToken(""));
     dispatch(addUser(null));
     navigate("/", { replace: true });
@@ -194,7 +198,7 @@ export default function Home() {
       <Box
         sx={{
           display: "flex",
-          bgcolor: theme==='light'? "#F1F0E8" : '#C5B3D3',
+          bgcolor: theme === "light" ? "#F5F7F2" : "#C5B3D3",
           width: "100%",
           minHeight: "100vh",
         }}
@@ -204,7 +208,7 @@ export default function Home() {
           position="fixed"
           sx={{
             zIndex: (theme) => theme.zIndex.drawer + 1,
-            bgcolor:theme==='light'? "#819A91" : "#233D4D",
+            bgcolor: theme === "light" ? "#607c71" : "#233D4D",
           }}
         >
           <Toolbar>
@@ -250,7 +254,8 @@ export default function Home() {
                 },
               }}
               sx={{
-                bgcolor: theme==='light'? '#a5b7b0':"rgba(255,255,255,0.15)",
+                bgcolor:
+                  theme === "light" ? "#a5b7b0" : "rgba(255,255,255,0.15)",
                 borderRadius: "30px",
                 width: 600,
                 border: "none",
@@ -267,12 +272,15 @@ export default function Home() {
             <Box>
               <FormGroup>
                 <FormControlLabel
-                  control={<MaterialUISwitch sx={{ m: 1 }} 
-                  checked = {theme === 'dark'}
-                  onChange = {()=>{
-                    setTheme(theme === 'dark' ?'light' :'dark')
-                  }}
-                   />}
+                  control={
+                    <MaterialUISwitch
+                      sx={{ m: 1 }}
+                      checked={theme === "dark"}
+                      onChange={() => {
+                        setTheme(theme === "dark" ? "light" : "dark");
+                      }}
+                    />
+                  }
                   label="Theme"
                 />
               </FormGroup>
@@ -294,9 +302,17 @@ export default function Home() {
                 }}
               />
             </Box>
-            <ShoppingCartIcon  onClick={() => {
-                  navigate("/cart");
-                }}/>
+            {user.role === "student" ?
+              <IconButton aria-label="show 4 unread messages">
+                <Badge badgeContent={cart?.length} color="secondary">
+                  <ShoppingCartIcon sx={{ color:"white"}}
+                    onClick={() => {
+                      navigate("/cart");
+                    }}
+                  />
+                </Badge>
+              </IconButton>
+            :null}
           </Toolbar>
         </AppBar>
 
@@ -308,7 +324,7 @@ export default function Home() {
             "& .MuiDrawer-paper": {
               width: drawerWidth,
               boxSizing: "border-box",
-              bgcolor:theme==='light'?'#485e56':"black",
+              bgcolor: theme === "light" ? "#485e56" : "black",
               color: "white",
             },
           }}

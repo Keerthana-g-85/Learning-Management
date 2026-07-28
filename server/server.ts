@@ -20,7 +20,7 @@ dotenv.config()
 // create express application
 const app = express()
 
-// Converts JSON request body into JavaScript object÷
+// Converts JSON request body into JavaScript object
 app.use(express.json())
 
 // Allow request from other origins 

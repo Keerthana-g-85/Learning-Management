@@ -136,7 +136,7 @@ export const GetStudent: RequestHandler = async (req, res) => {
   try {
     const registerRepo = database.getRepository(Register);
 
-    const students = await registerRepo.findBy({ role: Role.student });
+    const students = await registerRepo.find({where :{ role: Role.student } , order:{createdAt : 'ASC'} });
 
     res.status(200).send({
       success: true,
@@ -156,7 +156,7 @@ export const GetInstructor: RequestHandler = async (req, res) => {
   try {
     const registerRepo = database.getRepository(Register);
 
-    const instructor = await registerRepo.findBy({ role: Role.instructor });
+    const instructor = await registerRepo.find({where:{ role: Role.instructor },order:{createdAt: "DESC"}});
 
     res.status(200).send({
       success: true,
@@ -194,6 +194,7 @@ export const Get: RequestHandler = async (req, res) => {
         { email: ILike(`${search}%`) },
         { address: ILike(`%${search}%`) },
       ],
+       order : {createdAt:'ASC'}
     });
       const filterData = await userRepo.find({ where: { role: In(role) } });
       users = searchData.filter((sdata)=> filterData.some((fdata)=>fdata.id === sdata.id))
@@ -205,13 +206,14 @@ export const Get: RequestHandler = async (req, res) => {
         { email: ILike(`${search}%`) },
         { address: ILike(`%${search}%`) },
       ],
+       order : {createdAt:'ASC'}
     });
     }
     else if (filter){
-      users = await userRepo.find({ where: { role: In(role) } });
+      users = await userRepo.find({ where: { role: In(role) } , order : {createdAt:'ASC'}});
     }
     else{
-      users = await userRepo.find()
+      users = await userRepo.find({order : {createdAt:'ASC'}})
     }
 
     const total_page = Math.ceil(users.length / per_page);

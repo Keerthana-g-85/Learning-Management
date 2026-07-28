@@ -6,6 +6,8 @@ import useApi from "../components/Api";
 import Box from "@mui/material/Box";
 import CardMedia from "@mui/material/CardMedia";
 import { Typography } from "@mui/material";
+import { cartCourse } from "../redux/CartSlice";
+import { getMessage } from "../redux/MessageSlice";
 import Stack from "@mui/material/Stack";
 import Card from "@mui/material/Card";
 import Chip from "@mui/material/Chip";
@@ -35,12 +37,36 @@ export default function Cart() {
   const dispatch = useDispatch();
   const user = useSelector((state: any) => state.login.user);
   const course = useSelector((state: any) => state.cart.course);
+  const id = useSelector((state: any) => state.login.user.id);
   const { theme } = useContext(ThemeContext);
   const { Api } = useApi();
   console.log(course);
 
-  const totalPrice = course?.reduce((sum : number, item:Courses) => sum + item.price, 0);
-  console.log(totalPrice)
+  const totalPrice = course?.reduce(
+    (sum: number, item: Courses) => sum + item.price,
+    0,
+  );
+  console.log(totalPrice);
+
+ async function getCart(){
+     try{
+       const response = await Api({
+         method : 'get',
+         endpoint: `cart/get/${id}`
+       });
+       console.log('hello cart data',response)
+      console.log('data',response.data)
+       dispatch(cartCourse(response.data.courses));
+       dispatch(getMessage(response.data.message));
+ 
+     }catch(error){
+       console.log(error)
+     }
+   }
+   useEffect (()=>{
+     getCart()
+   },[])
+ 
 
   async function handleDelete(id: string) {
     const response = await Api({
@@ -53,7 +79,13 @@ export default function Cart() {
   }
   return (
     <>
-      <Box>
+      <Box
+        sx={{
+          bgcolor: theme === "light" ? "#dee5cc" : "#0f172a",
+          minHeight: "100vh",
+          p: 4,
+        }}
+      >
         <Stack spacing={3}>
           {course.map((data: Courses) => {
             return (
@@ -61,8 +93,11 @@ export default function Cart() {
                 <Box
                   sx={{
                     display: "flex",
-                    bgcolor: theme === "light" ? "#D1D8BE" : "#010102",
-                    borderRadius: "20px",
+                    gap: 3,
+                    p: 2,
+                    borderRadius: 4,
+                    bgcolor: theme === "light" ? "#D1D8BE" : "#1e293b",
+                    boxShadow: 4,
                   }}
                 >
                   <Box sx={{ height: "200px" }}>
@@ -78,7 +113,10 @@ export default function Cart() {
                         component="img"
                         alt=""
                         height="200"
-                        sx={{ p: 1, borderRadius: 5 }}
+                        sx={{
+                          height: 220,
+                          objectFit: "cover",
+                        }}
                         image={data.thumbnail}
                       />
                     </Card>
@@ -189,8 +227,40 @@ export default function Cart() {
             );
           })}
         </Stack>
-        <Box sx={{ display :'flex' , justifyContent: "flex-end" }}>
-            <Typography>Total Price : {totalPrice}</Typography>
+
+        <Box
+          sx={{
+            bottom: 20,
+            mt: 4,
+            display: "flex",
+            justifyContent: "flex-end",
+            alignItems: "flex-end",
+            
+          }}
+        >
+          <Card
+            sx={{
+              p: 3,
+              borderRadius: 4,
+              boxShadow: 8,
+              bgcolor: theme === "light" ? "#e3eccd" : "#0f172a",
+            }}
+          >
+            <Typography>Total Amount : ${totalPrice}</Typography>
+            <Button
+              fullWidth
+              variant="contained"
+              sx={{
+                mt: 3,
+                py: 1.3,
+                borderRadius: 3,
+                bgcolor: theme === "light" ? "#485e56" : "#0f172a",
+              }}
+              onClick={()=>{}}
+            >
+              Checkout
+            </Button>
+          </Card>
         </Box>
       </Box>
       <Dialog open={Boolean(open)} onClose={() => setOpen("")}>

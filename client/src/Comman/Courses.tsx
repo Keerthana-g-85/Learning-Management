@@ -157,8 +157,8 @@ export default function Courses() {
       method: "get",
       endpoint: "/register/getinstructor",
     });
-    console.log(response.data.instructor);
-    const name = response.data.instructor.map((data: Courses) => data.name);
+    console.log(response.data.instructor, 'instructors');
+    const name = response.data.instructor.map((data: Courses) => data.name); // improve
     console.log(name);
     setInstructor(name);
   };
@@ -193,13 +193,12 @@ export default function Courses() {
     }
     
   }
-  async function getCart(){
+ async function getCart(){
     try{
       const response = await Api({
         method : 'get',
         endpoint: `cart/get/${id}`
       });
-      console.log('hello cart data',response)
      console.log('data',response.data)
       dispatch(cartCourse(response.data.courses));
       dispatch(getMessage(response.data.message));
