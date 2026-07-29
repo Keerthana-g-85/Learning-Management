@@ -198,7 +198,7 @@ export default function Home() {
       <Box
         sx={{
           display: "flex",
-          bgcolor: theme === "light" ? "#F5F7F2" : "#C5B3D3",
+          bgcolor: theme === "light" ? "#F5F7F2" : "#f0e0fb",
           width: "100%",
           minHeight: "100vh",
         }}
@@ -302,17 +302,18 @@ export default function Home() {
                 }}
               />
             </Box>
-            {user.role === "student" ?
+            {user.role === "student" ? (
               <IconButton aria-label="show 4 unread messages">
                 <Badge badgeContent={cart?.length} color="secondary">
-                  <ShoppingCartIcon sx={{ color:"white"}}
+                  <ShoppingCartIcon
+                    sx={{ color: "white" }}
                     onClick={() => {
                       navigate("/cart");
                     }}
                   />
                 </Badge>
               </IconButton>
-            :null}
+            ) : null}
           </Toolbar>
         </AppBar>
 

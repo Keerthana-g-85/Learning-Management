@@ -21,6 +21,9 @@ import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogActions from "@mui/material/DialogActions";
+import emptyCart from "../assets/emptyCart.png";
+import emptyCartdark from "../assets/emptyCart2.png";
+import { useNavigate } from "react-router";
 
 interface Courses {
   id: string;
@@ -37,9 +40,9 @@ export default function Cart() {
   const dispatch = useDispatch();
   const user = useSelector((state: any) => state.login.user);
   const course = useSelector((state: any) => state.cart.course);
-  const id = useSelector((state: any) => state.login.user.id);
   const { theme } = useContext(ThemeContext);
   const { Api } = useApi();
+  const nav = useNavigate();
   console.log(course);
 
   const totalPrice = course?.reduce(
@@ -83,192 +86,240 @@ export default function Cart() {
       endpoint: `cart/clearcart/${user.id}`,
     });
     console.log(response);
+    getCart();
   }
   return (
     <>
-      <Box
-        sx={{
-          bgcolor: theme === "light" ? "#dee5cc" : "#0f172a",
-          minHeight: "100vh",
-          p: 4,
-        }}
-      >
-        <Stack spacing={3}>
-          {course.map((data: Courses) => {
-            return (
-              <div key={data.id}>
-                <Box
-                  sx={{
-                    display: "flex",
-                    gap: 3,
-                    p: 2,
-                    borderRadius: 4,
-                    bgcolor: theme === "light" ? "#D1D8BE" : "#1e293b",
-                    boxShadow: 4,
-                  }}
-                >
-                  <Box sx={{ height: "200px" }}>
-                    <Card
-                      sx={{
-                        height: "200px",
-                        width: "400px",
-                        bgcolor: theme === "light" ? "#D1D8BE" : "#010102",
-                        border: "none",
-                      }}
-                    >
-                      <CardMedia
-                        component="img"
-                        alt=""
-                        height="200"
-                        sx={{
-                          height: 220,
-                          objectFit: "cover",
-                        }}
-                        image={data.thumbnail}
-                      />
-                    </Card>
-                  </Box>
-
-                  <Box sx={{ p: 1 }}>
-                    <Typography
-                      sx={{
-                        fontSize: "1.5rem",
-                        color: theme === "light" ? "black" : "#94a3b8",
-                        fontWeight: 600,
-                        fontFamily: "Outfit, sans-serif",
-                        mb: 1,
-                      }}
-                    >
-                      {data.title}
-                    </Typography>
-                    <Chip
-                      label={data.level.toUpperCase()}
-                      sx={{
-                        bgcolor: theme === "light" ? "#819A91" : "#0ea5e9",
-
-                        fontWeight: 700,
-                        mb: 1,
-                      }}
-                    />
-                    <Typography
-                      sx={{
-                        color: theme === "light" ? "black" : "#94a3b8",
-                        fontSize: "1rem",
-                        lineHeight: 1.6,
-                        minHeight: 30,
-                      }}
-                    >
-                      {data.description}
-                    </Typography>
-                    <Box
-                      sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 5,
-                        mb: 2,
-                      }}
-                    >
-                      <Typography
-                        sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: 0.5,
-                          color: theme === "light" ? "black" : "#94a3b8",
-                          fontWeight: 600,
-                        }}
-                      >
-                        <AttachMoneyIcon
-                          sx={{
-                            color: theme === "light" ? "#2b3430" : "#0ea5e9",
-                          }}
-                        />
-                        {data.price}
-                      </Typography>
-
-                      <Typography
-                        sx={{
-                          fontWeight: 600,
-                          display: "flex",
-                          alignItems: "center",
-                          gap: 1,
-                          color: theme === "light" ? "black" : "#94a3b8",
-                        }}
-                      >
-                        <CoPresentIcon />
-                        {data.instructor_name}
-                      </Typography>
-
-                      <Typography
-                        sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: 1,
-                          fontWeight: 600,
-                          color: theme === "light" ? "black" : "#94a3b8",
-                        }}
-                      >
-                        <AccessTimeIcon
-                          sx={{
-                            color: theme === "light" ? "#2b3430" : "#0ea5e9",
-                          }}
-                        />
-                        {data.duration}
-                      </Typography>
-                    </Box>
-
-                    <Button
-                      variant="outlined"
-                      startIcon={<DeleteIcon />}
-                      sx={{
-                        color: "white",
-                        bgcolor: theme === "light" ? "#485e56" : "#0ea5e9",
-                        borderRadius: "10px",
-                      }}
-                      onClick={() => setOpen(data.id)}
-                    >
-                      Remove from cart
-                    </Button>
-                  </Box>
-                </Box>
-              </div>
-            );
-          })}
-        </Stack>
-
+      {course.length === 0 ? (
         <Box
           sx={{
-            bottom: 20,
-            mt: 4,
+            minHeight: "70vh",
             display: "flex",
-            justifyContent: "flex-end",
-            alignItems: "flex-end",
+            justifyContent: "center",
+            alignItems: "center",
+            textAlign: "center",
+            flexDirection: "column",
+            gap: 2,
           }}
         >
-          <Card
+          <Box
             sx={{
-              p: 3,
-              borderRadius: 4,
-              boxShadow: 8,
-              bgcolor: theme === "light" ? "#e3eccd" : "#0f172a",
+              backgroundImage:
+                theme === "light"
+                  ? `url(${emptyCart})`
+                  : `url(${emptyCartdark})`,
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+              width: "200px",
+              height: "200px",
+            }}
+          ></Box>
+
+          <Typography variant="h3">Start your learning journey</Typography>
+          <Button
+            variant="contained"
+            size="large"
+            sx={{
+              mt: 2,
+              px: 4,
+              borderRadius: 3,
+              bgcolor: theme === "light" ? "#5b7554" : "#0f172a",
+            }}
+            onClick={() => {
+              nav("/courses");
             }}
           >
-            <Typography>Total Amount : ${totalPrice}</Typography>
-            <Button
-              fullWidth
-              variant="contained"
-              sx={{
-                mt: 3,
-                py: 1.3,
-                borderRadius: 3,
-                bgcolor: theme === "light" ? "#485e56" : "#0f172a",
-              }}
-              onClick={handleCheckout}
-            >
-              Checkout
-            </Button>
-          </Card>
+            Go to Courses
+          </Button>
         </Box>
-      </Box>
+      ) : (
+        <Box
+          sx={{
+            bgcolor: theme === "light" ? "#dee5cc" : "#0f172a",
+            minHeight: "100vh",
+            p: 4,
+          }}
+        >
+          <Stack spacing={3}>
+            {course.map((data: Courses) => {
+              return (
+                <div key={data.id}>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      gap: 3,
+                      p: 2,
+                      borderRadius: 4,
+                      bgcolor: theme === "light" ? "#D1D8BE" : "#1e293b",
+                      boxShadow: 4,
+                    }}
+                  >
+                    <Box sx={{ height: "200px" }}>
+                      <Card
+                        sx={{
+                          height: "200px",
+                          width: "400px",
+                          bgcolor: theme === "light" ? "#D1D8BE" : "#010102",
+                          border: "none",
+                        }}
+                      >
+                        <CardMedia
+                          component="img"
+                          alt=""
+                          height="200"
+                          sx={{
+                            height: 220,
+                            objectFit: "cover",
+                          }}
+                          image={data.thumbnail}
+                        />
+                      </Card>
+                    </Box>
+
+                    <Box sx={{ p: 1 }}>
+                      <Typography
+                        sx={{
+                          fontSize: "1.5rem",
+                          color: theme === "light" ? "black" : "#94a3b8",
+                          fontWeight: 600,
+                          fontFamily: "Outfit, sans-serif",
+                          mb: 1,
+                        }}
+                      >
+                        {data.title}
+                      </Typography>
+                      <Chip
+                        label={data.level.toUpperCase()}
+                        sx={{
+                          bgcolor: theme === "light" ? "#819A91" : "#0ea5e9",
+
+                          fontWeight: 700,
+                          mb: 1,
+                        }}
+                      />
+                      <Typography
+                        sx={{
+                          color: theme === "light" ? "black" : "#94a3b8",
+                          fontSize: "1rem",
+                          lineHeight: 1.6,
+                          minHeight: 30,
+                        }}
+                      >
+                        {data.description}
+                      </Typography>
+                      <Box
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 5,
+                          mb: 2,
+                        }}
+                      >
+                        <Typography
+                          sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 0.5,
+                            color: theme === "light" ? "black" : "#94a3b8",
+                            fontWeight: 600,
+                          }}
+                        >
+                          <AttachMoneyIcon
+                            sx={{
+                              color: theme === "light" ? "#2b3430" : "#0ea5e9",
+                            }}
+                          />
+                          {data.price}
+                        </Typography>
+
+                        <Typography
+                          sx={{
+                            fontWeight: 600,
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 1,
+                            color: theme === "light" ? "black" : "#94a3b8",
+                          }}
+                        >
+                          <CoPresentIcon />
+                          {data.instructor_name}
+                        </Typography>
+
+                        <Typography
+                          sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 1,
+                            fontWeight: 600,
+                            color: theme === "light" ? "black" : "#94a3b8",
+                          }}
+                        >
+                          <AccessTimeIcon
+                            sx={{
+                              color: theme === "light" ? "#2b3430" : "#0ea5e9",
+                            }}
+                          />
+                          {data.duration}
+                        </Typography>
+                      </Box>
+
+                      <Button
+                        variant="outlined"
+                        startIcon={<DeleteIcon />}
+                        sx={{
+                          color: "white",
+                          bgcolor: theme === "light" ? "#485e56" : "#0ea5e9",
+                          borderRadius: "10px",
+                        }}
+                        onClick={() => setOpen(data.id)}
+                      >
+                        Remove from cart
+                      </Button>
+                    </Box>
+                  </Box>
+                </div>
+              );
+            })}
+          </Stack>
+
+          <Box
+            sx={{
+              bottom: 20,
+              mt: 4,
+              display: "flex",
+              justifyContent: "flex-end",
+              alignItems: "flex-end",
+            }}
+          >
+            <Card
+              sx={{
+                p: 3,
+                borderRadius: 4,
+                boxShadow: 8,
+                bgcolor: theme === "light" ? "#e3eccd" : "#0f172a",
+              }}
+            >
+              <Typography>Total Amount : ${totalPrice}</Typography>
+              <Button
+                fullWidth
+                variant="contained"
+                sx={{
+                  mt: 3,
+                  py: 1.3,
+                  borderRadius: 3,
+                  bgcolor: theme === "light" ? "#485e56" : "#0f172a",
+                }}
+                onClick={handleCheckout}
+              >
+                Checkout
+              </Button>
+            </Card>
+          </Box>
+        </Box>
+      )}
       <Dialog open={Boolean(open)} onClose={() => setOpen("")}>
         <DialogTitle>Remove Course from Cart</DialogTitle>
         <DialogContent>
