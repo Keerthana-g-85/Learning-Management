@@ -10,7 +10,7 @@ export default class Cart {
 
   @ManyToOne(() => User, { onDelete: "CASCADE" })
   @JoinColumn({ name: "student_id" })
-  User: User;
+  user: User;
 
   @ManyToOne(() => Course, { onDelete: "CASCADE" })
   @JoinColumn({ name: "course_id" })

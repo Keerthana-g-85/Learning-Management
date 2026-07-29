@@ -5,9 +5,9 @@ import type { RequestHandler } from "express";
 export const CreateCart: RequestHandler = async (req, res) => {
   try {
     const cartRepo = database.getRepository(Cart);
-    const { User, course } = req.body;
+    const { user, course } = req.body;
     const studuent_course = await cartRepo.findOne({
-      where: { User: { id: User }, course: { id: course } },
+      where: { user: { id: user }, course: { id: course } },
     });
 
     if (studuent_course) {
@@ -18,7 +18,7 @@ export const CreateCart: RequestHandler = async (req, res) => {
     }
 
     const tocart = cartRepo.create({
-      User,
+      user,
       course,
     });
     const addtocart = await cartRepo.save(tocart);
@@ -52,7 +52,7 @@ export const Get: RequestHandler = async (req, res) => {
     const cartRepo = database.getRepository(Cart);
 
     const course_cart = await cartRepo.find({
-      where: { User: { id: student_id } },
+      where: { user: { id: student_id } },
       relations: { course: true },
     });
 
@@ -84,13 +84,13 @@ export const Delete: RequestHandler = async (req, res) => {
         course: {
           id,
         },
-        User: {
+        user: {
           id: userId,
         },
       },
     });
 
-    console.log(cart.id);
+    console.log(cart);
     await cartRepo.delete(cart.id);
 
     return res.status(200).send({
@@ -104,6 +104,22 @@ export const Delete: RequestHandler = async (req, res) => {
       message: "error while deleting",
     });
   }
+}
 
+export const DeleteCart : RequestHandler = async(req,res)=>{
+  try{
+    const cartRepo = database.getRepository(Cart)
+    const id = req.params.id as string 
+    await cartRepo.delete({ user :{ id : id}})
+    return res.status(200).send({
+      success : true ,
+      message : "Cart Courses are checked Out"
+    })
 
+  }catch(error){
+    res.status(500).send({
+      success : false ,
+      message : "Error while clearing cart"
+    })
+  }
 };

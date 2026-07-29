@@ -138,9 +138,9 @@ export default function Courses() {
     console.log(id);
     try {
       const response = await Api({
-        method: "post",
+        method: "post", 
         endpoint: `enroll/create`,
-        data: { register: `${user.id}`, course: `${id}` },
+        data: { user: `${user.id}`, course: `${id}` },
       });
       console.log(response);
       setEnroll((prev) => [...prev, id]);
@@ -182,7 +182,7 @@ export default function Courses() {
       const response = await Api({
         method: "post",
         endpoint: `cart/create`,
-        data: { register: `${user.id}`, course: `${data.id}` },
+        data: { user : `${user.id}`, course: `${data.id}` },
       });
       console.log(response);
       // dispatch(cartCourse(response.data.cart.course));

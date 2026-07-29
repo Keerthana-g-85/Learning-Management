@@ -12,8 +12,8 @@ export const Create: RequestHandler = async (req, res) => {
     const enrollRepo = database.getRepository(Enroll);
     const studentRepo = database.getRepository(User);
     const courseRepo = database.getRepository(Course);
-    const { User, course } = req.body;
-    console.log(User);
+    const { user, course } = req.body;
+    console.log(user);
 
     const courseId = await courseRepo.findOneBy({ id: course });
     if (!courseId) {
@@ -23,7 +23,7 @@ export const Create: RequestHandler = async (req, res) => {
       });
     }
 
-    const studentId = await studentRepo.findOneBy({ id: User });
+    const studentId = await studentRepo.findOneBy({ id: user });
     if (!studentId) {
       return res.status(404).send({
         success: false,
@@ -32,7 +32,7 @@ export const Create: RequestHandler = async (req, res) => {
     }
 
     const studuent_course = await enrollRepo.findOne({
-      where: { User: { id: User }, course: { id: course } },
+      where: { user: { id: user }, course: { id: course } },
     });
 
     if (studuent_course) {
@@ -43,7 +43,7 @@ export const Create: RequestHandler = async (req, res) => {
     }
 
     const enroll = enrollRepo.create({
-      User,
+      user,
       course,
       enroll_date: new Date(),
     });
@@ -71,7 +71,7 @@ export const GetCourse: RequestHandler = async (req, res) => {
 
     const course_student = await enrollRepo.find({
       where: { course: { id: courseId } },
-      relations: { User: true },
+      relations: { user: true },
     });
 
     if (course_student.length === 0) {
@@ -103,7 +103,7 @@ export const GetNotenroll: RequestHandler = async (req, res) => {
 
     const course_student = await enrollRepo.find({
       where: { course: { id: courseId } },
-      relations: { User: true },
+      relations: { user: true },
     });
 
     const allStudents = await studentRepo.find({
@@ -111,7 +111,7 @@ export const GetNotenroll: RequestHandler = async (req, res) => {
     });
     const notenroll = allStudents.filter(
       (student) =>
-        !course_student.some((enroll) => enroll.User.id === student.id),
+        !course_student.some((enroll) => enroll.user.id === student.id),
     );
 
     return res.status(200).send({
@@ -159,7 +159,7 @@ export const GetStudent: RequestHandler = async (req, res) => {
     if (search) {
       student_course = await enrollRepo.find({
         where: {
-          User: { id: studentId },
+          user: { id: studentId },
           course: {
             title: ILike(`%${search}%`),
           },
@@ -168,7 +168,7 @@ export const GetStudent: RequestHandler = async (req, res) => {
       });
     } else {
       student_course = await enrollRepo.find({
-        where: { User: { id: studentId } },
+        where: { user: { id: studentId } },
         relations: { course: true },
       });
     }

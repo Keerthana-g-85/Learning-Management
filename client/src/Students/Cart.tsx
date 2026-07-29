@@ -48,27 +48,26 @@ export default function Cart() {
   );
   console.log(totalPrice);
 
- async function getCart(){
-     try{
-       const response = await Api({
-         method : 'get',
-         endpoint: `cart/get/${id}`
-       });
-       console.log('hello cart data',response)
-      console.log('data',response.data)
-       dispatch(cartCourse(response.data.courses));
-       dispatch(getMessage(response.data.message));
- 
-     }catch(error){
-       console.log(error)
-     }
-   }
-   useEffect (()=>{
-     getCart()
-   },[])
- 
+  async function getCart() {
+    try {
+      const response = await Api({
+        method: "get",
+        endpoint: `cart/get/${user.id}`,
+      });
+      console.log("hello cart data", response);
+      console.log("data", response.data);
+      dispatch(cartCourse(response.data.courses));
+      dispatch(getMessage(response.data.message));
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  useEffect(() => {
+    getCart();
+  }, []);
 
   async function handleDelete(id: string) {
+    console.log(id);
     const response = await Api({
       method: "delete",
       endpoint: `cart/delete/${id}/${user.id}`,
@@ -76,6 +75,14 @@ export default function Cart() {
     console.log(response);
     dispatch(removeCourse(open));
     setOpen("");
+  }
+
+  async function handleCheckout() {
+    const response = await Api({
+      method: "delete",
+      endpoint: `cart/clearcart/${user.id}`,
+    });
+    console.log(response);
   }
   return (
     <>
@@ -235,7 +242,6 @@ export default function Cart() {
             display: "flex",
             justifyContent: "flex-end",
             alignItems: "flex-end",
-            
           }}
         >
           <Card
@@ -256,7 +262,7 @@ export default function Cart() {
                 borderRadius: 3,
                 bgcolor: theme === "light" ? "#485e56" : "#0f172a",
               }}
-              onClick={()=>{}}
+              onClick={handleCheckout}
             >
               Checkout
             </Button>

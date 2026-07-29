@@ -13,7 +13,6 @@ CourseRouter.post("/create", authentication, Create);
 
 CourseRouter.get("/get", authentication, GetAll);
 
-
 CourseRouter.put("/update/:id", authentication, Update);
 
 CourseRouter.delete("/delete/:id", authentication, Delete);
