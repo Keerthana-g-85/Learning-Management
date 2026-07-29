@@ -56,7 +56,7 @@ export default function Instructor() {
       try {
         const response = await Api({
           method: "get",
-          endpoint: "/register/getinstructor",
+          endpoint: "/user/getinstructor",
         });
         console.log(response);
         setInstructor(response.data.instructor);

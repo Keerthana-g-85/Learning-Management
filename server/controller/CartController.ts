@@ -5,9 +5,9 @@ import type { RequestHandler } from "express";
 export const CreateCart: RequestHandler = async (req, res) => {
   try {
     const cartRepo = database.getRepository(Cart);
-    const { register, course } = req.body;
+    const { User, course } = req.body;
     const studuent_course = await cartRepo.findOne({
-      where: { register: { id: register }, course: { id: course } },
+      where: { User: { id: User }, course: { id: course } },
     });
 
     if (studuent_course) {
@@ -18,7 +18,7 @@ export const CreateCart: RequestHandler = async (req, res) => {
     }
 
     const tocart = cartRepo.create({
-      register,
+      User,
       course,
     });
     const addtocart = await cartRepo.save(tocart);
@@ -52,7 +52,7 @@ export const Get: RequestHandler = async (req, res) => {
     const cartRepo = database.getRepository(Cart);
 
     const course_cart = await cartRepo.find({
-      where: { register: { id: student_id } },
+      where: { User: { id: student_id } },
       relations: { course: true },
     });
 
@@ -84,7 +84,7 @@ export const Delete: RequestHandler = async (req, res) => {
         course: {
           id,
         },
-        register: {
+        User: {
           id: userId,
         },
       },
@@ -105,5 +105,5 @@ export const Delete: RequestHandler = async (req, res) => {
     });
   }
 
-  
+
 };

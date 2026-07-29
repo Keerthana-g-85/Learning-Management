@@ -1,19 +1,19 @@
 import type { RequestHandler } from "express";
 import { database } from "../server.js";
 
-import Register from "../models/RegisterModel.js";
+import User from "../models/UserModel.js";
 import Course from "../models/CourseModel.js";
 import Enroll from "../models/EnrollModel.js";
-import { Role } from "../models/RegisterModel.js";
+import { Role } from "../models/UserModel.js";
 import { ILike } from "typeorm";
 
 export const Create: RequestHandler = async (req, res) => {
   try {
     const enrollRepo = database.getRepository(Enroll);
-    const studentRepo = database.getRepository(Register);
+    const studentRepo = database.getRepository(User);
     const courseRepo = database.getRepository(Course);
-    const { register, course } = req.body;
-    console.log(register);
+    const { User, course } = req.body;
+    console.log(User);
 
     const courseId = await courseRepo.findOneBy({ id: course });
     if (!courseId) {
@@ -23,7 +23,7 @@ export const Create: RequestHandler = async (req, res) => {
       });
     }
 
-    const studentId = await studentRepo.findOneBy({ id: register });
+    const studentId = await studentRepo.findOneBy({ id: User });
     if (!studentId) {
       return res.status(404).send({
         success: false,
@@ -32,7 +32,7 @@ export const Create: RequestHandler = async (req, res) => {
     }
 
     const studuent_course = await enrollRepo.findOne({
-      where: { register: { id: register }, course: { id: course } },
+      where: { User: { id: User }, course: { id: course } },
     });
 
     if (studuent_course) {
@@ -43,7 +43,7 @@ export const Create: RequestHandler = async (req, res) => {
     }
 
     const enroll = enrollRepo.create({
-      register,
+      User,
       course,
       enroll_date: new Date(),
     });
@@ -71,7 +71,7 @@ export const GetCourse: RequestHandler = async (req, res) => {
 
     const course_student = await enrollRepo.find({
       where: { course: { id: courseId } },
-      relations: { register: true },
+      relations: { User: true },
     });
 
     if (course_student.length === 0) {
@@ -98,12 +98,12 @@ export const GetCourse: RequestHandler = async (req, res) => {
 export const GetNotenroll: RequestHandler = async (req, res) => {
   try {
     const enrollRepo = database.getRepository(Enroll);
-    const studentRepo = database.getRepository(Register);
+    const studentRepo = database.getRepository(User);
     const courseId = req.params.id as string;
 
     const course_student = await enrollRepo.find({
       where: { course: { id: courseId } },
-      relations: { register: true },
+      relations: { User: true },
     });
 
     const allStudents = await studentRepo.find({
@@ -111,7 +111,7 @@ export const GetNotenroll: RequestHandler = async (req, res) => {
     });
     const notenroll = allStudents.filter(
       (student) =>
-        !course_student.some((enroll) => enroll.register.id === student.id),
+        !course_student.some((enroll) => enroll.User.id === student.id),
     );
 
     return res.status(200).send({
@@ -159,7 +159,7 @@ export const GetStudent: RequestHandler = async (req, res) => {
     if (search) {
       student_course = await enrollRepo.find({
         where: {
-          register: { id: studentId },
+          User: { id: studentId },
           course: {
             title: ILike(`%${search}%`),
           },
@@ -168,7 +168,7 @@ export const GetStudent: RequestHandler = async (req, res) => {
       });
     } else {
       student_course = await enrollRepo.find({
-        where: { register: { id: studentId } },
+        where: { User: { id: studentId } },
         relations: { course: true },
       });
     }

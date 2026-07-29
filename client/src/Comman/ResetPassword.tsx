@@ -118,7 +118,7 @@ export default function Resetpassword() {
       } else {
         const response = await Api({
           method: "put",
-          endpoint: "/register/resetpassword",
+          endpoint: "/user/resetpassword",
           data: data,
         });
 

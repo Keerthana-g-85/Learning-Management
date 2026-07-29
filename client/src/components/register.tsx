@@ -111,10 +111,10 @@ export default function Register() {
       ) {
         return;
       } else {
-        // const response=await api.post('/register/create',register);
+        // const response=await api.post('/user/create',register);
         const response = await Api({
           method: "post",
-          endpoint: "/register/create",
+          endpoint: "/user/create",
           data: register,
         });
 

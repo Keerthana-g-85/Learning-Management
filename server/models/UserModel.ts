@@ -12,7 +12,7 @@ export enum Role {
   instructor = "instructor",
 }
 @Entity()
-export default class Register {
+export default class User{
   @PrimaryGeneratedColumn("uuid")
   id: string;
 

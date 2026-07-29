@@ -155,7 +155,7 @@ export default function Courses() {
   const instructorName = async () => {
     const response = await Api({
       method: "get",
-      endpoint: "/register/getinstructor",
+      endpoint: "/user/getinstructor",
     });
     console.log(response.data.instructor, 'instructors');
     const name = response.data.instructor.map((data: Courses) => data.name); // improve

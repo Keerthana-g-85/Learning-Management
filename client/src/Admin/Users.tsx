@@ -90,7 +90,7 @@ export default function User() {
     try {
       const response = await Api({
         method: "get",
-        endpoint: `/register/get/?search=${debounce}&filter=${filter.join(",")}&page=${page}&per_page=${per_page}`,
+        endpoint: `/user/get/?search=${debounce}&filter=${filter.join(",")}&page=${page}&per_page=${per_page}`,
       });
       console.log(response);
       const data = response.data.Data;
@@ -116,7 +116,7 @@ export default function User() {
     }
     const response = await Api({
       method: "put",
-      endpoint: `/register/update/${edit?.id}`,
+      endpoint: `/user/update/${edit?.id}`,
       data: edit,
     });
     console.log(response);
@@ -128,7 +128,7 @@ export default function User() {
   async function handleDelete(id: string) {
     const response = await Api({
       method: "delete",
-      endpoint: `/register/delete/${id}`,
+      endpoint: `/user/delete/${id}`,
     });
     console.log(response);
     dispatch(getMessage(response.data.message));

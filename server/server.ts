@@ -5,12 +5,12 @@ import cookieParser from "cookie-parser";
 
 import { DataSource , type DataSourceOptions} from 'typeorm';
 
-import Register from './models/RegisterModel.js';
+import User from './models/UserModel.js';
 import Course from './models/CourseModel.js'
 import Enroll from './models/EnrollModel.js'
 import Cart from './models/CartModel.js'
 
-import { registerRouter } from './Router/RegisterRouter.js'
+import { UserRouter } from './Router/UserRouter.js'
 import { CourseRouter } from './Router/CourseRouter.js'
 import { EnrollRouter  } from './Router/EnrollRouter.js';
 import { CartRouter } from './Router/CartRouter.js';
@@ -28,7 +28,7 @@ app.use(cors({origin:"http://localhost:5173",credentials: true}))
 
 app.use(cookieParser());
 
-app.use('/register' , registerRouter)
+app.use('/user' , UserRouter)
 app.use('/course',CourseRouter)
 app.use('/enroll',EnrollRouter)
 app.use('/cart',CartRouter)
@@ -42,8 +42,12 @@ const data : DataSourceOptions = {
     username : process.env.DB_USER as string ,
     // logging: true,
     port : Number(process.env.DB_PORT),
-    synchronize : true ,                                //TypeORM automatically creates/updates tables.
-    entities : [Register , Course , Enroll , Cart]
+    synchronize : false ,                                //TypeORM automatically creates/updates tables when true 
+    entities : [User , Course , Enroll , Cart],
+    migrations : ["./migrations/*.ts"],
+    migrationsRun: false,
+    migrationsTableName: "migrations",
+    migrationsTransactionMode: "all"
 }
 
 export const database = new DataSource(data)

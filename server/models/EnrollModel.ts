@@ -7,7 +7,7 @@ import {
   UpdateDateColumn,
   JoinColumn,
 } from "typeorm";
-import Register from "./RegisterModel.js";
+import User from "./UserModel.js";
 import Course from "./CourseModel.js";
 
 @Entity()
@@ -15,9 +15,9 @@ export default class Enroll {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
-  @ManyToOne(() => Register, { onDelete: "CASCADE" })
+  @ManyToOne(() => User, { onDelete: "CASCADE" })
   @JoinColumn({ name: "student_id" })
-  register: Register;
+  User: User;
 
   @ManyToOne(() => Course, { onDelete: "CASCADE" })
   @JoinColumn({ name: "course_id" })

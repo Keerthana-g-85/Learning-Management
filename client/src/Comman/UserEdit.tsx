@@ -118,7 +118,7 @@ export default function Edit() {
     } else {
       const response = await Api({
         method: "put",
-        endpoint: `register/edit/${user.id}`,
+        endpoint: `user/edit/${user.id}`,
         data: useredit,
       });
 

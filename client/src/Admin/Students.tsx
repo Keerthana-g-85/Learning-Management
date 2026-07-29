@@ -58,7 +58,7 @@ export default function Students() {
       try {
         const response = await Api({
           method: "get",
-          endpoint: "/register/getstudent",
+          endpoint: "/user/getstudent",
         });
         console.log(response);
         setStudent(response.data.students);

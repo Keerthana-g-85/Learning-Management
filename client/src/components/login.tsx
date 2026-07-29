@@ -64,7 +64,7 @@ export default function Login() {
       } else {
         const response = await Api({
           method: "post",
-          endpoint: "/register/login",
+          endpoint: "/user/login",
           data: login,
         });
 

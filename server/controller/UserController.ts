@@ -3,15 +3,15 @@ import jwt from "jsonwebtoken";
 import type { RequestHandler } from "express";
 
 import { database } from "../server.js";
-import Register from "../models/RegisterModel.js";
-import { Role } from "../models/RegisterModel.js";
+import User from "../models/UserModel.js";
+import { Role } from "../models/UserModel.js";
 
 import { ILike } from "typeorm";
 import { In } from "typeorm";
 
 export const Create: RequestHandler = async (req, res) => {
   try {
-    const registerRepo = database.getRepository(Register);
+    const UserRepo = database.getRepository(User);
     const { name, email, password, phoneNumber, address } = req.body;
 
     if (!email || !password || !name) {
@@ -21,7 +21,7 @@ export const Create: RequestHandler = async (req, res) => {
       });
     }
 
-    const existing = await registerRepo.findOne({ where: { email: email } });
+    const existing = await UserRepo.findOne({ where: { email: email } });
     if (existing) {
       return res.status(400).send({
         success: false,
@@ -32,7 +32,7 @@ export const Create: RequestHandler = async (req, res) => {
     const salt = bcrypt.genSaltSync(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    const user = registerRepo.create({
+    const user = UserRepo.create({
       name,
       email,
       password: hashedPassword,
@@ -40,11 +40,11 @@ export const Create: RequestHandler = async (req, res) => {
       address,
     });
 
-    const newUser = await registerRepo.save(user);
+    const newUser = await UserRepo.save(user);
 
     res.status(201).send({
       success: true,
-      message: "User registered successfully",
+      message: "User Usered successfully",
       user: newUser,
     });
   } catch (error) {
@@ -58,7 +58,7 @@ export const Create: RequestHandler = async (req, res) => {
 
 export const Login: RequestHandler = async (req, res) => {
   try {
-    const registerRepo = database.getRepository(Register);
+    const UserRepo = database.getRepository(User);
 
     const { email, password } = req.body;
 
@@ -69,12 +69,12 @@ export const Login: RequestHandler = async (req, res) => {
       });
     }
 
-    const exist = await registerRepo.findOneBy({ email: email });
+    const exist = await UserRepo.findOneBy({ email: email });
     console.log(exist);
     if (!exist) {
       return res.status(404).send({
         success: false,
-        message: "Email not yet registered",
+        message: "Email not yet Usered",
       });
     }
 
@@ -134,9 +134,9 @@ export const Login: RequestHandler = async (req, res) => {
 
 export const GetStudent: RequestHandler = async (req, res) => {
   try {
-    const registerRepo = database.getRepository(Register);
+    const UserRepo = database.getRepository(User);
 
-    const students = await registerRepo.find({where :{ role: Role.student } , order:{createdAt : 'ASC'} });
+    const students = await UserRepo.find({where :{ role: Role.student } , order:{createdAt : 'ASC'} });
 
     res.status(200).send({
       success: true,
@@ -154,9 +154,9 @@ export const GetStudent: RequestHandler = async (req, res) => {
 
 export const GetInstructor: RequestHandler = async (req, res) => {
   try {
-    const registerRepo = database.getRepository(Register);
+    const UserRepo = database.getRepository(User);
 
-    const instructor = await registerRepo.find({where:{ role: Role.instructor },order:{createdAt: "DESC"}});
+    const instructor = await UserRepo.find({where:{ role: Role.instructor },order:{createdAt: "DESC"}});
 
     res.status(200).send({
       success: true,
@@ -174,7 +174,7 @@ export const GetInstructor: RequestHandler = async (req, res) => {
 
 export const Get: RequestHandler = async (req, res) => {
   try {
-    const userRepo = database.getRepository(Register);
+    const userRepo = database.getRepository(User);
 
     const search= req.query.search as string;
     const filter = req.query.filter as string
@@ -238,12 +238,12 @@ export const Get: RequestHandler = async (req, res) => {
 
 export const UpdateUser: RequestHandler = async (req, res) => {
   try {
-    const registerRepo = database.getRepository(Register);
+    const UserRepo = database.getRepository(User);
     const { name, email, phoneNumber, address, role } = req.body;
 
     const id = req.params.id as string;
     console.log(id);
-    const user = await registerRepo.findOneBy({ id });
+    const user = await UserRepo.findOneBy({ id });
     console.log(user);
     if (!user) {
       return res.status(404).send({
@@ -251,7 +251,7 @@ export const UpdateUser: RequestHandler = async (req, res) => {
         message: "User not found",
       });
     }
-    const UpdatedUser = await registerRepo.update(
+    const UpdatedUser = await UserRepo.update(
       { id: id },
       {
         name: name,
@@ -277,7 +277,7 @@ export const UpdateUser: RequestHandler = async (req, res) => {
 
 export const Delete: RequestHandler = async (req, res) => {
   try {
-    const userRepo = database.getRepository(Register);
+    const userRepo = database.getRepository(User);
     const id = req.params.id as string;
     const student = await userRepo.findOneBy({ id: id });
 
@@ -305,7 +305,7 @@ export const Delete: RequestHandler = async (req, res) => {
 
 export const Update : RequestHandler = async (req,res) =>{
     try {
-        const userRepo = database.getRepository(Register)
+        const userRepo = database.getRepository(User)
         const id  = req.params.id as string
         const {name , email , address , phoneNumber } = req.body
         
@@ -345,7 +345,7 @@ export const Update : RequestHandler = async (req,res) =>{
 
 export const UpdatePassword = async (req,res) =>{
     try{
-        const userRepo = database.getRepository(Register)
+        const userRepo = database.getRepository(User)
 
         const { email , oldPassword , newPassword } = req.body
 
@@ -354,7 +354,7 @@ export const UpdatePassword = async (req,res) =>{
         if (!user){
           res.status(404).send({
             success:false,
-            message:'Email not yet registered',
+            message:'Email not yet Usered',
           })
         }
 
