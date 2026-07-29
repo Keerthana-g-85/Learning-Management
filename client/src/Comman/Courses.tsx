@@ -487,7 +487,7 @@ export default function Courses() {
                             Delete
                           </Button>{" "}
                         </>
-                      ) : (
+                      ) : user.role === "student" ?(
                         <>
                           <Button
                             variant="outlined"
@@ -542,7 +542,7 @@ export default function Courses() {
                               : "Add to cart"}
                           </Button>
                         </>
-                      )}
+                      ): null}
                     </Box>
                   </CardContent>
                 </Card>
