@@ -138,7 +138,7 @@ export default function Cart() {
       ) : (
         <Box
           sx={{
-            bgcolor: theme === "light" ? "#dee5cc" : "#0f172a",
+            bgcolor: theme === "light" ? "#dee5cc" :  "#f0e0fb",
             minHeight: "100vh",
             p: 4,
           }}
@@ -162,7 +162,7 @@ export default function Cart() {
                         sx={{
                           height: "200px",
                           width: "400px",
-                          bgcolor: theme === "light" ? "#D1D8BE" : "#010102",
+                          bgcolor: theme === "light" ? "#D1D8BE" : "#6e88c4",
                           border: "none",
                         }}
                       >
@@ -299,7 +299,7 @@ export default function Cart() {
                 p: 3,
                 borderRadius: 4,
                 boxShadow: 8,
-                bgcolor: theme === "light" ? "#e3eccd" : "#0f172a",
+                bgcolor: theme === "light" ? "#e3eccd" : "#6e88c4",
               }}
             >
               <Typography>Total Amount : ${totalPrice}</Typography>
@@ -310,7 +310,7 @@ export default function Cart() {
                   mt: 3,
                   py: 1.3,
                   borderRadius: 3,
-                  bgcolor: theme === "light" ? "#485e56" : "#0f172a",
+                  bgcolor: theme === "light" ? "#485e56" : "#19284e",
                 }}
                 onClick={handleCheckout}
               >
@@ -330,7 +330,7 @@ export default function Cart() {
         <DialogActions>
           <Button
             onClick={() => setOpen("")}
-            sx={{ bgcolor: "#626769", color: "white" }}
+            sx={{ bgcolor:  "#323334" , color: "white" }}
           >
             Cancel
           </Button>
@@ -338,7 +338,7 @@ export default function Cart() {
           <Button
             variant="contained"
             sx={{
-              bgcolor: "#81b6a2",
+            bgcolor: theme==='light' ? "#2f462d" :"#3fbdef",
               display: "flex",
               border: "1px solid #75988c",
             }}
