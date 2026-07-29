@@ -1,71 +1,70 @@
-import express  from 'express';
-import dotenv from 'dotenv';
-import cors from 'cors'
+import express from "express";
+import dotenv from "dotenv";
+import cors from "cors";
 import cookieParser from "cookie-parser";
 
-import { DataSource , type DataSourceOptions} from 'typeorm';
+import { DataSource, type DataSourceOptions } from "typeorm";
 
-import User from './models/UserModel.js';
-import Course from './models/CourseModel.js'
-import Enroll from './models/EnrollModel.js'
-import Cart from './models/CartModel.js'
+import User from "./models/UserModel.js";
+import Course from "./models/CourseModel.js";
+import Enroll from "./models/EnrollModel.js";
+import Cart from "./models/CartModel.js";
 
-import { UserRouter } from './Router/UserRouter.js'
-import { CourseRouter } from './Router/CourseRouter.js'
-import { EnrollRouter  } from './Router/EnrollRouter.js';
-import { CartRouter } from './Router/CartRouter.js';
+import { UserRouter } from "./Router/UserRouter.js";
+import { CourseRouter } from "./Router/CourseRouter.js";
+import { EnrollRouter } from "./Router/EnrollRouter.js";
+import { CartRouter } from "./Router/CartRouter.js";
 
-dotenv.config()
+dotenv.config();
 
 // create express application
-const app = express()
+const app = express();
 
 // Converts JSON request body into JavaScript object
-app.use(express.json())
+app.use(express.json());
 
-// Allow request from other origins 
-app.use(cors({origin:"http://localhost:5173",credentials: true}))
+// Allow request from other origins
+app.use(cors({ origin: "http://localhost:5173", credentials: true }));
 
 app.use(cookieParser());
 
-app.use('/user' , UserRouter)
-app.use('/course',CourseRouter)
-app.use('/enroll',EnrollRouter)
-app.use('/cart',CartRouter)
+app.use("/user", UserRouter);
+app.use("/course", CourseRouter);
+app.use("/enroll", EnrollRouter);
+app.use("/cart", CartRouter);
 
 // Database configuration
-const data : DataSourceOptions = {
-    type : process.env.DB_TYPE as 'postgres',
-    host : process.env.DB_HOST as string ,
-    password : process.env.DB_PASSWORD as string ,
-    database : process.env.DB_NAME as string ,
-    username : process.env.DB_USER as string ,
-    // logging: true,
-    port : Number(process.env.DB_PORT),
-    synchronize : false ,                                //TypeORM automatically creates/updates tables when true 
-    entities : [User , Course , Enroll , Cart],
-    migrations : ["./migrations/*.ts"],
-    migrationsRun: false,
-    migrationsTableName: "migrations",
-    migrationsTransactionMode: "all"
-}
+const data: DataSourceOptions = {
+  type: process.env.DB_TYPE as "postgres",
+  host: process.env.DB_HOST as string,
+  password: process.env.DB_PASSWORD as string,
+  database: process.env.DB_NAME as string,
+  username: process.env.DB_USER as string,
+  // logging: true,
+  port: Number(process.env.DB_PORT),
+  synchronize: false, //TypeORM automatically creates/updates tables when true
+  entities: [User, Course, Enroll, Cart],
+  migrations: ["./migrations/*.ts"],
+  migrationsRun: false,
+  migrationsTableName: "migrations",
+  migrationsTransactionMode: "all",
+};
 
-export const database = new DataSource(data)
-const port = process.env.PORT
+export const database = new DataSource(data);
+const port = process.env.PORT;
 
-// database connection 
+// database connection
 const connection = async () => {
-    try{
-    await database.initialize()
-    console.log("Database connected")
-    app.listen(port , ()=>{
-    console.log("server started")
-})
-    }
-    catch(error){
-        console.log(error)
-        console.log("Unable to connect database ")
-    }
-}
+  try {
+    await database.initialize();
+    console.log("Database connected");
+    app.listen(port, () => {
+      console.log("server started");
+    });
+  } catch (error) {
+    console.log(error);
+    console.log("Unable to connect database ");
+  }
+};
 
-connection()
+connection();
