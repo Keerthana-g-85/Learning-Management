@@ -57,7 +57,7 @@ interface Students {
 }
 interface Course {
   id: string;
-  register: Students;
+  user: Students;
   enroll_date: string;
 }
 
@@ -127,7 +127,7 @@ export default function Enroll() {
       const response = await Api({
         method: "post",
         endpoint: `enroll/create/`,
-        data: { register: `${id}`, course: `${course.id}` },
+        data: { user: `${id}`, course: `${course.id}` },
       });
       console.log(response);
       dispatch(getMessage(response.data.message));
@@ -208,17 +208,17 @@ export default function Enroll() {
                   <StyledTableCell component="th" scope="row">
                     <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                       <PersonIcon sx={{ fontSize: 20, color: "#0ea5e9" }} />
-                      {row.register.name}
+                      {row.user.name}
                     </Box>
                   </StyledTableCell>
                   <StyledTableCell align="right">
-                    {row.register.email}
+                    {row.user.email}
                   </StyledTableCell>
                   <StyledTableCell align="right">
-                    {row.register.phoneNumber}
+                    {row.user.phoneNumber}
                   </StyledTableCell>
                   <StyledTableCell align="right">
-                    {row.register.address}
+                    {row.user.address}
                   </StyledTableCell>
                   <StyledTableCell align="right">
                     {row.enroll_date}
